@@ -1,0 +1,10 @@
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\bin\Debug\DVlD_BusinessLayer.dll
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\bin\Debug\DVlD_BusinessLayer.pdb
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\bin\Debug\DVLD_DataAccessLayer.dll
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\bin\Debug\DVLD_DataAccessLayer.pdb
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.csproj.AssemblyReference.cache
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.dll
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.pdb
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\obj\Debug\DVLD_Bus.693E2707.Up2Date
+C:\Users\Hp\source\repos\DVlD_BusinessLayer\bin\Debug\DVLD_DataAccessLayer.dll.config
