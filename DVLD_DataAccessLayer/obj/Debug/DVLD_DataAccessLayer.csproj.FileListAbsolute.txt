@@ -5,3 +5,10 @@ C:\Users\Hp\source\repos\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.csp
 C:\Users\Hp\source\repos\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.dll
 C:\Users\Hp\source\repos\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.pdb
 C:\Users\Hp\source\repos\DVLD_DataAccessLayer\bin\Debug\DVLD_DataAccessLayer.dll.config
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\bin\Debug\DVLD_DataAccessLayer.dll.config
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\bin\Debug\DVLD_DataAccessLayer.dll
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\bin\Debug\DVLD_DataAccessLayer.pdb
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.dll
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.pdb
