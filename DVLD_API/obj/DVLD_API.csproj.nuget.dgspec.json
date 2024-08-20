@@ -28,7 +28,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVlD_BusinessLayer\\DVLD_BusinessLayer.csproj": {
+                "projectPath": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVlD_BusinessLayer\\DVLD_BusinessLayer.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -49,6 +53,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
             }
           },
           "imports": [
@@ -72,6 +80,40 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
+      }
+    },
+    "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVlD_BusinessLayer\\DVLD_BusinessLayer.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVlD_BusinessLayer\\DVLD_BusinessLayer.csproj",
+        "projectName": "DVLD_BusinessLayer",
+        "projectPath": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVlD_BusinessLayer\\DVLD_BusinessLayer.csproj",
+        "frameworks": {
+          "net472": {
+            "projectReferences": {
+              "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVLD_DataAccessLayer\\DVLD_DataAccessLayer.csproj": {
+                "projectPath": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVLD_DataAccessLayer\\DVLD_DataAccessLayer.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
+    "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVLD_DataAccessLayer\\DVLD_DataAccessLayer.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVLD_DataAccessLayer\\DVLD_DataAccessLayer.csproj",
+        "projectName": "DVLD_DataAccessLayer",
+        "projectPath": "C:\\Users\\Hp\\source\\repos\\Git_DVLD\\DVLD_DataAccessLayer\\DVLD_DataAccessLayer.csproj",
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
       }
     }
   }

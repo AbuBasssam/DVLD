@@ -29,7 +29,6 @@ namespace DVlD_BusinessLayer
             this.UserName = "";
             this.Password = "";
             this.IsActive = false;
-            this.PersonInfo = new clsPerson();
         }
         
         private clsUser(int UserID,int PersonID,string UserName,string Password,bool IsActive)

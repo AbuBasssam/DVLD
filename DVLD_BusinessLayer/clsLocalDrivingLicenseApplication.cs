@@ -250,7 +250,7 @@ namespace DVlD_BusinessLayer
                 //we check if the driver already there for this person.
                 Driver = new clsDriver();
                
-                Driver.PersonID= this.ApplicationInfo.ApplicationPersonID;
+                //Driver.PersonID= this.ApplicationInfo.ApplicationPersonID; must modfy
                 Driver.CreatedByUserID= CreatedByUserID;
                 if (Driver.Save())
                 {

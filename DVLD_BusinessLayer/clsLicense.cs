@@ -300,7 +300,7 @@ namespace DVlD_BusinessLayer
             //First Create Applicaiton 
             clsApplication Application = new clsApplication();
 
-            Application.ApplicationPersonID = (int)this.DriverInfo.PersonID;
+           // Application.ApplicationPersonID = (int)this.DriverInfo.PersonID; must modfy
             Application.ApplicationDate = DateTime.Now;
             Application.ApplicationTypeID = (int)clsApplication.enApplicationType.ReleaseDetainedDrivingLicsense;
             Application.ApplicationStatus = clsApplication.enApplicationStatus.Completed;
@@ -326,7 +326,7 @@ namespace DVlD_BusinessLayer
             //First Create Applicaiton 
             clsApplication Application = new clsApplication();
 
-            Application.ApplicationPersonID = (int)this.DriverInfo.PersonID;
+            //Application.ApplicationPersonID = (int)this.DriverInfo.PersonID;must modfy
             Application.ApplicationDate = DateTime.Now;
             Application.ApplicationTypeID = (int)clsApplication.enApplicationType.RenewDrivingLicense;
             Application.ApplicationStatus = clsApplication.enApplicationStatus.Completed;
@@ -374,7 +374,7 @@ namespace DVlD_BusinessLayer
             //First Create Applicaiton 
             clsApplication Application = new clsApplication();
 
-            Application.ApplicationPersonID = (int)this.DriverInfo.PersonID;
+            //Application.ApplicationPersonID = (int)this.DriverInfo.PersonID; must modfy
             Application.ApplicationDate = DateTime.Now;
 
             Application.ApplicationTypeID = (IssueReason == enIssueReason.ReplacementForDamaged) ?

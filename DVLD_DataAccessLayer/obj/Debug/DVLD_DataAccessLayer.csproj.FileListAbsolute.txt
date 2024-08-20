@@ -12,3 +12,6 @@ C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccess
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.csproj.CoreCompileInputs.cache
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.dll
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_DataAccessLayer.pdb
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\bin\Debug\System.Data.SqlClient.dll
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\bin\Debug\System.Data.SqlClient.xml
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_DataAccessLayer\obj\Debug\DVLD_Dat.5E8DE79F.Up2Date

@@ -18,3 +18,5 @@ C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\obj\Debug\DVLD_BusinessLaye
 C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\obj\Debug\DVLD_Bus.693E2707.Up2Date
 C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.dll
 C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\obj\Debug\DVlD_BusinessLayer.pdb
+C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\bin\Debug\System.Data.SqlClient.dll
+C:\Users\Hp\source\repos\Git_DVLD\DVlD_BusinessLayer\bin\Debug\System.Data.SqlClient.xml

@@ -8,7 +8,7 @@ using DVLD_DataAccessLayer;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsDriver:clsPerson
+    public class clsDriver
     {
         public enum enMode { AddNew, Update };
         
@@ -35,19 +35,19 @@ namespace DVlD_BusinessLayer
             this.CreatedDate = CreatedDate;
             this.UserInfo = clsUser.FindByUserID(CreatedByUserID);
             
-            this.PersonID = PersonID;
-            this.NationalNo = NationalNo;
-            this.FirstName = FirstName;
-            this.SecondName = SecondName;
-            this.ThirdName = ThirdName;
-            this.LastName = LastName;
-            this.DateOfBirth = DateOfBirth;
-            this.Gender = Gender;
-            this.Address = Address;
-            this.Phone = Phone;
-            this.Email = Email;
-            this.Nationality = Nationality;
-            this.ImagePath = ImagePath;
+            //this.PersonID = PersonID;
+            //this.NationalNo = NationalNo;
+            //this.FirstName = FirstName;
+            //this.SecondName = SecondName;
+            //this.ThirdName = ThirdName;
+            //this.LastName = LastName;
+            //this.DateOfBirth = DateOfBirth;
+            //this.Gender = Gender;
+            //this.Address = Address;
+            //this.Phone = Phone;
+            //this.Email = Email;
+            //this.Nationality = Nationality;
+            //this.ImagePath = ImagePath;
             this.Mode = enMode.Update;
         }
 
@@ -98,14 +98,14 @@ namespace DVlD_BusinessLayer
         
         private bool _AddNewDriver()
         {
-            this.DriverID=clsDriverData.AddNewDriver((int)PersonID,CreatedByUserID);
+            //this.DriverID=clsDriverData.AddNewDriver((int)PersonID,CreatedByUserID);
             return (this.DriverID != -1);
         }
        
         private bool _UpdateDriver()
         {
 
-            return clsDriverData.UpdateDriver(DriverID, (int)PersonID, CreatedByUserID);
+            return clsDriverData.UpdateDriver(DriverID, 0, CreatedByUserID);
         }
 
         public bool Delete(int DriverID)
