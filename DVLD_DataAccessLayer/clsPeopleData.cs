@@ -264,7 +264,7 @@ namespace DVLD_DataAccessLayer
 
         public static bool UpdatePerson(PeopleDTO PeopleDTO)
         {
-            //int rowsAffected = 0;
+            int rowsAffected = 0;
 
             try
             {
@@ -305,9 +305,7 @@ namespace DVLD_DataAccessLayer
                         else
                             command.Parameters.AddWithValue("@ImagePath", System.DBNull.Value);
                         connection.Open();
-                        // rowsAffected = command.ExecuteNonQuery();
-                        command.ExecuteNonQuery();
-                        return true;
+                        rowsAffected = command.ExecuteNonQuery();                        
 
                     }
                 }
@@ -320,7 +318,7 @@ namespace DVLD_DataAccessLayer
             }
 
 
-            //return (rowsAffected > 0);
+            return (rowsAffected ==1);
         }
 
         public static bool DeletePerson(int PersonID)
