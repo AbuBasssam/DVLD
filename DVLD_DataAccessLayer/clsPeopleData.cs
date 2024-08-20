@@ -94,7 +94,7 @@ namespace DVLD_DataAccessLayer
                                          reader.GetString(reader.GetOrdinal("Address")),
                                          reader.GetString(reader.GetOrdinal("Phone")),
                                          reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                         reader.GetByte(reader.GetOrdinal("NationalityCountryID")),
+                                         reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
                                          reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
 
                                     );
@@ -128,7 +128,7 @@ namespace DVLD_DataAccessLayer
         public static PeopleDTO FindByID(int PersonID)
         {
 
-            bool isFound = false;
+            
             try
             {
 
@@ -136,7 +136,6 @@ namespace DVLD_DataAccessLayer
 
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    //string query = "SELECT * FROM People WHERE PersonID = @PersonID";
 
                     using (var command = new SqlCommand("SP_FindPerson", connection))
                     {
@@ -162,7 +161,7 @@ namespace DVLD_DataAccessLayer
                                          reader.GetString(reader.GetOrdinal("Address")),
                                          reader.GetString(reader.GetOrdinal("Phone")),
                                          reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                         reader.GetByte(reader.GetOrdinal("NationalityCountryID")),
+                                         reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
                                          reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
 
                                     );
@@ -185,7 +184,7 @@ namespace DVLD_DataAccessLayer
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
 
                 //Console.WriteLine("Error: " + ex.Message);
-                isFound = false;
+                
             }
 
 

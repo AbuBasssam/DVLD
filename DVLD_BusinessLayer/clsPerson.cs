@@ -37,7 +37,7 @@ namespace DVlD_BusinessLayer
         public string Address { set; get; }
         public string Phone { set; get; }
         public string Email { set; get; }
-        public byte Nationality { set; get; }
+        public int Nationality { set; get; }
 
         private string _ImagePath;
         public string ImagePath
@@ -48,19 +48,19 @@ namespace DVlD_BusinessLayer
 
         public clsPerson(PeopleDTO PDTO, enMode cMode = enMode.AddNew)
         {
-            this.PersonID = PersonID;
-            this.NationalNo = NationalNo;
-            this.FirstName = FirstName;
-            this.SecondName = SecondName;
-            this.ThirdName = ThirdName;
-            this.LastName = LastName;
-            this.DateOfBirth = DateOfBirth;
-            this.Gender = Gender;
-            this.Address = Address;
-            this.Phone = Phone;
-            this.Email = Email;
-            this.Nationality = Nationality;
-            this.ImagePath = ImagePath;
+            this.PersonID = PDTO.PersonID;
+            this.NationalNo = PDTO.NationalNo;
+            this.FirstName = PDTO.FirstName;
+            this.SecondName = PDTO.SecondName;
+            this.ThirdName = PDTO.ThirdName;
+            this.LastName = PDTO.LastName;
+            this.DateOfBirth = PDTO.DateOfBirth;
+            this.Gender = PDTO.Gender;
+            this.Address = PDTO.Address;
+            this.Phone = PDTO.Phone;
+            this.Email = PDTO.Email;
+            this.Nationality = PDTO.Nationality;
+            this.ImagePath = PDTO.ImagePath;
             this.Mode = cMode;
         }
 

@@ -196,7 +196,7 @@ namespace DVlD_BusinessLayer
         
         public static bool AlreadyHaveLicense(int PersonID,int LicenseClass)
         {
-            clsDriver Driver= clsDriver.FindByPersonID(PersonID);
+           clsDriver Driver= clsDriver.FindByPersonID(PersonID);
             int DriverID = (Driver!=null)? Driver.DriverID:-1;
             if (DriverID == -1)
                 return false;

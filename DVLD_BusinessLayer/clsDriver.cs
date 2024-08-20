@@ -17,6 +17,7 @@ namespace DVlD_BusinessLayer
         public int CreatedByUserID {  get; set; }
         public DateTime CreatedDate { get; set; }   
         public clsUser UserInfo { get; set; }
+        public clsPerson PersonInfo { get; set; }
         
         public clsDriver()
         {
@@ -26,14 +27,13 @@ namespace DVlD_BusinessLayer
             Mode= enMode.AddNew;
         }
        
-        private clsDriver(int DriverID,int CreatedByUserID, DateTime CreatedDate, int PersonID, string NationalNo, string FirstName, string SecondName
-           , string ThirdName, string LastName, DateTime DateOfBirth, byte Gender,
-           string Address, string Phone, string Email, byte Nationality, string ImagePath)
+        private clsDriver(int DriverID,int CreatedByUserID, DateTime CreatedDate, int PersonID)
         {
             this.DriverID = DriverID;
             this.CreatedByUserID = CreatedByUserID;
             this.CreatedDate = CreatedDate;
             this.UserInfo = clsUser.FindByUserID(CreatedByUserID);
+            this.PersonInfo=clsPerson.Find(PersonID);
             
             //this.PersonID = PersonID;
             //this.NationalNo = NationalNo;
@@ -52,21 +52,19 @@ namespace DVlD_BusinessLayer
         }
 
 
-        public static  clsDriver FindByDriverID(int DriverID)
+        public static clsDriver FindByDriverID(int DriverID)
         {
-            int CreatedByUserID = -1, PersonID = -1 ;
+            int CreatedByUserID = -1, PersonID = -1;
             DateTime CreatedDate = DateTime.Now;
-            
-            bool Found=clsDriverData.FindByDriverID(DriverID,ref PersonID,ref CreatedByUserID,ref CreatedDate);
+
+            bool Found = clsDriverData.FindByDriverID(DriverID, ref PersonID, ref CreatedByUserID, ref CreatedDate);
             if (Found)
             {
                 clsPerson Person = clsPerson.Find(PersonID);
-                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, (int)Person.PersonID, Person.NationalNo, Person.FirstName, Person.SecondName,
-                    Person.ThirdName, Person.LastName, Person.DateOfBirth, Person.Gender,
-                    Person.Address, Person.Phone, Person.Email, Person.Nationality, Person.ImagePath);
+                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, PersonID);
             }
             else
-               return null;
+                return null;
 
 
 
@@ -77,13 +75,11 @@ namespace DVlD_BusinessLayer
             int CreatedByUserID = -1, DriverID = -1;
             DateTime CreatedDate = DateTime.Now;
             bool Found = false;
-            Found = clsDriverData.FindByPersonID(ref DriverID,  PersonID, ref CreatedByUserID, ref CreatedDate);
+            Found = clsDriverData.FindByPersonID(ref DriverID, PersonID, ref CreatedByUserID, ref CreatedDate);
             if (Found)
             {
                 clsPerson Person = clsPerson.Find(PersonID);
-                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, (int)Person.PersonID, Person.NationalNo, Person.FirstName, Person.SecondName,
-                    Person.ThirdName, Person.LastName, Person.DateOfBirth, Person.Gender,
-                    Person.Address, Person.Phone, Person.Email, Person.Nationality, Person.ImagePath);
+                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, PersonID);
             }
             else
                 return null;
