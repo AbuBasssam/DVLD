@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DVlD_BusinessLayer;
 using DVLD_DataAccessLayer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace DVLD_API.Controllers
 {
@@ -93,7 +94,20 @@ namespace DVLD_API.Controllers
         public ActionResult<PeopleDTO> AddStudent(PeopleDTO NewPersonDTO)
         {
             //this code without verfying opreatoin
-
+            switch (clsUtil.PersonCheckConstraints(NewPersonDTO))
+            {
+                case clsUtil.enPersonBadRequestTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+                
+                case clsUtil.enPersonBadRequestTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+                
+                case clsUtil.enPersonBadRequestTypes.UnderAge:
+                    return BadRequest($"Invalid Date of birth  the age is under 18");
+                
+                case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
+                    return BadRequest($"The National number '{NewPersonDTO.NationalNo}' already exists.");
+            }
             DVlD_BusinessLayer.clsPerson Person = new DVlD_BusinessLayer.clsPerson(new PeopleDTO(NewPersonDTO.PersonID, NewPersonDTO.NationalNo,
                 NewPersonDTO.FirstName, NewPersonDTO.SecondName, NewPersonDTO.ThirdName, NewPersonDTO.LastName,
                 NewPersonDTO.DateOfBirth, NewPersonDTO.Gender, NewPersonDTO.Address, NewPersonDTO.Phone, NewPersonDTO.Email,
@@ -116,15 +130,29 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<PeopleDTO> UpdateStudent(int PersonID, PeopleDTO UpdatedPerson)
         {
-            //this code without verfying opreatoin
-
-
             DVlD_BusinessLayer.clsPerson Person = DVlD_BusinessLayer.clsPerson.Find(PersonID);
-
 
             if (Person == null)
             {
                 return NotFound($"Person with ID {PersonID} not found.");
+            }
+            switch (clsUtil.PersonCheckConstraints(UpdatedPerson))
+            {
+                case clsUtil.enPersonBadRequestTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsUtil.enPersonBadRequestTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsUtil.enPersonBadRequestTypes.UnderAge:
+                    return BadRequest($"Invalid Date of birth  the age is under 18");
+
+                case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
+                    
+                    if (Person.NationalNo != UpdatedPerson.NationalNo)
+                        return BadRequest($"The National number '{UpdatedPerson.NationalNo}' already exists.");
+                    else
+                        break;
             }
 
             Person.NationalNo = UpdatedPerson.NationalNo;
@@ -139,6 +167,7 @@ namespace DVLD_API.Controllers
             Person.Email = UpdatedPerson.Email;
             Person.Nationality = UpdatedPerson.Nationality;
             Person.ImagePath = UpdatedPerson.ImagePath;
+            
             Person.Save();
 
             return Ok(Person.PDTO);
