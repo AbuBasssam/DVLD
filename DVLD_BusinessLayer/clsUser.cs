@@ -14,7 +14,14 @@ namespace DVlD_BusinessLayer
     {
         public enum enMode { AddNew = 0, Update = 1 }
         public enMode Mode = enMode.AddNew;
-
+        public UserDTO UDTO
+        {
+            get
+            {
+                return (new UserDTO((int)this.UserID,this.PersonID,
+                this.UserName, this.Password, this.IsActive));
+            }
+        }
         public Nullable< int> UserID { get; set; }
         public int PersonID { get; set; }
         public string UserName { get; set; }
@@ -22,42 +29,27 @@ namespace DVlD_BusinessLayer
         public bool   IsActive {  get; set; }
         public clsPerson PersonInfo { get; set; }
         
-        public clsUser()
+        public clsUser(UserDTO UDTO,enMode cMode=enMode.AddNew)
         {
-            this.UserID = -1;
-            this.PersonID = -1;
-            this.UserName = "";
-            this.Password = "";
-            this.IsActive = false;
-        }
-        
-        private clsUser(int UserID,int PersonID,string UserName,string Password,bool IsActive)
-        {
-            this.UserID = UserID;
-            this.PersonID = PersonID;
-            this.UserName = UserName;
-            this.Password = Password;
-            this.IsActive = IsActive;
-            this.PersonInfo = clsPerson.Find(PersonID);
-            Mode = enMode.Update;
+            this.UserID = UDTO.UserID;
+            this.PersonID = UDTO.PersonID;
+            this.UserName = UDTO.UserName;
+            this.Password = UDTO.Password;
+            this.IsActive = UDTO.IsActive;
+            this.PersonInfo = clsPerson.Find(UDTO.PersonID);
+            Mode = cMode;
             
             
         }
-
 
         public static clsUser FindByPersonID(int PersonID)
         {
-            int    UserID   = -1;
-            string UserName = default(string);
-            string Password = default(string);
-            bool   isActive = false;
-           
 
-            if (clsUserData.FindByPersonID(ref UserID, PersonID, ref UserName, ref Password, ref isActive))
+            UserDTO UDTO=clsUserData.FindByPersonID(PersonID);
+
+            if (UDTO!=null)
             {
-                return new clsUser(UserID, PersonID, UserName, Password, isActive);
-
-
+                return new clsUser(UDTO,enMode.Update);
 
             }
             else
@@ -68,18 +60,11 @@ namespace DVlD_BusinessLayer
         
         public static clsUser FindByUserID(int UserID)
         {
-            int PersonID = -1;
-            string UserName = default(string);
-            string Password = default(string);
-            bool isActive = false;
+            UserDTO UDTO = clsUserData.FindByUserID(UserID);
 
-
-            if (clsUserData.FindByIUserD( UserID, ref PersonID, ref UserName, ref Password, ref isActive))
+            if (UDTO != null)
             {
-
-                return new clsUser(UserID, PersonID, UserName, Password, isActive);
-
-
+                return new clsUser(UDTO, enMode.Update);
 
             }
             else
@@ -89,17 +74,11 @@ namespace DVlD_BusinessLayer
         }
         public static clsUser Find(string UserName,string Password)
         {
-            int PersonID = -1;
-            int UserID = -1;
-            bool isActive = false;
+            UserDTO UDTO = clsUserData.Find(UserName,Password);
 
-
-            if (clsUserData.Find(ref UserID, ref PersonID,  UserName, Password, ref isActive))
+            if (UDTO != null)
             {
-
-                return new clsUser(UserID, PersonID, UserName, Password, isActive);
-
-
+                return new clsUser(UDTO, enMode.Update);
 
             }
             else
@@ -134,13 +113,13 @@ namespace DVlD_BusinessLayer
 
         private bool _AddNewUser()
         {
-            this.UserID = clsUserData.AddNewUser(PersonID, UserName, Password, IsActive);
+            this.UserID = clsUserData.AddNewUser(UDTO);
                 return (UserID !=null);
         }
 
         private bool _UpdateUser()
         {
-            return (clsUserData.UpdateUser((int)UserID,UserName,Password,IsActive));
+            return (clsUserData.UpdateUser(UDTO));
         }
 
         public static bool DeleteUser(int UserID)
@@ -158,7 +137,7 @@ namespace DVlD_BusinessLayer
             return clsUserData.IsAlreadyUserExist(PersonID);
         }
 
-        public static DataTable GetAllUsers()
+        public static List<UserDTO> GetAllUsers()
         {
             return clsUserData.GetUsers();
         }

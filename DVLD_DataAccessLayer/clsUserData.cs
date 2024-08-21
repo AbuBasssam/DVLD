@@ -10,29 +10,30 @@ using System.Security.Cryptography;
 
 namespace DVLD_DataAccessLayer
 {
-    public class clsUserData
+    public class UserDTO
     {
-        public class UserDTO
-        {
 
-            public PeopleDTO UserInfo { get; set; }
-            public Nullable<int> UserID { get; set; }
-            public int PersonID {  get; set; }
-            public string UserName { get; set; }
-            public string Password { get; set; }
-            public bool IsActive { get; set; }
-            public UserDTO(int UserID, int PersonID, string UserName, string Password, bool isActive)
-            {
-                this.UserID = UserID;
-                this.PersonID = PersonID;
-                this.UserName = UserName;
-                this.Password = Password;
-                this.IsActive = isActive;
-                this.UserInfo =clsPeopleData.FindByID(PersonID);
-               
-            }
+        public PeopleDTO UserInfo { get; set; }
+        public Nullable<int> UserID { get; set; }
+        public int PersonID { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public bool IsActive { get; set; }
+        public UserDTO(int UserID, int PersonID, string UserName, string Password, bool isActive)
+        {
+            this.UserID = UserID;
+            this.PersonID = PersonID;
+            this.UserName = UserName;
+            this.Password = Password;
+            this.IsActive = isActive;
+            this.UserInfo = clsPeopleData.FindByID(PersonID);
 
         }
+
+    }
+
+    public class clsUserData
+    {
         public static UserDTO FindByPersonID(int PersonID)
         {
             try
@@ -222,7 +223,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static bool UpdateUser(int UserID,string UserName, string Password ,bool IsActive)
+        public static bool UpdateUser(UserDTO UserDTO)
         {
             int rowsAffected = 0;
           
@@ -236,10 +237,10 @@ namespace DVLD_DataAccessLayer
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.AddWithValue("@UserName", UserName);
-                        command.Parameters.AddWithValue("@Password", Password);
-                        command.Parameters.AddWithValue("@IsActive", IsActive);
-                        command.Parameters.AddWithValue("@UserID", UserID);
+                        command.Parameters.AddWithValue("@UserName", UserDTO.UserName);
+                        command.Parameters.AddWithValue("@Password", UserDTO.Password);
+                        command.Parameters.AddWithValue("@IsActive", UserDTO.IsActive);
+                        command.Parameters.AddWithValue("@UserID", UserDTO.UserID);
                         connection.Open();
                         rowsAffected = command.ExecuteNonQuery();
 
