@@ -42,6 +42,6 @@ namespace DVLD_API
 
             return enPersonBadRequestTypes.None;
         }
-       // txtNationalNo.Text.Trim() != _Person.NationalNo && clsPerson.IsPersonExist(txtNationalNo.Text.Trim()) 
+       
     }
 }
