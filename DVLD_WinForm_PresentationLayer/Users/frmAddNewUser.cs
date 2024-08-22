@@ -227,7 +227,7 @@ namespace DVLD
             {
                 lblTitle.Text = "Add New User";
 
-                _User = new clsUser();
+               // _User = new clsUser();
 
                 btnNext.Enabled = false;
 

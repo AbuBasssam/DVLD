@@ -10,11 +10,10 @@ using System.Security.Cryptography;
 
 namespace DVLD_DataAccessLayer
 {
+    
     public class UserDTO
     {
-
-        public PeopleDTO UserInfo { get; set; }
-        public Nullable<int> UserID { get; set; }
+        public int UserID { get; set; }
         public int PersonID { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
@@ -26,10 +25,27 @@ namespace DVLD_DataAccessLayer
             this.UserName = UserName;
             this.Password = Password;
             this.IsActive = isActive;
-            this.UserInfo = clsPeopleData.FindByID(PersonID);
+            
 
         }
 
+    }
+    public class ListUsersDTO
+    {
+        public int UserID { get; set; }
+        public int PersonID { get; set; }
+        public string FullName {  get; set; }
+        public string UserName { get; set; }
+        public bool IsActive { get; set; }
+
+        public ListUsersDTO(int UserID, int PersonID, string FullName, string UserName, bool IsActive)
+        {
+            this.UserID = UserID;
+            this.PersonID = PersonID;
+            this.FullName = FullName;
+            this.UserName = UserName;
+            this.IsActive = IsActive;
+        }
     }
 
     public class clsUserData
@@ -236,7 +252,7 @@ namespace DVLD_DataAccessLayer
                     using (var command = new SqlCommand("SP_UpdateUser", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-
+                        command.Parameters.AddWithValue("@PersonID", UserDTO.PersonID);
                         command.Parameters.AddWithValue("@UserName", UserDTO.UserName);
                         command.Parameters.AddWithValue("@Password", UserDTO.Password);
                         command.Parameters.AddWithValue("@IsActive", UserDTO.IsActive);
@@ -317,6 +333,7 @@ namespace DVLD_DataAccessLayer
                         {
                             Direction = ParameterDirection.ReturnValue
                         };
+                        command.Parameters.Add(returnParameter);
                         connection.Open();
                         command.ExecuteNonQuery();
                         IsExist=(int)returnParameter.Value==1;
@@ -334,54 +351,95 @@ namespace DVLD_DataAccessLayer
             }
             return IsExist;
         }
+        
+        public static bool IsUserExist(string UserName)
+        {
+            bool IsExist = false;
+
+
+
+            try
+            {
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+
+                    using (var command = new SqlCommand("SP_CheckUserExistsByUserName", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@UserName", UserName);
+                        SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.ReturnValue
+                        };
+                        command.Parameters.Add(returnParameter);
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        return (int)returnParameter.Value == 1;
+
+                    }
+
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
+            return IsExist;
+        }
 
         public static bool IsAlreadyUserExist(int PersonID)
         {
             bool IsExist = false;
-
-            var connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-
-            var command = new SqlCommand("SP_CheckAlreadyUserExists", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-
             try
             {
-                connection.Open();
-                SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    Direction = ParameterDirection.ReturnValue
-                };
-                connection.Open();
-                command.ExecuteNonQuery();
-                IsExist=(int)returnParameter.Value == 1;
+
+
+                    using (var command = new SqlCommand("SP_CheckAlreadyUserExists", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@PersonID", PersonID);
+                        SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.ReturnValue
+                        };
+                        connection.Open();
+                        command.Parameters.Add(returnParameter);
+                        command.ExecuteNonQuery();
+                        IsExist = (int)returnParameter.Value == 1;
+
+                    }
+                        
+
+
+                }
+
+
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
                 
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
             return IsExist;
         }
         
-        public static List<UserDTO> GetUsers()
+        public static List<ListUsersDTO> GetUsers()
         {
 
-           List<UserDTO> UsersList = new List<UserDTO>();
+           List<ListUsersDTO> UsersList = new List<ListUsersDTO>();
             
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                   /* string query = "SELECT Users.UserID, Users.PersonID, People.FirstName +' '+ People.SecondName+' '+People.ThirdName+' '+People.LastName as FullName, Users.UserName, Users.IsActive " +
-                        "FROM Users INNER JOIN People" +
-                        " ON Users.PersonID = People.PersonID";*/
+                   
 
                     using (var command = new SqlCommand("SP_GetAllUsers", connection))
                     {
@@ -391,12 +449,12 @@ namespace DVLD_DataAccessLayer
                         {
                             while (reader.Read())
                             {
-                                UsersList.Add(new UserDTO
+                                UsersList.Add(new ListUsersDTO
                                 (
                                     reader.GetInt32(reader.GetOrdinal("UserID")),
                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                    reader.GetString(reader.GetOrdinal("FullName")),
                                     reader.GetString(reader.GetOrdinal("UserName")),
-                                    reader.GetString(reader.GetOrdinal("Password")),
                                     reader.GetBoolean(reader.GetOrdinal("IsActive"))
                                 ));
                                

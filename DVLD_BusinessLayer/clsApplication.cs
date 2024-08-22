@@ -74,7 +74,6 @@ namespace DVlD_BusinessLayer
             this.LastStauteDate = DateTime.Today;
             this.PaidFees = PaidFees;
             this.CreatedBy = -1;
-            this.User = new clsUser();
             this.ApplicationType = new clsApplicationType();
             Mode = enMode.AddNew;
 

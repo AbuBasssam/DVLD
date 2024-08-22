@@ -28,7 +28,6 @@ namespace DVlD_BusinessLayer
           this.TestResult=0;
           this.Notes = string.Empty;
           this.CreatedBy = -1;
-          this.UserInfo = new clsUser();
           this.AppointmentInfo=new clsTestAppointment();
           Mode =enMode.AddNew;
         

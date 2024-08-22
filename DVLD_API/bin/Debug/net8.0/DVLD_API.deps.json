@@ -143,12 +143,18 @@
           "DVLD_DataAccessLayer": "1.0.0"
         },
         "runtime": {
-          "DVlD_BusinessLayer.dll": {}
+          "DVlD_BusinessLayer.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": ""
+          }
         }
       },
       "DVLD_DataAccessLayer/1.0.0": {
         "runtime": {
-          "DVLD_DataAccessLayer.dll": {}
+          "DVLD_DataAccessLayer.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }

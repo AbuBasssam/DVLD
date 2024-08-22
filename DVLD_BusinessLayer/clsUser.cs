@@ -12,7 +12,7 @@ namespace DVlD_BusinessLayer
 {
     public class clsUser
     {
-        public enum enMode { AddNew = 0, Update = 1 }
+        public enum enMode { AddNew = 0, Update = 1}
         public enMode Mode = enMode.AddNew;
         public UserDTO UDTO
         {
@@ -29,7 +29,7 @@ namespace DVlD_BusinessLayer
         public bool   IsActive {  get; set; }
         public clsPerson PersonInfo { get; set; }
         
-        public clsUser(UserDTO UDTO,enMode cMode=enMode.AddNew)
+        public clsUser(UserDTO UDTO, enMode cMode = enMode.AddNew)
         {
             this.UserID = UDTO.UserID;
             this.PersonID = UDTO.PersonID;
@@ -38,14 +38,13 @@ namespace DVlD_BusinessLayer
             this.IsActive = UDTO.IsActive;
             this.PersonInfo = clsPerson.Find(UDTO.PersonID);
             Mode = cMode;
-            
-            
+
         }
 
         public static clsUser FindByPersonID(int PersonID)
         {
 
-            UserDTO UDTO=clsUserData.FindByPersonID(PersonID);
+            UserDTO UDTO =clsUserData.FindByPersonID(PersonID);
 
             if (UDTO!=null)
             {
@@ -72,6 +71,7 @@ namespace DVlD_BusinessLayer
                 return null;
             }
         }
+       
         public static clsUser Find(string UserName,string Password)
         {
             UserDTO UDTO = clsUserData.Find(UserName,Password);
@@ -131,13 +131,17 @@ namespace DVlD_BusinessLayer
         {
             return clsUserData.IsUserExist(UserID);
         }
+        public static bool IsUserExist(string UserName)
+        {
+            return clsUserData.IsUserExist(UserName);
+        }
 
         public static bool IsAlreadyUserExist(int PersonID)
         {
             return clsUserData.IsAlreadyUserExist(PersonID);
         }
 
-        public static List<UserDTO> GetAllUsers()
+        public static List<ListUsersDTO> GetAllUsers()
         {
             return clsUserData.GetUsers();
         }

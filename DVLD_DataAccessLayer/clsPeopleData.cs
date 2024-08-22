@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer
 {
-    public class PeopleDTO
+    public class PersonDTO
     {
 
         public Nullable<int> PersonID { set; get; }
@@ -34,7 +34,7 @@ namespace DVLD_DataAccessLayer
             get { return _ImagePath; }
             set { _ImagePath = value; }
         }
-        public PeopleDTO(Nullable<int> PersonID, string NationalNo, string FirstName, string SecondName
+        public PersonDTO(Nullable<int> PersonID, string NationalNo, string FirstName, string SecondName
             , string ThirdName, string LastName, DateTime DateOfBirth, byte Gender,
             string Address, string Phone, string Email, int Nationality, string ImagePath)
         {
@@ -56,9 +56,52 @@ namespace DVLD_DataAccessLayer
 
 
     }
+    public class ListPersonDTO
+    {
+        public Nullable<int> PersonID { set; get; }
+        public string NationalNo { set; get; }
+        public string FirstName { set; get; }
+        public string SecondName { set; get; }
+        public string ThirdName { set; get; }
+        public string LastName { set; get; }
+        public DateTime DateOfBirth { set; get; }
+        public byte Gender { set; get; }
+        public string Address { set; get; }
+        public string Phone { set; get; }
+        public string Email { set; get; }
+        public int Nationality { set; get; }
+
+        private string _ImagePath;
+        public string ImagePath
+        {
+            get { return _ImagePath; }
+            set { _ImagePath = value; }
+        }
+        public string CountryName { set; get; }
+        public string Genderstr { set; get; }
+        public ListPersonDTO(PersonDTO PersonInfo, string CountryName, string Genderstr)
+        {
+            this.PersonID = PersonInfo.PersonID;
+            this.NationalNo = PersonInfo.NationalNo;
+            this.FirstName = PersonInfo.FirstName;
+            this.SecondName = PersonInfo.SecondName;
+            this.ThirdName = PersonInfo.ThirdName;
+            this.LastName = PersonInfo.LastName;
+            this.DateOfBirth = PersonInfo.DateOfBirth;
+            this.Gender = PersonInfo.Gender;
+            this.Address = PersonInfo.Address;
+            this.Phone = PersonInfo.Phone;
+            this.Email = PersonInfo.Email;
+            this.Nationality = PersonInfo.Nationality;
+            this.ImagePath = PersonInfo.ImagePath;
+            this.CountryName = CountryName;
+            this.Genderstr = Genderstr;
+        }
+    }
+
     public class clsPeopleData
     {
-        public static PeopleDTO FindByNationalNo(string NationalNO)
+        public static PersonDTO FindByNationalNo(string NationalNO)
         {
 
             try
@@ -81,7 +124,7 @@ namespace DVLD_DataAccessLayer
                             {
                                 // The record was found
 
-                                return new PeopleDTO
+                                return new PersonDTO
                                     (
                                          reader.GetInt32(reader.GetOrdinal("PersonID")),
                                          reader.GetString(reader.GetOrdinal("NationalNO")),
@@ -125,7 +168,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static PeopleDTO FindByID(int PersonID)
+        public static PersonDTO FindByID(int PersonID)
         {
 
             
@@ -148,7 +191,7 @@ namespace DVLD_DataAccessLayer
                         {
                             if (reader.Read())
                             {
-                                return new PeopleDTO
+                                return new PersonDTO
                                     (
                                          reader.GetInt32(reader.GetOrdinal("PersonID")),
                                          reader.GetString(reader.GetOrdinal("NationalNO")),
@@ -191,7 +234,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static Nullable<int> AddNewPerson(PeopleDTO PeopleDTO)
+        public static Nullable<int> AddNewPerson(PersonDTO PeopleDTO)
         {
 
 
@@ -262,7 +305,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static bool UpdatePerson(PeopleDTO PeopleDTO)
+        public static bool UpdatePerson(PersonDTO PeopleDTO)
         {
             int rowsAffected = 0;
 
@@ -468,18 +511,18 @@ namespace DVLD_DataAccessLayer
             return isFound;
         }
 
-        public static List<PeopleDTO> GetPeople()
+        public static List<ListPersonDTO> GetPeople()
         {
-            var PeoplesList = new List<PeopleDTO>();
+            var PeoplesList = new List<ListPersonDTO>();
 
             try
             {
                 string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=sa123456;";
                 using (var connection = new SqlConnection(ConnectionString))
                 {
-                    string query = "SELECT * From People";
+                   
 
-                    using (var command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand("SP_GetPeopleList", connection))
                     {
                         connection.Open();
 
@@ -488,9 +531,9 @@ namespace DVLD_DataAccessLayer
 
                             while (reader.Read())
                             {
-                                PeoplesList.Add(new PeopleDTO
+                                PeoplesList.Add(new ListPersonDTO
                                     (
-                                         reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                        new PersonDTO( reader.GetInt32(reader.GetOrdinal("PersonID")),
                                          reader.GetString(reader.GetOrdinal("NationalNO")),
                                          reader.GetString(reader.GetOrdinal("FirstName")),
                                          reader.GetString(reader.GetOrdinal("SecondName")),
@@ -503,7 +546,8 @@ namespace DVLD_DataAccessLayer
                                          reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
                                          reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
                                          reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
-
+                                         ),reader.GetString(reader.GetOrdinal("CountryName")),
+                                           reader.GetString(reader.GetOrdinal("GenderCaption"))
                                     ));
                             }
 

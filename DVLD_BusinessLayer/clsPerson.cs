@@ -12,11 +12,11 @@ namespace DVlD_BusinessLayer
     {
         public enum enMode { AddNew = 0, Update = 1 }
         public enMode Mode = enMode.AddNew;
-        public PeopleDTO PDTO
+        public PersonDTO PDTO
         {
             get
             {
-                return (new PeopleDTO(this.PersonID, this.NationalNo,
+                return (new PersonDTO(this.PersonID, this.NationalNo,
                 this.FirstName, this.SecondName, this.ThirdName, this.LastName,
                 this.DateOfBirth, this.Gender, this.Address, this.Phone, this.Email,
                 this.Nationality, this._ImagePath));
@@ -46,7 +46,7 @@ namespace DVlD_BusinessLayer
             set { _ImagePath = value; }
         }
 
-        public clsPerson(PeopleDTO PDTO, enMode cMode = enMode.AddNew)
+        public clsPerson(PersonDTO PDTO, enMode cMode = enMode.AddNew)
         {
             this.PersonID = PDTO.PersonID;
             this.NationalNo = PDTO.NationalNo;
@@ -66,7 +66,7 @@ namespace DVlD_BusinessLayer
 
         public static clsPerson Find(string NationalNo)
         {
-            PeopleDTO PDTO = clsPeopleData.FindByNationalNo(NationalNo);
+            PersonDTO PDTO = clsPeopleData.FindByNationalNo(NationalNo);
 
 
             if (PDTO != null)
@@ -84,7 +84,7 @@ namespace DVlD_BusinessLayer
 
         public static clsPerson Find(int PersonID)
         {
-            PeopleDTO PDTO = clsPeopleData.FindByID(PersonID);
+            PersonDTO PDTO = clsPeopleData.FindByID(PersonID);
 
 
             if (PDTO != null)
@@ -158,7 +158,7 @@ namespace DVlD_BusinessLayer
             return clsPeopleData.IsPersonExist(NationalNo);
         }
 
-        public static List<PeopleDTO> GetAllPersons()
+        public static List<ListPersonDTO> GetAllPersons()
         {
             return clsPeopleData.GetPeople();
         }
