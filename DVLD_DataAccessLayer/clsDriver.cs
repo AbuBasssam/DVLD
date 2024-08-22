@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -11,20 +12,57 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DVLD_DataAccessLayer
 {
+    public class DriverDTO
+    {
+        public int DriverID { get; set; }
+        public int PersonID { get; set; }
+        public int CreatedByUserID { get; set; }
+        
+        public DateTime CreatedDate { get; set; }
+        public DriverDTO( int DriverID,int PersonID,int CreatedByUserID,DateTime CreatedDate)
+        {
+            this.DriverID = DriverID;
+            this.PersonID = PersonID;
+            this.CreatedByUserID = CreatedByUserID;
+            this.CreatedDate = CreatedDate; 
+
+        }
+
+    }
+    public class ListDriverDTO
+    {
+        public int DriverID { get; set; }
+        public int PersonID { get; set; }
+        public string NationalNo { get; set; }
+        public string FullName { get; set; }
+        public int CreatedByUserID { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public  byte NumberOfActiveLicenses {  get; set; }
+        public ListDriverDTO(int DriverID, int PersonID,string NationalNo,string FullName, int CreatedByUserID,DateTime CreatedDate, byte NumberOfActiveLicenses)
+        {
+            this.DriverID = DriverID;
+            this.PersonID = PersonID;
+            this.NationalNo = NationalNo;
+            this.FullName = FullName;
+            this.CreatedByUserID = CreatedByUserID;
+            this.CreatedDate = CreatedDate;
+            this.NumberOfActiveLicenses = NumberOfActiveLicenses;
+
+
+        }
+    }
+
     public static class clsDriverData
     {
-        public static DataTable GetAllDrivers()
+        public static List<ListDriverDTO> GetAllDrivers()
         {
-            
-                DataTable dt = new DataTable();
+
+            List<ListDriverDTO> DriversList = new List<ListDriverDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
-            string query = "SELECT dbo.Drivers.DriverID, dbo.Drivers.PersonID, dbo.People.NationalNo, dbo.People.FirstName + ' ' + dbo.People.SecondName + ' ' + ISNULL(dbo.People.ThirdName, '') + ' ' + dbo.People.LastName AS FullName, dbo.Drivers.CreatedDate," +
-                "(SELECT COUNT(LicenseID) AS NumberOfActiveLicenses " +
-                "FROM dbo.Licenses WHERE(IsActive = 1) AND(DriverID = dbo.Drivers.DriverID)) AS NumberOfActiveLicenses " +
-                "FROM dbo.Drivers INNER JOIN  dbo.People ON dbo.Drivers.PersonID = dbo.People.PersonID";
+           
 
-            SqlCommand command = new SqlCommand(query, connection);
+            SqlCommand command = new SqlCommand("SP_GetDriversList", connection);
 
             try
             {
@@ -32,10 +70,20 @@ namespace DVLD_DataAccessLayer
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while(reader.Read())
 
                 {
-                    dt.Load(reader);
+                    DriversList.Add
+                       (
+                        new ListDriverDTO(
+                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                     reader.GetString(reader.GetOrdinal("NationalNo")),
+                                     reader.GetString(reader.GetOrdinal("FullName")),
+                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
+                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+                                     reader.GetByte(reader.GetOrdinal("NumberOfActiveLicenses"))
+                                 ));
                 }
 
                 reader.Close();
@@ -52,220 +100,207 @@ namespace DVLD_DataAccessLayer
                 connection.Close();
             }
 
-            return dt;
+            return DriversList;
         }
     
-        public static bool FindByDriverID(int DriverID, ref int  PersonID, ref  int CreatedByUserID, ref DateTime CreatedDate)
+        public static DriverDTO FindByDriverID(int DriverID)
         {
-           
-                 bool isFound = false;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = " Select* From Drivers where DriverID = @DriverID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@CreatedDate", CreatedDate);
-
-
-
-
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
+                    using (var command = new SqlCommand("GetDriverByID", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+                        connection.Open();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
 
-                    // The record was found
-                    isFound = true;
+                                return new DriverDTO
+                                 (
 
-                    PersonID = (int)reader["PersonID"];
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    CreatedDate = (DateTime)reader["CreatedDate"];
+                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
+                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
+                                 );
 
+                            }
+                        }
 
+                            
 
+                    }
+                   
 
-
+                    
 
                 }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
 
-                reader.Close();
+                   
 
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
+                return null;
             }
-            finally
-            {
-                connection.Close();
-            }
+           
 
-            return isFound;
+            return null;
 
         }
         
-        public static bool FindByPersonID(ref int DriverID,  int PersonID, ref int CreatedByUserID, ref DateTime CreatedDate)
+        public static DriverDTO FindByPersonID(int PersonID)
         {
-
-            bool isFound = false;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = " Select* From Drivers where PersonID = @PersonID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@CreatedDate", CreatedDate);
-
-
-
 
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
+                    using (var command = new SqlCommand("GetDriverByPersonID", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@PersonID", PersonID);
+                        connection.Open();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
 
-                    // The record was found
-                    isFound = true;
+                                return new DriverDTO
+                                 (
 
-                    DriverID = (int)reader["DriverID"];
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    CreatedDate = (DateTime)reader["CreatedDate"];
+                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
+                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
+                                 );
+
+                            }
+                        }
 
 
+
+                    }
 
 
 
 
                 }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
 
-                reader.Close();
+
 
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
-            }
-            finally
-            {
-                connection.Close();
+                return null;
             }
 
-            return isFound;
-
-        }
-
-        public static int AddNewDriver(int PersonID,  int CreatedByUserID)
-        {
-
-            int DriverID = -1;
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"INSERT INTO Drivers(PersonID,CreatedByUserID,CreatedDate) VALUES(@PersonID,@CreatedByUserID,@CreatedDate);
-                             SELECT SCOPE_IDENTITY();";
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
-
-
-            try
-            {
-                connection.Open();
-
-                object result = command.ExecuteScalar();
-
-
-                if (result != null && int.TryParse(result.ToString(), out int insertedID))
-                {
-                    DriverID = insertedID;
-                }
-            }
-
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-
-            }
-
-            finally
-            {
-                connection.Close();
-            }
-
-
-            return DriverID;
-
-
-
-
-
-        }
-
-        public static bool UpdateDriver(int DriverID, int PersonID, int CreatedByUserID)
-        {
 
            
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"UPDATE Drivers
-                                  SET PersonID = @PersonID,
-                                      CreatedByUserID= @CreatedByUserID
-                                      WHERE DriverID=@DriverID";
-
-            int rowsAffected = 0;
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
 
 
+
+          
+
+            return null;
+
+        }
+
+        public static Nullable<int> AddNewDriver(DriverDTO DriverDTO)
+        {
 
             try
             {
-                connection.Open();
-                rowsAffected = command.ExecuteNonQuery();
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                   //INSERT INTO Drivers(PersonID,CreatedByUserID,CreatedDate) VALUES(@PersonID,@CreatedByUserID,@CreatedDate);
+                             //SELECT SCOPE_IDENTITY();";
+
+                    using (var command = new SqlCommand("SP_AddNewDriver", connection))
+                    {
+                        command.CommandType= CommandType.StoredProcedure;
+                        var outputIdParam = new SqlParameter("@NewDriverID", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(outputIdParam);
+                        command.Parameters.AddWithValue("@PersonID", DriverDTO.PersonID);
+                        command.Parameters.AddWithValue("@CreatedByUserID", DriverDTO.CreatedByUserID);
+                        command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        return (int)outputIdParam.Value;
+                    }
+                    
+                }
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return false;
+
             }
 
-            finally
+            
+
+
+            return null;
+
+
+
+
+
+        }
+
+        public static bool UpdateDriver(DriverDTO DriverDTO)
+        {
+            int rowsAffected = 0;
+            try
             {
-                connection.Close();
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                    //UPDATE Drivers
+                    //SET PersonID = @PersonID,
+                    //    CreatedByUserID= @CreatedByUserID
+                    //    WHERE DriverID=@DriverID
+
+
+                    using (var command = new SqlCommand("SP_UpdateDriver", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@PersonID", DriverDTO.PersonID);
+                        command.Parameters.AddWithValue("@CreatedByUserID", DriverDTO.CreatedByUserID);
+                        command.Parameters.AddWithValue("@DriverID", DriverDTO.DriverID);
+                        connection.Open();
+                        rowsAffected = command.ExecuteNonQuery();
+                    }
+                    
+
+
+
+
+                    
+                }
+                    
+
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
+               
             }
 
-            return (rowsAffected > 0);
+            
+
+            return (rowsAffected == 1);
 
 
 
@@ -277,35 +312,36 @@ namespace DVLD_DataAccessLayer
         {
 
             int rowsAffected = 0;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Delete Drivers 
-                                where DriverID = @DriverID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-
             try
             {
-                connection.Open();
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                    
+                    using (var command = new SqlCommand("SP_DeleteDriver", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+                        connection.Open();
+                        rowsAffected = command.ExecuteNonQuery();
+                    }
 
-                rowsAffected = command.ExecuteNonQuery();
+                    
+                }
+
+                
+
+           
+               
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
+                
             }
-            finally
-            {
+            
 
-                connection.Close();
-
-            }
-
-            return (rowsAffected > 0);
+            return (rowsAffected== 1);
 
         }
 
@@ -313,81 +349,104 @@ namespace DVLD_DataAccessLayer
         {
 
             int rowsAffected = 0;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Delete Drivers 
-                                where PersonID = @PersonID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-
             try
             {
-                connection.Open();
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                    
 
-                rowsAffected = command.ExecuteNonQuery();
+                    using (var command = new SqlCommand("SP_DeleteDriverByPersonID", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@PersonID", PersonID);
+                        connection.Open();
+                        rowsAffected = command.ExecuteNonQuery();
+                    }
+
+
+                }
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-            }
-            finally
-            {
-
-                connection.Close();
 
             }
 
-            return (rowsAffected > 0);
-
+            return (rowsAffected == 1);
         }
         
         public static bool IsDriverExistByPersonID(int PersonID)
         {
-            bool isFound = false;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT Found=1 FROM Drivers WHERE PersonID = @PersonID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-
+    
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
 
-                isFound = reader.HasRows;
+                    using (var command = new SqlCommand("SP_CheckDriverExistsByPersonID", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@PersonID", PersonID);
+                        SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.ReturnValue
+                        };
+                        command.Parameters.Add(returnParameter);
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        return (int)returnParameter.Value == 1;
 
-                reader.Close();
+                    }
+
+
+                }
+
+
             }
             catch (Exception ex)
             {
-                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
+                clsEventLog.SetEventLog(ex.Message);
             }
-            finally
-            {
-                connection.Close();
-            }
+            return false;
 
-            return isFound;
         }
+        
+        public static bool IsDriverExists(int DriverID)
+        {
+
+            try
+            {
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+
+                    using (var command = new SqlCommand("SP_CheckDriverExists", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+                        SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.ReturnValue
+                        };
+                        command.Parameters.Add(returnParameter);
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        return (int)returnParameter.Value == 1;
+
+                    }
 
 
+                }
 
 
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
+            return false;
 
-
-
-
-
-
+        }
 
     }
 }

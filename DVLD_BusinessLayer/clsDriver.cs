@@ -15,6 +15,7 @@ namespace DVlD_BusinessLayer
         public enMode Mode = enMode.AddNew; 
         public int DriverID {  get; set; }
         public int CreatedByUserID {  get; set; }
+        public int PersonID { get; set;}
         public DateTime CreatedDate { get; set; }   
         public clsUser UserInfo { get; set; }
         public clsPerson PersonInfo { get; set; }
