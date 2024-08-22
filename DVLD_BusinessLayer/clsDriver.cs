@@ -13,56 +13,43 @@ namespace DVlD_BusinessLayer
         public enum enMode { AddNew, Update };
         
         public enMode Mode = enMode.AddNew; 
-        public int DriverID {  get; set; }
+        public DriverDTO DDTO
+        {
+            get
+            {
+                return (new DriverDTO((int)this.DriverID, this.PersonID, this.CreatedByUserID, this.CreatedDate));
+            }
+        }
+        public Nullable<int> DriverID {  get; set; }
+        public int PersonID { get; set; }
         public int CreatedByUserID {  get; set; }
-        public int PersonID { get; set;}
         public DateTime CreatedDate { get; set; }   
         public clsUser UserInfo { get; set; }
         public clsPerson PersonInfo { get; set; }
         
-        public clsDriver()
-        {
-            CreatedByUserID = -1;
-            DriverID = -1;
-            CreatedDate = DateTime.Now;
-            Mode= enMode.AddNew;
-        }
+        
        
-        private clsDriver(int DriverID,int CreatedByUserID, DateTime CreatedDate, int PersonID)
+        public clsDriver(DriverDTO DriverDTO ,enMode cMode=enMode.AddNew)
         {
-            this.DriverID = DriverID;
-            this.CreatedByUserID = CreatedByUserID;
-            this.CreatedDate = CreatedDate;
+            this.DriverID = DriverDTO.DriverID;
+            this.PersonID = DriverDTO.PersonID;
+            this.CreatedByUserID = DriverDTO.CreatedByUserID;
+            this.CreatedDate = DriverDTO.CreatedDate;
             this.UserInfo = clsUser.FindByUserID(CreatedByUserID);
             this.PersonInfo=clsPerson.Find(PersonID);
-            
-            //this.PersonID = PersonID;
-            //this.NationalNo = NationalNo;
-            //this.FirstName = FirstName;
-            //this.SecondName = SecondName;
-            //this.ThirdName = ThirdName;
-            //this.LastName = LastName;
-            //this.DateOfBirth = DateOfBirth;
-            //this.Gender = Gender;
-            //this.Address = Address;
-            //this.Phone = Phone;
-            //this.Email = Email;
-            //this.Nationality = Nationality;
-            //this.ImagePath = ImagePath;
-            this.Mode = enMode.Update;
+            this.Mode = cMode;
         }
 
 
         public static clsDriver FindByDriverID(int DriverID)
         {
-            int CreatedByUserID = -1, PersonID = -1;
-            DateTime CreatedDate = DateTime.Now;
+            
 
-            bool Found = clsDriverData.FindByDriverID(DriverID, ref PersonID, ref CreatedByUserID, ref CreatedDate);
-            if (Found)
+            DriverDTO Driver= clsDriverData.FindByDriverID(DriverID);
+            if (Driver!=null)
             {
-                clsPerson Person = clsPerson.Find(PersonID);
-                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, PersonID);
+                
+                return new clsDriver(Driver,enMode.Update);
             }
             else
                 return null;
@@ -73,14 +60,11 @@ namespace DVlD_BusinessLayer
 
         public static clsDriver FindByPersonID(int PersonID)
         {
-            int CreatedByUserID = -1, DriverID = -1;
-            DateTime CreatedDate = DateTime.Now;
-            bool Found = false;
-            Found = clsDriverData.FindByPersonID(ref DriverID, PersonID, ref CreatedByUserID, ref CreatedDate);
-            if (Found)
+            DriverDTO Driver = clsDriverData.FindByPersonID(PersonID);
+            if (Driver != null)
             {
-                clsPerson Person = clsPerson.Find(PersonID);
-                return new clsDriver(DriverID, CreatedByUserID, CreatedDate, PersonID);
+
+                return new clsDriver(Driver, enMode.Update);
             }
             else
                 return null;
@@ -88,27 +72,27 @@ namespace DVlD_BusinessLayer
 
 
         }
-        public static DataTable GetAllDriver()
+        public static List<ListDriverDTO> GetAllDriver()
         {
             return clsDriverData.GetAllDrivers();
         }
         
         private bool _AddNewDriver()
         {
-            //this.DriverID=clsDriverData.AddNewDriver((int)PersonID,CreatedByUserID);
-            return (this.DriverID != -1);
+            this.DriverID=clsDriverData.AddNewDriver(DDTO);
+            return (this.DriverID != null);
         }
        
         private bool _UpdateDriver()
         {
 
-            return clsDriverData.UpdateDriver(DriverID, 0, CreatedByUserID);
+            return clsDriverData.UpdateDriver(DDTO);
         }
 
-        public bool Delete(int DriverID)
+        /*public bool Delete(int DriverID)
         {
            return clsDriverData.DeleteDriver(DriverID);
-        }
+        }*/
         
         public bool DeleteByPersonID(int PersonID)
         {
@@ -121,11 +105,6 @@ namespace DVlD_BusinessLayer
 
         public bool Save()
         {
-            //base.Mode = (clsPerson.enMode)Mode;
-            //if(!base.Save())
-            //    return false;
-            
-            
             switch (Mode)
             {
                 case enMode.AddNew:
@@ -160,12 +139,12 @@ namespace DVlD_BusinessLayer
 
         public  DataTable GetLicenses()
         {
-            return clsLicense.GetAllDriverLicenses(DriverID);
+            return clsLicense.GetAllDriverLicenses((int)DriverID);
         }
 
         public  DataTable GetInternationalLicenses()
         {
-            return clsInternationalLicense.GetAllDriverInternationalLicenses(DriverID);
+            return clsInternationalLicense.GetAllDriverInternationalLicenses((int)DriverID);
         }
 
 

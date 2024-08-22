@@ -248,13 +248,13 @@ namespace DVlD_BusinessLayer
             if (Driver == null)
             {
                 //we check if the driver already there for this person.
-                Driver = new clsDriver();
+                //Driver = new clsDriver();
                
                 //Driver.PersonID= this.ApplicationInfo.ApplicationPersonID; must modfy
                 Driver.CreatedByUserID= CreatedByUserID;
                 if (Driver.Save())
                 {
-                    DriverID= Driver.DriverID;
+                    //DriverID= Driver.DriverID;
                 }
                 else
                 {
@@ -263,7 +263,7 @@ namespace DVlD_BusinessLayer
             }
             else
             {
-                DriverID= Driver.DriverID;
+                DriverID= (int)Driver.DriverID;
             }
             //now we diver is there, so we add new licesnse
             
