@@ -25,7 +25,7 @@ namespace DVLD
         {
             if(MessageBox.Show("Are your Sure You Want to Delete", "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                if (clsPerson.DeletePerson(id))
+                if (clsPerson.DeletePersonAsync(id))
                 {
                     MessageBox.Show("Delete successfully","Done", MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
                     this.Close();

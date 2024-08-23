@@ -12,102 +12,13 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer
 {
-    public class PersonDTO
-    {
-
-        public Nullable<int> PersonID { set; get; }
-        public string NationalNo { set; get; }
-        public string FirstName { set; get; }
-        public string SecondName { set; get; }
-        public string ThirdName { set; get; }
-        public string LastName { set; get; }
-        public DateTime DateOfBirth { set; get; }
-        public byte Gender { set; get; }
-        public string Address { set; get; }
-        public string Phone { set; get; }
-        public string Email { set; get; }
-        public int Nationality { set; get; }
-
-        private string _ImagePath;
-        public string ImagePath
-        {
-            get { return _ImagePath; }
-            set { _ImagePath = value; }
-        }
-        public PersonDTO(Nullable<int> PersonID, string NationalNo, string FirstName, string SecondName
-            , string ThirdName, string LastName, DateTime DateOfBirth, byte Gender,
-            string Address, string Phone, string Email, int Nationality, string ImagePath)
-        {
-            this.PersonID = PersonID;
-            this.NationalNo = NationalNo;
-            this.FirstName = FirstName;
-            this.SecondName = SecondName;
-            this.ThirdName = ThirdName;
-            this.LastName = LastName;
-            this.DateOfBirth = DateOfBirth;
-            this.Gender = Gender;
-            this.Address = Address;
-            this.Phone = Phone;
-            this.Email = Email;
-            this.Nationality = Nationality;
-            this.ImagePath = ImagePath;
-
-        }
-
-
-    }
-    public class ListPersonDTO
-    {
-        public Nullable<int> PersonID { set; get; }
-        public string NationalNo { set; get; }
-        public string FirstName { set; get; }
-        public string SecondName { set; get; }
-        public string ThirdName { set; get; }
-        public string LastName { set; get; }
-        public DateTime DateOfBirth { set; get; }
-        public byte Gender { set; get; }
-        public string Address { set; get; }
-        public string Phone { set; get; }
-        public string Email { set; get; }
-        public int Nationality { set; get; }
-
-        private string _ImagePath;
-        public string ImagePath
-        {
-            get { return _ImagePath; }
-            set { _ImagePath = value; }
-        }
-        public string CountryName { set; get; }
-        public string Genderstr { set; get; }
-        public ListPersonDTO(PersonDTO PersonInfo, string CountryName, string Genderstr)
-        {
-            this.PersonID = PersonInfo.PersonID;
-            this.NationalNo = PersonInfo.NationalNo;
-            this.FirstName = PersonInfo.FirstName;
-            this.SecondName = PersonInfo.SecondName;
-            this.ThirdName = PersonInfo.ThirdName;
-            this.LastName = PersonInfo.LastName;
-            this.DateOfBirth = PersonInfo.DateOfBirth;
-            this.Gender = PersonInfo.Gender;
-            this.Address = PersonInfo.Address;
-            this.Phone = PersonInfo.Phone;
-            this.Email = PersonInfo.Email;
-            this.Nationality = PersonInfo.Nationality;
-            this.ImagePath = PersonInfo.ImagePath;
-            this.CountryName = CountryName;
-            this.Genderstr = Genderstr;
-        }
-    }
-
     public class clsPeopleData
     {
-        public static PersonDTO FindByNationalNo(string NationalNO)
+        public static async Task<Person> FindByNationalNoAsync(string NationalNO)
         {
 
             try
             {
-
-
 
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
@@ -118,36 +29,14 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@NationalNO", NationalNO);
                         connection.Open();
 
-                        using (var reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if ( await reader.ReadAsync())
                             {
                                 // The record was found
 
-                                return new PersonDTO
-                                    (
-                                         reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                         reader.GetString(reader.GetOrdinal("NationalNO")),
-                                         reader.GetString(reader.GetOrdinal("FirstName")),
-                                         reader.GetString(reader.GetOrdinal("SecondName")),
-                                         reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? "" : reader.GetString(reader.GetOrdinal("ThirdName")),
-                                         reader.GetString(reader.GetOrdinal("LastName")),
-                                         reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
-                                         reader.GetByte(reader.GetOrdinal("Gender")),
-                                         reader.GetString(reader.GetOrdinal("Address")),
-                                         reader.GetString(reader.GetOrdinal("Phone")),
-                                         reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                         reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
-                                         reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
-
-                                    );
+                                return MapReaderToPerson(reader);
                             }
-
-
-
-
-
-
 
 
                         }
@@ -168,15 +57,10 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static PersonDTO FindByID(int PersonID)
+        public static async Task<Person> FindByIDAsync(int PersonID)
         {
-
-            
             try
             {
-
-
-
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
 
@@ -187,27 +71,11 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@PersonID", PersonID);
                         connection.Open();
 
-                        using (var reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-                                return new PersonDTO
-                                    (
-                                         reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                         reader.GetString(reader.GetOrdinal("NationalNO")),
-                                         reader.GetString(reader.GetOrdinal("FirstName")),
-                                         reader.GetString(reader.GetOrdinal("SecondName")),
-                                         reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? "" : reader.GetString(reader.GetOrdinal("ThirdName")),
-                                         reader.GetString(reader.GetOrdinal("LastName")),
-                                         reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
-                                         reader.GetByte(reader.GetOrdinal("Gender")),
-                                         reader.GetString(reader.GetOrdinal("Address")),
-                                         reader.GetString(reader.GetOrdinal("Phone")),
-                                         reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                         reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
-                                         reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
-
-                                    );
+                                MapReaderToPerson(reader);
 
                             }
 
@@ -234,7 +102,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static Nullable<int> AddNewPerson(PersonDTO PeopleDTO)
+        public static async Task<int?> AddNewPersonAsync(Person PeopleDTO)
         {
 
 
@@ -283,7 +151,7 @@ namespace DVLD_DataAccessLayer
 
                         connection.Open();
 
-                        int result = command.ExecuteNonQuery();
+                        int result = await command.ExecuteNonQueryAsync();
 
                         return (int)outputIdParam.Value;
                     }
@@ -305,7 +173,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static bool UpdatePerson(PersonDTO PeopleDTO)
+        public static async Task<bool> UpdatePersonAsync(Person PeopleDTO)
         {
             int rowsAffected = 0;
 
@@ -348,7 +216,7 @@ namespace DVLD_DataAccessLayer
                         else
                             command.Parameters.AddWithValue("@ImagePath", System.DBNull.Value);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();                        
+                        rowsAffected = await command.ExecuteNonQueryAsync();                        
 
                     }
                 }
@@ -364,12 +232,10 @@ namespace DVLD_DataAccessLayer
             return (rowsAffected ==1);
         }
 
-        public static bool DeletePerson(int PersonID)
+        public static async Task<bool> DeletePersonAsync(int PersonID)
         {
-
             int rowsAffected = 0;
-
-
+            
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
@@ -383,7 +249,7 @@ namespace DVLD_DataAccessLayer
 
                         connection.Open();
 
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -401,7 +267,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool DeletePerson(string NationalNo)
+        public static async Task<bool> DeletePersonAsync(string NationalNo)
         {
 
             int rowsAffected = 0;
@@ -420,7 +286,7 @@ namespace DVLD_DataAccessLayer
 
                         connection.Open();
 
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -436,7 +302,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool IsPersonExist(int PersonID)
+        public static async Task<bool> IsPersonExistAsync(int PersonID)
         {
             bool isFound = false;
 
@@ -455,7 +321,7 @@ namespace DVLD_DataAccessLayer
                         connection.Open();
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            isFound = reader.HasRows;
+                            isFound = (int)await command.ExecuteScalarAsync() > 0;
                         }
 
 
@@ -474,7 +340,7 @@ namespace DVLD_DataAccessLayer
             return isFound;
         }
 
-        public static bool IsPersonExist(string NationalNo)
+        public static async Task<bool> IsPersonExistAsync(string NationalNo)
         {
             bool isFound = false;
 
@@ -492,7 +358,7 @@ namespace DVLD_DataAccessLayer
                         connection.Open();
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            isFound = reader.HasRows;
+                            isFound = (int)await command.ExecuteScalarAsync() > 0;
                         }
                     }
 
@@ -511,9 +377,9 @@ namespace DVLD_DataAccessLayer
             return isFound;
         }
 
-        public static List<ListPersonDTO> GetPeople()
+        public static async Task<IEnumerable<PersonView>> GetPeopleAsync()
         {
-            var PeoplesList = new List<ListPersonDTO>();
+            var PeoplesList = new List<PersonView>();
 
             try
             {
@@ -526,29 +392,12 @@ namespace DVLD_DataAccessLayer
                     {
                         connection.Open();
 
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
 
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
-                                PeoplesList.Add(new ListPersonDTO
-                                    (
-                                        new PersonDTO( reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                         reader.GetString(reader.GetOrdinal("NationalNO")),
-                                         reader.GetString(reader.GetOrdinal("FirstName")),
-                                         reader.GetString(reader.GetOrdinal("SecondName")),
-                                         reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? "" : reader.GetString(reader.GetOrdinal("ThirdName")),
-                                         reader.GetString(reader.GetOrdinal("LastName")),
-                                         reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
-                                         reader.GetByte(reader.GetOrdinal("Gender")),
-                                         reader.GetString(reader.GetOrdinal("Address")),
-                                         reader.GetString(reader.GetOrdinal("Phone")),
-                                         reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                         reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
-                                         reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
-                                         ),reader.GetString(reader.GetOrdinal("CountryName")),
-                                           reader.GetString(reader.GetOrdinal("GenderCaption"))
-                                    ));
+                                PeoplesList.Add(MapReaderToPersonView(reader));
                             }
 
                         }
@@ -571,12 +420,53 @@ namespace DVLD_DataAccessLayer
 
         }
 
+        private static Person MapReaderToPerson(IDataReader reader)
+        {
+            return new Person(
 
-
+                 reader.GetInt32(reader.GetOrdinal("PersonID")),
+                 reader.GetString(reader.GetOrdinal("NationalNO")),
+                 reader.GetString(reader.GetOrdinal("FirstName")),
+                 reader.GetString(reader.GetOrdinal("SecondName")),
+                 reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? "" : reader.GetString(reader.GetOrdinal("ThirdName")),
+                 reader.GetString(reader.GetOrdinal("LastName")),
+                 reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
+                 reader.GetByte(reader.GetOrdinal("Gender")),
+                 reader.GetString(reader.GetOrdinal("Address")),
+                 reader.GetString(reader.GetOrdinal("Phone")),
+                 reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
+                 reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
+                 reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
+            );
+        }
+        
+        private static PersonView MapReaderToPersonView(IDataReader reader)
+        {
+            return new PersonView
+                             (
+                                new Person(reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                 reader.GetString(reader.GetOrdinal("NationalNO")),
+                                 reader.GetString(reader.GetOrdinal("FirstName")),
+                                 reader.GetString(reader.GetOrdinal("SecondName")),
+                                 reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? "" : reader.GetString(reader.GetOrdinal("ThirdName")),
+                                 reader.GetString(reader.GetOrdinal("LastName")),
+                                 reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
+                                 reader.GetByte(reader.GetOrdinal("Gender")),
+                                 reader.GetString(reader.GetOrdinal("Address")),
+                                 reader.GetString(reader.GetOrdinal("Phone")),
+                                 reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
+                                 reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
+                                 reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
+                                 ), reader.GetString(reader.GetOrdinal("CountryName")),
+                                   reader.GetString(reader.GetOrdinal("GenderCaption"))
+                             );
+        }
     }
 
-
 }
+
+
+
 
 
 

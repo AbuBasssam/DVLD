@@ -90,8 +90,8 @@ namespace DVlD_BusinessLayer
             this.LastStauteDate = LastStauteDate;
             this.PaidFees = PaidFees;
             this.CreatedBy = CreatedBy;
-            this.User = clsUser.FindByUserID(CreatedBy);
-            this.Person = clsPerson.Find(applicationPersonID);
+            this.User = clsUser.FindByUserID(CreatedBy).Result;
+            //this.Person = clsPerson.Find(applicationPersonID);
             this.ApplicationType = clsApplicationType.Find(ApplicationTypeID);
             Mode = enMode.Update;
 

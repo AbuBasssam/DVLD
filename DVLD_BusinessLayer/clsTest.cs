@@ -40,7 +40,7 @@ namespace DVlD_BusinessLayer
             this.TestResult = TestResult;
             this.Notes = Notes;
             this.CreatedBy = CreatedBy;
-            this.UserInfo =  clsUser.FindByUserID(CreatedBy);
+            this.UserInfo =  clsUser.FindByUserID(CreatedBy).Result;
             this.AppointmentInfo =clsTestAppointment.Find(TestAppointmentID);
             Mode = enMode.Update;
         }

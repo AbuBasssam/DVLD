@@ -8,6 +8,44 @@ using DVLD_DataAccessLayer;
 
 namespace DVlD_BusinessLayer
 {
+    public class DriverDTO
+    {
+        public int DriverID { get; set; }
+        public int PersonID { get; set; }
+        public int CreatedByUserID { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+        public DriverDTO(int DriverID, int PersonID, int CreatedByUserID, DateTime CreatedDate)
+        {
+            this.DriverID = DriverID;
+            this.PersonID = PersonID;
+            this.CreatedByUserID = CreatedByUserID;
+            this.CreatedDate = CreatedDate;
+
+        }
+
+    }
+    public class ListDriverDTO
+    {
+        public int DriverID { get; set; }
+        public int PersonID { get; set; }
+        public string NationalNo { get; set; }
+        public string FullName { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public byte NumberOfActiveLicenses { get; set; }
+        public ListDriverDTO(int DriverID, int PersonID, string NationalNo, string FullName, DateTime CreatedDate, byte NumberOfActiveLicenses)
+        {
+            this.DriverID = DriverID;
+            this.PersonID = PersonID;
+            this.NationalNo = NationalNo;
+            this.FullName = FullName;
+            this.CreatedDate = CreatedDate;
+            this.NumberOfActiveLicenses = NumberOfActiveLicenses;
+
+
+        }
+    }
+
     public class clsDriver
     {
         public enum enMode { AddNew, Update };
@@ -24,7 +62,6 @@ namespace DVlD_BusinessLayer
         public int PersonID { get; set; }
         public int CreatedByUserID {  get; set; }
         public DateTime CreatedDate { get; set; }   
-        public clsUser UserInfo { get; set; }
         public clsPerson PersonInfo { get; set; }
         
         
@@ -35,8 +72,7 @@ namespace DVlD_BusinessLayer
             this.PersonID = DriverDTO.PersonID;
             this.CreatedByUserID = DriverDTO.CreatedByUserID;
             this.CreatedDate = DriverDTO.CreatedDate;
-            this.UserInfo = clsUser.FindByUserID(CreatedByUserID);
-            this.PersonInfo=clsPerson.Find(PersonID);
+            this.PersonInfo=clsPerson.Find(PersonID).Result;
             this.Mode = cMode;
         }
 
@@ -45,13 +81,13 @@ namespace DVlD_BusinessLayer
         {
             
 
-            DriverDTO Driver= clsDriverData.FindByDriverID(DriverID);
-            if (Driver!=null)
-            {
+            //DriverDTO Driver= clsDriverData.FindByDriverID(DriverID);
+            //if (Driver!=null)
+            //{
                 
-                return new clsDriver(Driver,enMode.Update);
-            }
-            else
+            //    return new clsDriver(Driver,enMode.Update);
+            //}
+            //else
                 return null;
 
 
@@ -60,47 +96,44 @@ namespace DVlD_BusinessLayer
 
         public static clsDriver FindByPersonID(int PersonID)
         {
-            DriverDTO Driver = clsDriverData.FindByPersonID(PersonID);
-            if (Driver != null)
-            {
+            //DriverDTO Driver = clsDriverData.FindByPersonID(PersonID);
+            //if (Driver != null)
+            //{
 
-                return new clsDriver(Driver, enMode.Update);
-            }
-            else
+            //    return new clsDriver(Driver, enMode.Update);
+            //}
+            //else
                 return null;
 
 
 
         }
-        public static List<ListDriverDTO> GetAllDriver()
+        public static List<DriverView> GetAllDriver()
         {
             return clsDriverData.GetAllDrivers();
         }
         
         private bool _AddNewDriver()
         {
-            this.DriverID=clsDriverData.AddNewDriver(DDTO);
+            //this.DriverID=clsDriverData.AddNewDriver(DDTO);
             return (this.DriverID != null);
         }
        
         private bool _UpdateDriver()
         {
 
-            return clsDriverData.UpdateDriver(DDTO);
+            return false;// clsDriverData.UpdateDriver(DDTO);
         }
 
-        /*public bool Delete(int DriverID)
-        {
-           return clsDriverData.DeleteDriver(DriverID);
-        }*/
-        
-        public bool DeleteByPersonID(int PersonID)
-        {
-            return clsDriverData.DeleteDriverByPersonID(PersonID);
-        }
+       
         public static bool IsDriverExistByPersonID( int PersonID)
         {
             return clsDriverData.IsDriverExistByPersonID(PersonID);
+        }
+
+        public static bool IsDriverExists(int DriverID)
+        {
+            return clsDriverData.IsDriverExists(DriverID);
         }
 
         public bool Save()

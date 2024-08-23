@@ -253,7 +253,7 @@ namespace DVLD
                 _User.PersonID = (int)e.PersonInfo.PersonID;
                 _User.PersonInfo = e.PersonInfo;
             }
-            if (!clsPerson.IsPersonExist((int)e.PersonInfo.PersonID))
+            if (!clsPerson.IsPersonExistAsync((int)e.PersonInfo.PersonID))
             {
                 _Lock();
 

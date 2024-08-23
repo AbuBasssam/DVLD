@@ -1,5 +1,4 @@
 ﻿using DVlD_BusinessLayer;
-using DVLD_DataAccessLayer;
 using System.Reflection.Metadata.Ecma335;
 
 namespace DVLD_API
@@ -35,10 +34,10 @@ namespace DVLD_API
             }
 
             if (clsUtil.IsUnderAge(NewPersonDTO.DateOfBirth))
-                return enPersonBadRequestTypes.UnderAge; 
+                return enPersonBadRequestTypes.UnderAge;
 
-           
-            if (clsPerson.IsPersonExist(NewPersonDTO.NationalNo))
+            var Exist = clsPerson.IsPersonExistAsync(NewPersonDTO.NationalNo);
+            if (Exist.Result)
             {
                 return enPersonBadRequestTypes.NationalNoDuplicate; 
             }
@@ -67,13 +66,13 @@ namespace DVLD_API
                 return enUserBadRequestTypes.InvalidPersonID;
             }
 
-            if (clsUser.IsAlreadyUserExist(NewUserDTO.PersonID))
+            if (clsUser.IsAlreadyUserExist(NewUserDTO.PersonID).Result)
             {
 
                 return enUserBadRequestTypes.AlreadyUser;
             }
 
-            if (clsUser.IsUserExist(NewUserDTO.UserName))
+            if (clsUser.IsUserExist(NewUserDTO.UserName).Result)
             {
                 return enUserBadRequestTypes.UserNameDuplicate;
             }

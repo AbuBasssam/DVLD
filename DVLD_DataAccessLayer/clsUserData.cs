@@ -10,47 +10,11 @@ using System.Security.Cryptography;
 
 namespace DVLD_DataAccessLayer
 {
-    
-    public class UserDTO
-    {
-        public int UserID { get; set; }
-        public int PersonID { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public bool IsActive { get; set; }
-        public UserDTO(int UserID, int PersonID, string UserName, string Password, bool isActive)
-        {
-            this.UserID = UserID;
-            this.PersonID = PersonID;
-            this.UserName = UserName;
-            this.Password = Password;
-            this.IsActive = isActive;
-            
 
-        }
-
-    }
-    public class ListUsersDTO
-    {
-        public int UserID { get; set; }
-        public int PersonID { get; set; }
-        public string FullName {  get; set; }
-        public string UserName { get; set; }
-        public bool IsActive { get; set; }
-
-        public ListUsersDTO(int UserID, int PersonID, string FullName, string UserName, bool IsActive)
-        {
-            this.UserID = UserID;
-            this.PersonID = PersonID;
-            this.FullName = FullName;
-            this.UserName = UserName;
-            this.IsActive = IsActive;
-        }
-    }
 
     public class clsUserData
     {
-        public static UserDTO FindByPersonID(int PersonID)
+        public static async Task<User> FindByPersonIDAsync(int PersonID)
         {
             try
             {
@@ -63,19 +27,11 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@PersonID", PersonID);
 
                         connection.Open();
-                        using (var reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-                                return new UserDTO
-                                (
-                                    reader.GetInt32(reader.GetOrdinal("UserID")),
-                                    reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                    reader.GetString(reader.GetOrdinal("UserName")),
-                                    reader.GetString(reader.GetOrdinal("Password")),
-                                    reader.GetBoolean(reader.GetOrdinal("IsActive"))
-                                         
-                                );
+                                MapReaderToUser(reader);
                             }
                         }
 
@@ -94,7 +50,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
        
-        public static UserDTO FindByUserID(int UserID)
+        public static async Task<User> FindByUserIDAsync(int UserID)
         {
             
             try
@@ -109,19 +65,11 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@UserID", UserID);
 
                         connection.Open();
-                        using (var reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-                                return new UserDTO
-                                 (
-                                     reader.GetInt32(reader.GetOrdinal("UserID")),
-                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                     reader.GetString(reader.GetOrdinal("UserName")),
-                                     reader.GetString(reader.GetOrdinal("Password")),
-                                     reader.GetBoolean(reader.GetOrdinal("IsActive"))
-
-                                 );
+                                MapReaderToUser(reader);
 
                             }
                            
@@ -146,7 +94,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static UserDTO Find(string UserName,string Password)
+        public static async Task<User> FindAsync(string UserName,string Password)
         {
             try
             {
@@ -160,20 +108,12 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@Password", Password);
 
                         connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
 
-                                return new UserDTO
-                                 (
-                                     reader.GetInt32(reader.GetOrdinal("UserID")),
-                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                     reader.GetString(reader.GetOrdinal("UserName")),
-                                     reader.GetString(reader.GetOrdinal("Password")),
-                                     reader.GetBoolean(reader.GetOrdinal("IsActive"))
-
-                                 );
+                                MapReaderToUser(reader);
 
                             }
                            
@@ -196,15 +136,15 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static Nullable<int> AddNewUser(UserDTO UserDTO)
+        public static async Task<int?> AddNewUserAsync(User UserDTO)
         {
            
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
 
-                    using (SqlCommand command = new SqlCommand("SP_AddNewUser", connection))
+                    using (var command = new SqlCommand("SP_AddNewUser", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         var outputIdParam = new SqlParameter("@NewUserID", SqlDbType.Int)
@@ -219,7 +159,7 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@IsActive", UserDTO.IsActive);
                         connection.Open();
 
-                        int result = command.ExecuteNonQuery();
+                        int result =await command.ExecuteNonQueryAsync();
 
                         return (int)outputIdParam.Value;
                     }
@@ -239,7 +179,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static bool UpdateUser(UserDTO UserDTO)
+        public static async Task<bool> UpdateUserAsync(User UserDTO)
         {
             int rowsAffected = 0;
           
@@ -258,7 +198,7 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@IsActive", UserDTO.IsActive);
                         command.Parameters.AddWithValue("@UserID", UserDTO.UserID);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -279,7 +219,7 @@ namespace DVLD_DataAccessLayer
             return (rowsAffected==1);
         }
 
-        public static bool DeleteUser(int UserID)
+        public static async Task<bool> DeleteUserAsync(int UserID)
         {
 
             int rowsAffected = 0;
@@ -296,7 +236,7 @@ namespace DVLD_DataAccessLayer
 
                         connection.Open();
 
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -314,7 +254,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool IsUserExist(int UserID)
+        public static async Task<bool> IsUserExistAsync(int UserID)
         {
            bool IsExist=false;
 
@@ -335,7 +275,7 @@ namespace DVLD_DataAccessLayer
                         };
                         command.Parameters.Add(returnParameter);
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         IsExist=(int)returnParameter.Value==1;
 
                     }
@@ -352,7 +292,7 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
         
-        public static bool IsUserExist(string UserName)
+        public static async Task<bool> IsUserExistAsync(string UserName)
         {
             bool IsExist = false;
 
@@ -373,7 +313,7 @@ namespace DVLD_DataAccessLayer
                         };
                         command.Parameters.Add(returnParameter);
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         return (int)returnParameter.Value == 1;
 
                     }
@@ -390,7 +330,7 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
 
-        public static bool IsAlreadyUserExist(int PersonID)
+        public static async Task<bool> IsAlreadyUserExistAsync(int PersonID)
         {
             bool IsExist = false;
             try
@@ -409,7 +349,7 @@ namespace DVLD_DataAccessLayer
                         };
                         connection.Open();
                         command.Parameters.Add(returnParameter);
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         IsExist = (int)returnParameter.Value == 1;
 
                     }
@@ -430,10 +370,10 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
         
-        public static List<ListUsersDTO> GetUsers()
+        public static async Task<IEnumerable<ListUsersView>> GetUsersAsync()
         {
 
-           List<ListUsersDTO> UsersList = new List<ListUsersDTO>();
+           List<ListUsersView> UsersList = new List<ListUsersView>();
             
             try
             {
@@ -445,18 +385,11 @@ namespace DVLD_DataAccessLayer
                     {
                         connection.Open();
 
-                        using (var reader = command.ExecuteReader())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
-                                UsersList.Add(new ListUsersDTO
-                                (
-                                    reader.GetInt32(reader.GetOrdinal("UserID")),
-                                    reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                    reader.GetString(reader.GetOrdinal("FullName")),
-                                    reader.GetString(reader.GetOrdinal("UserName")),
-                                    reader.GetBoolean(reader.GetOrdinal("IsActive"))
-                                ));
+                                UsersList.Add(MapReaderToUserView(reader));
                                
                             }
 
@@ -479,6 +412,29 @@ namespace DVLD_DataAccessLayer
 
         }
 
+        private static User MapReaderToUser(IDataReader reader)
+        {
+            return new User
+                                (
+                                    reader.GetInt32(reader.GetOrdinal("UserID")),
+                                    reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                    reader.GetString(reader.GetOrdinal("UserName")),
+                                    reader.GetString(reader.GetOrdinal("Password")),
+                                    reader.GetBoolean(reader.GetOrdinal("IsActive"))
 
+                                );
+        }
+
+        private static ListUsersView MapReaderToUserView(IDataReader reader)
+        {
+            return new ListUsersView
+                                (
+                                    reader.GetInt32(reader.GetOrdinal("UserID")),
+                                    reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                    reader.GetString(reader.GetOrdinal("FullName")),
+                                    reader.GetString(reader.GetOrdinal("UserName")),
+                                    reader.GetBoolean(reader.GetOrdinal("IsActive"))
+                                );
+        }
     }
 }

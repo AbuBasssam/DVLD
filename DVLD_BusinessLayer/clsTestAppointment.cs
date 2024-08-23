@@ -52,7 +52,7 @@ namespace DVlD_BusinessLayer
             this.PaidFees = PaidFees;
             this.CreatedBy = CreatedBy;
             this.IsLocked = IsLocked;
-            this.UserInfo = clsUser.FindByUserID(this.CreatedBy);
+            this.UserInfo = clsUser.FindByUserID(this.CreatedBy).Result;
             this.TestTypes = clsTestTypes.Find((clsTestTypes.enTestType) TestTypeID);
             this.LocalDrivingLicenseApplicationInfo = clsLocalDrivingLicenseApplication.Find(LocalDrivingApplicationID);
             this.RetakeTestApplicationID = RetakeTestApplicationID;

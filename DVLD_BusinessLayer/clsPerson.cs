@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
+   
     public class clsPerson
     {
         public enum enMode { AddNew = 0, Update = 1 }
         public enMode Mode = enMode.AddNew;
+        
         public PersonDTO PDTO
         {
             get
@@ -64,49 +66,32 @@ namespace DVlD_BusinessLayer
             this.Mode = cMode;
         }
 
-        public static clsPerson Find(string NationalNo)
+        public static async Task< clsPerson> Find(string NationalNo)
         {
-            PersonDTO PDTO = clsPeopleData.FindByNationalNo(NationalNo);
+            PersonDTO PDTO=MapToDTO(await clsPeopleData.FindByNationalNoAsync(NationalNo));
 
-
-            if (PDTO != null)
-            {
-                return new clsPerson(PDTO, enMode.Update);
+            return( PDTO!=null)?new clsPerson(PDTO, enMode.Update): null;
 
 
 
-            }
-            else
-            {
-                return null;
-            }
+
+
         }
 
-        public static clsPerson Find(int PersonID)
+        public static async Task<clsPerson> Find(int PersonID)
         {
-            PersonDTO PDTO = clsPeopleData.FindByID(PersonID);
+            PersonDTO PDTO = MapToDTO(await clsPeopleData.FindByIDAsync(PersonID));
 
-
-            if (PDTO != null)
-            {
-                return new clsPerson(PDTO, enMode.Update);
-
-
-
-            }
-            else
-            {
-                return null;
-            }
+            return (PDTO != null) ? new clsPerson(PDTO, enMode.Update) : null;
         }
 
-        public bool Save()
+        public async Task< bool> SaveAsync()
         {
             switch (Mode)
             {
                 case enMode.AddNew:
 
-                    if (_AddNewPerson())
+                    if (await _AddNewPerson())
                     {
                         Mode = enMode.Update;
                         return true;
@@ -116,7 +101,7 @@ namespace DVlD_BusinessLayer
 
                 case enMode.Update:
 
-                    return _UpdatePerson();
+                    return await _UpdatePerson();
 
 
                 default:
@@ -125,42 +110,114 @@ namespace DVlD_BusinessLayer
             }
         }
 
-        private bool _AddNewPerson()
+        private async Task< bool> _AddNewPerson()
         {
-            //call DataAccess Layer 
-            this.PersonID = clsPeopleData.AddNewPerson(PDTO);
+
+            this.PersonID =await clsPeopleData.AddNewPersonAsync(MapToEntity(PDTO));
             return (PersonID != null);
         }
 
-        private bool _UpdatePerson()
+        private async Task<bool> _UpdatePerson()
         {
-            return clsPeopleData.UpdatePerson(PDTO);
+            return await clsPeopleData.UpdatePersonAsync(MapToEntity(PDTO));
         }
 
-        public static bool DeletePerson(int PersonID)
+        public static async Task<bool> DeletePersonAsync(int PersonID)
         {
-            return clsPeopleData.DeletePerson(PersonID);
+            return await clsPeopleData.DeletePersonAsync(PersonID);
         }
 
-        public static bool DeletePerson(string NationalNo)
+        public static async Task<bool> DeletePersonAsync(string NationalNo)
         {
-            return clsPeopleData.DeletePerson(NationalNo);
+            return await clsPeopleData.DeletePersonAsync(NationalNo);
 
         }
 
-        public static bool IsPersonExist(int ID)
+        public static async Task<bool> IsPersonExistAsync(int ID)
         {
-            return clsPeopleData.IsPersonExist(ID);
+            return await clsPeopleData.IsPersonExistAsync(ID);
         }
 
-        public static bool IsPersonExist(string NationalNo)
+        public static async Task<bool> IsPersonExistAsync(string NationalNo)
         {
-            return clsPeopleData.IsPersonExist(NationalNo);
+            return await clsPeopleData.IsPersonExistAsync(NationalNo);
         }
 
-        public static List<ListPersonDTO> GetAllPersons()
+        public static async Task <IEnumerable<ListPersonDTO>> GetAllPeopleAsync()
         {
-            return clsPeopleData.GetPeople();
+            var persons = await clsPeopleData.GetPeopleAsync();
+            return MapToLDTOs(persons);
+        }
+        
+        private static PersonDTO MapToDTO(Person Person)
+        {
+            return new PersonDTO(
+
+               Person.PersonID,
+               Person.NationalNo,
+               Person.FirstName,
+               Person.SecondName,
+               Person.ThirdName,
+               Person.LastName,
+               Person.DateOfBirth,
+               Person.Gender,
+               Person.Address,
+               Person.Phone,
+               Person.Email,
+               Person.Nationality,
+               Person.ImagePath
+
+            );
+        }
+        
+        private static ListPersonDTO MapToLDTO(PersonView Person)
+        {
+            PersonDTO PDTO = new PersonDTO(Person.PersonID,
+               Person.NationalNo,
+               Person.FirstName,
+               Person.SecondName,
+               Person.ThirdName,
+               Person.LastName,
+               Person.DateOfBirth,
+               Person.Gender,
+               Person.Address,
+               Person.Phone,
+               Person.Email,
+               Person.Nationality,
+               Person.ImagePath);
+
+            return new ListPersonDTO(PDTO,Person.CountryName,Person.Genderstr);
+        }
+        
+        private Person MapToEntity(PersonDTO Person)
+        {
+            return new Person(
+
+                Person.PersonID,
+                Person.NationalNo,
+                Person.FirstName,
+                Person.SecondName,
+                Person.ThirdName,
+                Person.LastName,
+                Person.DateOfBirth,
+                Person.Gender,
+                Person.Address,
+                Person.Phone,
+                Person.Email,
+                Person.Nationality,
+                Person.ImagePath
+
+            );
+        }
+        
+        private static IEnumerable<ListPersonDTO> MapToLDTOs(IEnumerable<PersonView> persons)
+        {
+            var personDTOs = new List<ListPersonDTO>();
+            foreach (var person in persons)
+            {
+                personDTOs.Add(MapToLDTO(person));
+            }
+            return personDTOs;
         }
     }
 

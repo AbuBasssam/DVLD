@@ -13,7 +13,7 @@ namespace DVLD
 {
     public partial class frmPeopleMangment : Form
     {
-        DataTable dt = clsPerson.GetAllPersons();
+        DataTable dt = clsPerson.GetAllPeopleAsync();
         
         
         
@@ -30,7 +30,7 @@ namespace DVLD
        
         private void _Refresh()
         {
-            dt = clsPerson.GetAllPersons();
+            dt = clsPerson.GetAllPeopleAsync();
 
             dataGridView1.DataSource = dt;
 

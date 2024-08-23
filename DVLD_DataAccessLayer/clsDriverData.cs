@@ -12,14 +12,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DVLD_DataAccessLayer
 {
-    public class DriverDTO
+    public class Driver
     {
         public int DriverID { get; set; }
         public int PersonID { get; set; }
         public int CreatedByUserID { get; set; }
         
         public DateTime CreatedDate { get; set; }
-        public DriverDTO( int DriverID,int PersonID,int CreatedByUserID,DateTime CreatedDate)
+        public Driver( int DriverID,int PersonID,int CreatedByUserID,DateTime CreatedDate)
         {
             this.DriverID = DriverID;
             this.PersonID = PersonID;
@@ -29,22 +29,20 @@ namespace DVLD_DataAccessLayer
         }
 
     }
-    public class ListDriverDTO
+    public class DriverView
     {
         public int DriverID { get; set; }
         public int PersonID { get; set; }
         public string NationalNo { get; set; }
         public string FullName { get; set; }
-        public int CreatedByUserID { get; set; }
         public DateTime CreatedDate { get; set; }
         public  byte NumberOfActiveLicenses {  get; set; }
-        public ListDriverDTO(int DriverID, int PersonID,string NationalNo,string FullName, int CreatedByUserID,DateTime CreatedDate, byte NumberOfActiveLicenses)
+        public DriverView(int DriverID, int PersonID,string NationalNo,string FullName,DateTime CreatedDate, byte NumberOfActiveLicenses)
         {
             this.DriverID = DriverID;
             this.PersonID = PersonID;
             this.NationalNo = NationalNo;
             this.FullName = FullName;
-            this.CreatedByUserID = CreatedByUserID;
             this.CreatedDate = CreatedDate;
             this.NumberOfActiveLicenses = NumberOfActiveLicenses;
 
@@ -54,39 +52,54 @@ namespace DVLD_DataAccessLayer
 
     public static class clsDriverData
     {
-        public static List<ListDriverDTO> GetAllDrivers()
+        public static List<DriverView> GetAllDrivers()
         {
 
-            List<ListDriverDTO> DriversList = new List<ListDriverDTO>();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-           
-
-            SqlCommand command = new SqlCommand("SP_GetDriversList", connection);
-
+            List<DriverView> DriversList = new List<DriverView>();
             try
             {
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                while(reader.Read())
-
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    DriversList.Add
-                       (
-                        new ListDriverDTO(
-                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
-                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                     reader.GetString(reader.GetOrdinal("NationalNo")),
-                                     reader.GetString(reader.GetOrdinal("FullName")),
-                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
-                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
-                                     reader.GetByte(reader.GetOrdinal("NumberOfActiveLicenses"))
-                                 ));
+                    using (var command = new SqlCommand("SP_GetDriversList", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        connection.Open();
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+
+                            {
+                                DriversList.Add
+                                   (
+                                        new DriverView
+                                        (
+                                                 reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                                 reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                                 reader.GetString(reader.GetOrdinal("NationalNo")),
+                                                 reader.GetString(reader.GetOrdinal("FullName")),
+                                                 reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+                                                 Convert.ToByte(reader.GetInt32(reader.GetOrdinal("NumberOfActiveLicenses")))
+                                        )
+                                   );
+                            }
+                        }
+
+                            
+
+                    }
+
                 }
 
-                reader.Close();
+
+
+                
+
+            
+                
+
+                
 
 
             }
@@ -95,21 +108,18 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
             return DriversList;
         }
     
-        public static DriverDTO FindByDriverID(int DriverID)
+        public static Driver FindByDriverID(int DriverID)
         {
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    using (var command = new SqlCommand("GetDriverByID", connection))
+                    using (var command = new SqlCommand("SP_FindDriverByID", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@DriverID", DriverID);
@@ -119,7 +129,7 @@ namespace DVLD_DataAccessLayer
                             if (reader.Read())
                             {
 
-                                return new DriverDTO
+                                return new Driver
                                  (
 
                                      reader.GetInt32(reader.GetOrdinal("DriverID")),
@@ -155,14 +165,14 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static DriverDTO FindByPersonID(int PersonID)
+        public static Driver FindByPersonID(int PersonID)
         {
 
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    using (var command = new SqlCommand("GetDriverByPersonID", connection))
+                    using (var command = new SqlCommand("SP_FindDriverByPersonID", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@PersonID", PersonID);
@@ -172,7 +182,7 @@ namespace DVLD_DataAccessLayer
                             if (reader.Read())
                             {
 
-                                return new DriverDTO
+                                return new Driver
                                  (
 
                                      reader.GetInt32(reader.GetOrdinal("DriverID")),
@@ -214,7 +224,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static Nullable<int> AddNewDriver(DriverDTO DriverDTO)
+        public static Nullable<int> AddNewDriver(Driver DriverDTO)
         {
 
             try
@@ -260,7 +270,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool UpdateDriver(DriverDTO DriverDTO)
+        public static bool UpdateDriver(Driver DriverDTO)
         {
             int rowsAffected = 0;
             try
@@ -345,37 +355,6 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool DeleteDriverByPersonID(int PersonID)
-        {
-
-            int rowsAffected = 0;
-            try
-            {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
-                {
-                    
-
-                    using (var command = new SqlCommand("SP_DeleteDriverByPersonID", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@PersonID", PersonID);
-                        connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
-                    }
-
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-
-            }
-
-            return (rowsAffected == 1);
-        }
-        
         public static bool IsDriverExistByPersonID(int PersonID)
         {
     

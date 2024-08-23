@@ -362,7 +362,7 @@ namespace DVLD
             else
                 _Person.ImagePath = "";
             
-            if (_Person.Save())
+            if (_Person.SaveAsync())
             {
                 lblPersonID.Text=_Person.PersonID.ToString();
                 Mode = enMode.Update;
@@ -447,7 +447,7 @@ namespace DVLD
             }
 
             //Make sure the national number is not used by another person
-            if (txtNationalNo.Text.Trim() != _Person.NationalNo && clsPerson.IsPersonExist(txtNationalNo.Text.Trim()))
+            if (txtNationalNo.Text.Trim() != _Person.NationalNo && clsPerson.IsPersonExistAsync(txtNationalNo.Text.Trim()))
             {
                 e.Cancel = true;
                 errorProvider1.SetError(txtNationalNo, "National Number is used for another person!");

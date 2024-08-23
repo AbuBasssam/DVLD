@@ -59,8 +59,12 @@
     <Compile Include="clsTest.cs" />
     <Compile Include="clsTestAppointment.cs" />
     <Compile Include="clsTestTypes.cs" />
+    <Compile Include="ListPersonDTO.cs" />
+    <Compile Include="PersonDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="clsUser.cs" />
+    <Compile Include="UserDTO.cs" />
+    <Compile Include="UserViewDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DVLD_DataAccessLayer\DVLD_DataAccessLayer.csproj">
@@ -70,6 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

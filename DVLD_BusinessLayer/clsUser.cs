@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
+
     public class clsUser
     {
         public enum enMode { AddNew = 0, Update = 1}
@@ -36,64 +37,41 @@ namespace DVlD_BusinessLayer
             this.UserName = UDTO.UserName;
             this.Password = UDTO.Password;
             this.IsActive = UDTO.IsActive;
-            this.PersonInfo = clsPerson.Find(UDTO.PersonID);
+            this.PersonInfo = clsPerson.Find(UDTO.PersonID).Result;
             Mode = cMode;
 
         }
 
-        public static clsUser FindByPersonID(int PersonID)
+        public static async Task<clsUser>FindByPersonID(int PersonID)
         {
 
-            UserDTO UDTO =clsUserData.FindByPersonID(PersonID);
+            UserDTO UDTO = MapToDTO(await clsUserData.FindByPersonIDAsync(PersonID));
 
-            if (UDTO!=null)
-            {
-                return new clsUser(UDTO,enMode.Update);
-
-            }
-            else
-            {
-                return null;
-            }
+            return (UDTO!=null)? new clsUser(UDTO, enMode.Update):null;
+            
         }
         
-        public static clsUser FindByUserID(int UserID)
+        public static async Task<clsUser> FindByUserID(int UserID)
         {
-            UserDTO UDTO = clsUserData.FindByUserID(UserID);
+            UserDTO UDTO =MapToDTO( await clsUserData.FindByUserIDAsync(UserID));
 
-            if (UDTO != null)
-            {
-                return new clsUser(UDTO, enMode.Update);
-
-            }
-            else
-            {
-                return null;
-            }
+            return (UDTO != null) ? new clsUser(UDTO, enMode.Update) : null;
         }
        
-        public static clsUser Find(string UserName,string Password)
+        public static async Task<clsUser> Find(string UserName,string Password)
         {
-            UserDTO UDTO = clsUserData.Find(UserName,Password);
+            UserDTO UDTO =MapToDTO(await clsUserData.FindAsync(UserName, Password));
 
-            if (UDTO != null)
-            {
-                return new clsUser(UDTO, enMode.Update);
-
-            }
-            else
-            {
-                return null;
-            }
+            return (UDTO != null) ? new clsUser(UDTO, enMode.Update) : null;
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
             switch (Mode)
             {
                 case enMode.AddNew:
 
-                    if (_AddNewUser())
+                    if ( await _AddNewUserAsync())
                     {
                         Mode = enMode.Update;
                         return true;
@@ -103,7 +81,7 @@ namespace DVlD_BusinessLayer
 
                 case enMode.Update:
 
-                    return _UpdateUser();
+                    return await _UpdateUser();
 
 
                 default:
@@ -111,40 +89,93 @@ namespace DVlD_BusinessLayer
             }
         }
 
-        private bool _AddNewUser()
+        private async Task<bool> _AddNewUserAsync()
         {
-            this.UserID = clsUserData.AddNewUser(UDTO);
+            this.UserID =await clsUserData.AddNewUserAsync(MapToEntity(UDTO));
                 return (UserID !=null);
         }
 
-        private bool _UpdateUser()
+        private async Task< bool> _UpdateUser()
         {
-            return (clsUserData.UpdateUser(UDTO));
+            return await clsUserData.UpdateUserAsync(MapToEntity(UDTO));
         }
 
-        public static bool DeleteUser(int UserID)
+        public static async Task<bool> DeleteUser(int UserID)
         {
-            return clsUserData.DeleteUser(UserID);
+            return await clsUserData.DeleteUserAsync(UserID);
         }
       
-        public static bool IsUserExist(int UserID)
+        public static async Task<bool> IsUserExist(int UserID)
         {
-            return clsUserData.IsUserExist(UserID);
+            return await clsUserData.IsUserExistAsync(UserID);
         }
-        public static bool IsUserExist(string UserName)
+        
+        public static async Task<bool> IsUserExist(string UserName)
         {
-            return clsUserData.IsUserExist(UserName);
-        }
-
-        public static bool IsAlreadyUserExist(int PersonID)
-        {
-            return clsUserData.IsAlreadyUserExist(PersonID);
+            return await clsUserData.IsUserExistAsync(UserName);
         }
 
-        public static List<ListUsersDTO> GetAllUsers()
+        public static async Task<bool> IsAlreadyUserExist(int PersonID)
         {
-            return clsUserData.GetUsers();
+            return await clsUserData.IsAlreadyUserExistAsync(PersonID);
         }
+
+        public static async Task<IEnumerable<UsersViewDTO>> GetAllUsers()
+        {
+            var Users = await clsUserData.GetUsersAsync();
+            return MapToLDTOs(Users);
+        }
+
+        private static UserDTO MapToDTO(User User)
+        {
+            return new UserDTO(
+
+               User.UserID,
+               User.PersonID,
+               User.UserName,
+               User.Password,
+               User.IsActive
+               
+            );
+        }
+
+        private static UsersViewDTO MapToLDTO(ListUsersView UserView)
+        {
+            return new UsersViewDTO
+            (
+               UserView.UserID,
+               UserView.PersonID,
+               UserView.FullName,
+               UserView.UserName,
+               UserView.IsActive
+            );
+
+             
+        }
+        
+        private User MapToEntity(UserDTO User)
+        {
+            return new User
+            (
+
+                User.UserID,
+                User.PersonID,
+                User.UserName,
+                User.Password,
+                User.IsActive
+            );
+        }
+        
+        private static IEnumerable<UsersViewDTO> MapToLDTOs(IEnumerable<ListUsersView> Users)
+        {
+            var UserDTOs = new List<UsersViewDTO>();
+            foreach (var User in Users)
+            {
+                UserDTOs.Add(MapToLDTO(User));
+            }
+            return UserDTOs;
+        }
+
     }
 
 

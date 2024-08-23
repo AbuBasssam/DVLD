@@ -1,5 +1,266 @@
 [
   {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "AddDriver",
+    "RelativePath": "api/DVLD/Drivers/AddNewDriver",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NewDriverDTO",
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "EndpointName": "AddDriver"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "GetAllDrivers",
+    "RelativePath": "api/DVLD/Drivers/AllDrivers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.ListDriverDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetAllDrivers"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "GetDriverByID",
+    "RelativePath": "api/DVLD/Drivers/FindByID/{DriverID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetDriverByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "GetDriverByPersonID",
+    "RelativePath": "api/DVLD/Drivers/FindDriverByPersonID/{PersonID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PersonID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetDriverByPersonID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "IsDriverExists",
+    "RelativePath": "api/DVLD/Drivers/IsDriverExists/{DriverID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "IsDriverExist"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "IsDriverExistsByPersonID",
+    "RelativePath": "api/DVLD/Drivers/IsDriverExistsByPersonID/{PersonID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PersonID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "IsDriverExistsByPersonID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.DriversController",
+    "Method": "UpdatDriver",
+    "RelativePath": "api/DVLD/Drivers/UpdateDriver/{DriverID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedDriver",
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateDriver"
+  },
+  {
     "ContainingType": "DVLD_API.Controllers.PeopleController",
     "Method": "AddPerson",
     "RelativePath": "api/DVLD/People/AddNewPerson",
@@ -9,13 +270,13 @@
     "Parameters": [
       {
         "Name": "NewPersonDTO",
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -45,7 +306,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.ListPersonDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.ListPersonDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -122,7 +383,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -167,7 +428,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -266,13 +527,13 @@
       },
       {
         "Name": "UpdatedPerson",
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.PersonDTO",
+        "Type": "DVlD_BusinessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -311,13 +572,13 @@
     "Parameters": [
       {
         "Name": "NewUserDTO",
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -340,14 +601,14 @@
   {
     "ContainingType": "DVLD_API.Controllers.UsersController",
     "Method": "GetAllUsers",
-    "RelativePath": "api/DVLD/Users/AlUsers",
+    "RelativePath": "api/DVLD/Users/AllUsers",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.ListUsersDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.UsersViewDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -424,7 +685,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -469,7 +730,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -510,7 +771,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -577,13 +838,13 @@
       },
       {
         "Name": "UpdatedUser",
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.UserDTO",
+        "Type": "DVlD_BusinessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

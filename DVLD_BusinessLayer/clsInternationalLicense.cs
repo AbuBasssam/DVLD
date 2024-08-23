@@ -51,7 +51,7 @@ namespace DVlD_BusinessLayer
             this.ExpirationDate = ExpirationDate;
             this.IsActive = IsActive;
             this.ApplicationInfo = clsApplication.Find(ApplicationID);
-            this.UserInfo = clsUser.FindByUserID(CreatedByUserID);
+            this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
             this.DriverInfo = clsDriver.FindByDriverID(DriverID);
             this.Mode = enMode.AddNew;
 

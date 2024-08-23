@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DVlD_BusinessLayer;
-using DVLD_DataAccessLayer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System;
+//using DVLD_DataAccessLayer;
 
 namespace DVLD_API.Controllers
 {
@@ -25,12 +25,12 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<ListPersonDTO>> GetAllPeople()
         {
-            List<ListPersonDTO> PeopleList = DVlD_BusinessLayer.clsPerson.GetAllPersons();
-            if (PeopleList.Count == 0)
+            var PeopleList = clsPerson.GetAllPeopleAsync();
+            if (PeopleList==null)
             {
                 return NotFound("No Students Found!");
             }
-            return Ok(PeopleList); // Returns the list of students.
+            return Ok(PeopleList); // Returns the list of People.
 
         }
 
@@ -48,7 +48,7 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {PersonID}");
             }
 
-            DVlD_BusinessLayer.clsPerson Person = DVlD_BusinessLayer.clsPerson.Find(PersonID);
+           var Person = clsPerson.Find(PersonID);
 
             if (Person == null)
             {
@@ -56,7 +56,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            PersonDTO PDTO = Person.PDTO;
+            PersonDTO PDTO = Person.Result.PDTO;
 
             //we return the DTO not the student object.
             return Ok(PDTO);
@@ -72,7 +72,7 @@ namespace DVLD_API.Controllers
         public ActionResult<PersonDTO> GetPersontByNationalNo(string NationalNo)
         {
 
-            DVlD_BusinessLayer.clsPerson Person = DVlD_BusinessLayer.clsPerson.Find(NationalNo);
+            var Person = clsPerson.Find(NationalNo);
 
             if (Person == null)
             {
@@ -80,7 +80,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            PersonDTO PDTO = Person.PDTO;
+            PersonDTO PDTO = Person.Result.PDTO;
 
             //we return the DTO not the student object.
             return Ok(PDTO);
@@ -108,12 +108,12 @@ namespace DVLD_API.Controllers
                 case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
                     return BadRequest($"The National number '{NewPersonDTO.NationalNo}' already exists.");
             }
-            DVlD_BusinessLayer.clsPerson Person = new DVlD_BusinessLayer.clsPerson(new PersonDTO(NewPersonDTO.PersonID, NewPersonDTO.NationalNo,
+           clsPerson Person = new clsPerson(new PersonDTO(NewPersonDTO.PersonID, NewPersonDTO.NationalNo,
                 NewPersonDTO.FirstName, NewPersonDTO.SecondName, NewPersonDTO.ThirdName, NewPersonDTO.LastName,
                 NewPersonDTO.DateOfBirth, NewPersonDTO.Gender, NewPersonDTO.Address, NewPersonDTO.Phone, NewPersonDTO.Email,
                 NewPersonDTO.Nationality, NewPersonDTO.ImagePath));
 
-            Person.Save();
+            var result = Person.SaveAsync();
 
             NewPersonDTO.PersonID = Person.PersonID;
 
@@ -132,7 +132,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<PersonDTO> UpdatePerson(int PersonID, PersonDTO UpdatedPerson)
         {
-            DVlD_BusinessLayer.clsPerson Person = DVlD_BusinessLayer.clsPerson.Find(PersonID);
+            var Person = clsPerson.Find(PersonID);
 
             if (Person == null)
             {
@@ -151,28 +151,28 @@ namespace DVLD_API.Controllers
 
                 case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
 
-                    if (Person.NationalNo != UpdatedPerson.NationalNo)
+                    if (Person.Result.NationalNo != UpdatedPerson.NationalNo)
                         return BadRequest($"The National number '{UpdatedPerson.NationalNo}' already exists.");
                     else
                         break;
             }
 
-            Person.NationalNo = UpdatedPerson.NationalNo;
-            Person.FirstName = UpdatedPerson.FirstName;
-            Person.SecondName = UpdatedPerson.SecondName;
-            Person.ThirdName = UpdatedPerson.ThirdName;
-            Person.LastName = UpdatedPerson.LastName;
-            Person.DateOfBirth = UpdatedPerson.DateOfBirth;
-            Person.Gender = UpdatedPerson.Gender;
-            Person.Address = UpdatedPerson.Address;
-            Person.Phone = UpdatedPerson.Phone;
-            Person.Email = UpdatedPerson.Email;
-            Person.Nationality = UpdatedPerson.Nationality;
-            Person.ImagePath = UpdatedPerson.ImagePath;
+            Person.Result.NationalNo = UpdatedPerson.NationalNo;
+            Person.Result.FirstName = UpdatedPerson.FirstName;
+            Person.Result.SecondName = UpdatedPerson.SecondName;
+            Person.Result.ThirdName = UpdatedPerson.ThirdName;
+            Person.Result.LastName = UpdatedPerson.LastName;
+            Person.Result.DateOfBirth = UpdatedPerson.DateOfBirth;
+            Person.Result.Gender = UpdatedPerson.Gender;
+            Person.Result.Address = UpdatedPerson.Address;
+            Person.Result.Phone = UpdatedPerson.Phone;
+            Person.Result.Email = UpdatedPerson.Email;
+            Person.Result.Nationality = UpdatedPerson.Nationality;
+            Person.Result.ImagePath = UpdatedPerson.ImagePath;
 
-            Person.Save();
+            var result = Person.Result.SaveAsync();
 
-            return Ok(Person.PDTO);
+            return Ok(Person.Result.PDTO);
 
         }
 
@@ -187,8 +187,8 @@ namespace DVLD_API.Controllers
             {
                 return BadRequest($"Not accepted ID {PersonID}");
             }
-
-            if (DVlD_BusinessLayer.clsPerson.DeletePerson(PersonID))
+            var Deleting = clsPerson.DeletePersonAsync(PersonID);
+            if (Deleting.Result)
 
                 return Ok($"Student with ID {PersonID} has been deleted.");
             else
@@ -200,9 +200,10 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<bool> IsPersonExist(int PersonID)
         {
-            if (clsPerson.IsPersonExist(PersonID))
+            var Exist=clsPerson.IsPersonExistAsync(PersonID);
+            if (Exist.Result)
             {
-                return Ok(new { Exists = true, Message = "The person exists." });
+                return Ok("The person exists." );
 
             }
             else
@@ -219,7 +220,8 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<bool> IsPersonExist(string NationalNo)
         {
-            if (clsPerson.IsPersonExist(NationalNo))
+            var Exist= clsPerson.IsPersonExistAsync(NationalNo);
+            if (Exist.Result)
             {
                 return Ok(new { Exists = true, Message = "The person exists." });
             }
@@ -232,18 +234,18 @@ namespace DVLD_API.Controllers
 
     }
 
-
+    
     [Route("api/DVLD/Users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet("AlUsers", Name = "GetAllUsers")]
+        [HttpGet("AllUsers", Name = "GetAllUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<ListUsersDTO>> GetAllUsers()
+        public ActionResult<IEnumerable<UsersViewDTO>> GetAllUsers()
         {
-            List<ListUsersDTO> UsersList = DVlD_BusinessLayer.clsUser.GetAllUsers();
-            if (UsersList.Count == 0)
+           var UsersList = clsUser.GetAllUsers().Result;
+            if (UsersList.Count() == 0)
             {
                 return NotFound("No Users Found!");
             }
@@ -267,7 +269,7 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {UserID}");
             }
 
-            DVlD_BusinessLayer.clsUser User = DVlD_BusinessLayer.clsUser.FindByUserID(UserID);
+           var User =clsUser.FindByUserID(UserID);
 
             if (User == null)
             {
@@ -275,7 +277,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            UserDTO UDTO = User.UDTO;
+            UserDTO UDTO = User.Result.UDTO;
 
             //we return the DTO not the student object.
             return Ok(UDTO);
@@ -291,7 +293,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<UserDTO> GetUserByPersonID(int PersonID){
 
-            DVlD_BusinessLayer.clsUser User = DVlD_BusinessLayer.clsUser.FindByPersonID(PersonID);
+           var User = clsUser.FindByPersonID(PersonID);
 
             if (User == null)
             {
@@ -299,7 +301,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            UserDTO UDTO = User.UDTO;
+            UserDTO UDTO = User.Result.UDTO;
 
             //we return the DTO not the student object.
             return Ok(UDTO);
@@ -316,14 +318,14 @@ namespace DVLD_API.Controllers
         public ActionResult<UserDTO> GetUserByUserNameAndPassword(string UserName,string Password)
         {
 
-            DVlD_BusinessLayer.clsUser User = DVlD_BusinessLayer.clsUser.Find(UserName,Password);
+           var User = clsUser.Find(UserName,Password);
 
             if (User == null)
             {
                 return NotFound($"User with these information not found.");
             }
 
-            UserDTO UDTO = User.UDTO;
+            UserDTO UDTO = User.Result.UDTO;
 
             return Ok(UDTO);
 
@@ -354,10 +356,10 @@ namespace DVLD_API.Controllers
                     return BadRequest($"This person is already a user");
             }
 
-            DVlD_BusinessLayer.clsUser User = new DVlD_BusinessLayer.clsUser(new UserDTO(NewUserDTO.UserID, NewUserDTO.PersonID,
+           var User = new clsUser(new UserDTO(NewUserDTO.UserID, NewUserDTO.PersonID,
                      NewUserDTO.UserName, NewUserDTO.Password, NewUserDTO.IsActive));
 
-                     User.Save();
+                    var Result= User.Save();
 
                      NewUserDTO.UserID = Convert.ToInt32(User.UserID);
 
@@ -374,7 +376,7 @@ namespace DVLD_API.Controllers
         public ActionResult<UserDTO> UpdateUser(int UserID, UserDTO UpdatedUser)
         {
            
-            DVlD_BusinessLayer.clsUser User = DVlD_BusinessLayer.clsUser.FindByUserID(UserID);
+           var User =clsUser.FindByUserID(UserID);
 
                  if (User == null)
                  {
@@ -397,21 +399,21 @@ namespace DVLD_API.Controllers
                     return BadRequest($"This person is already a user");
 
                 case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
-                    if (User.UserName != UpdatedUser.UserName)
+                    if (User.Result.UserName != UpdatedUser.UserName)
                         return BadRequest($"The UserName '{UpdatedUser.UserName}' already exists.");
                     else
                         break;
             }
 
-                 User.PersonID = UpdatedUser.PersonID;
-                 User.UserName = UpdatedUser.UserName;
-                 User.Password = UpdatedUser.Password;
-                 User.IsActive = UpdatedUser.IsActive;
+                 User.Result.PersonID = UpdatedUser.PersonID;
+                 User.Result.UserName = UpdatedUser.UserName;
+                 User.Result.Password = UpdatedUser.Password;
+                 User.Result.IsActive = UpdatedUser.IsActive;
                  
 
-                 User.Save();
+                var Result= User.Result.Save();
 
-                 return Ok(User.UDTO);
+                 return Ok(User.Result.UDTO);
 
              }
         
@@ -426,8 +428,8 @@ namespace DVLD_API.Controllers
                 {
                     return BadRequest($"Not accepted ID {UserID}");
                 }
-
-                if (DVlD_BusinessLayer.clsUser.DeleteUser(UserID))
+                
+                if (clsUser.DeleteUser(UserID).Result)
 
                     return Ok($"User with ID {UserID} has been deleted.");
                 else
@@ -440,7 +442,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<bool> IsUserExists(int UserID)
             {
-                if (clsPerson.IsPersonExist(UserID))
+                if (clsUser.IsUserExist(UserID).Result)
                 {
                     return Ok(new { Exists = true, Message = "The user exists." });
 
@@ -455,4 +457,209 @@ namespace DVLD_API.Controllers
 
     }
 
+    
+    [Route("api/DVLD/Drivers")]
+    [ApiController]
+    public class DriversController : ControllerBase
+    {
+        [HttpGet("AllDrivers", Name = "GetAllDrivers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ListDriverDTO>> GetAllDrivers()
+        {
+            /*List<ListDriverDTO> DriversList = clsDriver.GetAllDriver();
+            if (DriversList.Count == 0)
+            {
+                return NotFound("No Users Found!");
+            }*/
+            return Ok(true); // Returns the list of students.
+
+        }
+
+
+
+
+
+        [HttpGet("FindByID/{DriverID}", Name = "GetDriverByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DriverDTO> GetDriverByID(int DriverID)
+        {
+
+            if (DriverID < 1)
+            {
+                return BadRequest($"Not accepted ID {DriverID}");
+            }
+
+            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
+
+            if (User == null)
+            {
+                return NotFound($"Driver with ID {DriverID} not found.");
+            }
+
+            
+           DriverDTO DDTO = Driver.DDTO;
+
+            return Ok(DDTO);
+
+        }
+
+
+
+
+
+        [HttpGet("FindDriverByPersonID/{PersonID}", Name = "GetDriverByPersonID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DriverDTO> GetDriverByPersonID(int PersonID)
+        {
+
+            if (PersonID < 1)
+            {
+                return BadRequest($"Not accepted ID {PersonID}");
+            }
+
+            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByPersonID(PersonID);
+
+            if (User == null)
+            {
+                return NotFound($"Driver with PersonID {PersonID} not found.");
+            }
+
+
+            DriverDTO DDTO = Driver.DDTO;
+
+            return Ok(DDTO);
+
+        }
+
+
+
+
+
+        
+        [HttpPost("AddNewDriver", Name = "AddDriver")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<DriverDTO> AddDriver(DriverDTO NewDriverDTO)
+        {
+
+            /*switch (clsUtil.UserCheckConstraints(NewUserDTO))
+            {
+                case clsUtil.enUserBadRequestTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
+                    return BadRequest($"The personID {NewUserDTO.PersonID} is not exists");
+
+                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
+                    return BadRequest($"The UserName '{NewUserDTO.UserName}' already exists.");
+
+                case clsUtil.enUserBadRequestTypes.AlreadyUser:
+                    return BadRequest($"This person is already a user");
+            }*/
+
+            DVlD_BusinessLayer.clsDriver Driver = new clsDriver(new DriverDTO(NewDriverDTO.DriverID, NewDriverDTO.PersonID,NewDriverDTO.CreatedByUserID, NewDriverDTO.CreatedDate));
+
+            Driver.Save();
+
+            NewDriverDTO.DriverID = Convert.ToInt32(Driver.DriverID);
+
+
+            return CreatedAtRoute("GetDriverByID", new { DriverID = NewDriverDTO.DriverID }, NewDriverDTO);
+
+        }
+
+
+        [HttpPut("UpdateDriver/{DriverID}", Name = "UpdateDriver")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DriverDTO> UpdatDriver(int DriverID, DriverDTO UpdatedDriver)
+        {
+
+            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
+
+            if (Driver == null)
+            {
+                return NotFound($"Driver with ID {DriverID} not found.");
+            }
+
+
+            /*switch (clsUtil.UserCheckConstraints(UpdatedUser))
+            {
+                case clsUtil.enUserBadRequestTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
+                    return BadRequest($"The personID {UpdatedUser.PersonID} is not exists");
+
+                case clsUtil.enUserBadRequestTypes.AlreadyUser:
+                    return BadRequest($"This person is already a user");
+
+                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
+                    if (User.UserName != UpdatedUser.UserName)
+                        return BadRequest($"The UserName '{UpdatedUser.UserName}' already exists.");
+                    else
+                        break;
+            }*/
+
+            //User.PersonID = UpdatedUser.PersonID;
+            //User.UserName = UpdatedUser.UserName;
+            //User.Password = UpdatedUser.Password;
+            //User.IsActive = UpdatedUser.IsActive;
+
+
+            Driver.Save();
+
+            return Ok(Driver.DDTO);
+
+        }
+
+
+       
+       [HttpGet("IsDriverExists/{DriverID}", Name = "IsDriverExist")]
+       [ProducesResponseType(StatusCodes.Status200OK)]
+       [ProducesResponseType(StatusCodes.Status204NoContent)]
+       public ActionResult<bool> IsDriverExists(int DriverID)
+       {
+           if (clsDriver.IsDriverExists(DriverID))
+           {
+               return Ok("The Driver exists." );
+
+           }
+           else
+           {
+               return NoContent();
+
+           }
+       }
+
+        [HttpGet("IsDriverExistsByPersonID/{PersonID}", Name = "IsDriverExistsByPersonID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<bool> IsDriverExistsByPersonID(int PersonID)
+        {
+            if (clsDriver.IsDriverExistByPersonID(PersonID))
+            {
+                return Ok("The Driver exists.");
+
+            }
+            else
+            {
+                return NoContent();
+
+            }
+        }
+
+
+    }
 }
