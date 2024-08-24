@@ -7,14 +7,6 @@ using System;
 
 namespace DVLD_API.Controllers
 {
-    //[Route("api/DVLD")]
-    //[ApiController]
-    //public class DVLDController : ControllerBase
-    //{
-        
-
-
-    //}
 
     [Route("api/DVLD/People")]
     [ApiController]
@@ -359,7 +351,7 @@ namespace DVLD_API.Controllers
            var User = new clsUser(new UserDTO(NewUserDTO.UserID, NewUserDTO.PersonID,
                      NewUserDTO.UserName, NewUserDTO.Password, NewUserDTO.IsActive));
 
-                    var Result= User.Save();
+                    var Result= User.SaveAsync();
 
                      NewUserDTO.UserID = Convert.ToInt32(User.UserID);
 
@@ -411,7 +403,7 @@ namespace DVLD_API.Controllers
                  User.Result.IsActive = UpdatedUser.IsActive;
                  
 
-                var Result= User.Result.Save();
+                var Result= User.Result.SaveAsync();
 
                  return Ok(User.Result.UDTO);
 
@@ -468,7 +460,7 @@ namespace DVLD_API.Controllers
         public ActionResult<IEnumerable<ListDriverDTO>> GetAllDrivers()
         {
             var DriversList = clsDriver.GetAllDriver();
-            if (DriversList.Count == 0)
+            if (DriversList.Result.Count() == 0)
             {
                 return NotFound("No Users Found!");
             }
@@ -492,7 +484,7 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {DriverID}");
             }
 
-            clsDriver Driver = clsDriver.FindByDriverID(DriverID);
+            var Driver = clsDriver.FindByDriverID(DriverID);
 
             if (Driver == null)
             {
@@ -500,7 +492,7 @@ namespace DVLD_API.Controllers
             }
 
             
-           DriverDTO DDTO = Driver.DDTO;
+           DriverDTO DDTO = Driver.Result.DDTO;
 
             return Ok(DDTO);
 
@@ -521,7 +513,7 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {PersonID}");
             }
 
-            clsDriver Driver = clsDriver.FindByPersonID(PersonID);
+            var Driver = clsDriver.FindByPersonID(PersonID);
 
             if (Driver == null)
             {
@@ -529,7 +521,7 @@ namespace DVLD_API.Controllers
             }
 
 
-            DriverDTO DDTO = Driver.DDTO;
+            DriverDTO DDTO = Driver.Result.DDTO;
 
             return Ok(DDTO);
 
@@ -563,7 +555,7 @@ namespace DVLD_API.Controllers
 
             clsDriver Driver = new clsDriver(new DriverDTO(NewDriverDTO.DriverID, NewDriverDTO.PersonID,NewDriverDTO.CreatedByUserID, NewDriverDTO.CreatedDate));
 
-            Driver.Save();
+            var Result=Driver.SaveAsync();
 
             NewDriverDTO.DriverID = Convert.ToInt32(Driver.DriverID);
 
@@ -580,7 +572,7 @@ namespace DVLD_API.Controllers
         public ActionResult<DriverDTO> UpdatDriver(int DriverID, DriverDTO UpdatedDriver)
         {
 
-           clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
+           var Driver = clsDriver.FindByDriverID(DriverID);
 
             if (Driver == null)
             {
@@ -597,14 +589,14 @@ namespace DVLD_API.Controllers
                 
             }
 
-            Driver.PersonID = UpdatedDriver.PersonID;
-            Driver.CreatedDate = UpdatedDriver.CreatedDate;
-            Driver.CreatedByUserID = UpdatedDriver.CreatedByUserID;
+            Driver.Result.PersonID = UpdatedDriver.PersonID;
+            Driver.Result.CreatedDate = UpdatedDriver.CreatedDate;
+            Driver.Result.CreatedByUserID = UpdatedDriver.CreatedByUserID;
 
 
-            Driver.Save();
+           var Result= Driver.Result.SaveAsync();
 
-            return Ok(Driver.DDTO);
+            return Ok(Driver.Result.DDTO);
 
         }
 
@@ -615,7 +607,7 @@ namespace DVLD_API.Controllers
        [ProducesResponseType(StatusCodes.Status204NoContent)]
        public ActionResult<bool> IsDriverExists(int DriverID)
        {
-           if (clsDriver.IsDriverExists(DriverID))
+           if (clsDriver.IsDriverExists(DriverID).Result)
            {
                return Ok("The Driver exists." );
 
@@ -632,7 +624,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<bool> IsDriverExistsByPersonID(int PersonID)
         {
-            if (clsDriver.IsDriverExistByPersonID(PersonID))
+            if (clsDriver.IsDriverExistByPersonID(PersonID).Result)
             {
                 return Ok("The Driver exists.");
 

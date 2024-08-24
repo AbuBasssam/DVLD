@@ -65,7 +65,7 @@ namespace DVlD_BusinessLayer
             return (UDTO != null) ? new clsUser(UDTO, enMode.Update) : null;
         }
 
-        public async Task<bool> Save()
+        public async Task<bool> SaveAsync()
         {
             switch (Mode)
             {

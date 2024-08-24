@@ -243,7 +243,7 @@ namespace DVlD_BusinessLayer
         {
             int DriverID = -1;
 
-            clsDriver Driver =clsDriver.FindByPersonID(this.ApplicationInfo.ApplicationPersonID);
+            clsDriver Driver =clsDriver.FindByPersonID(this.ApplicationInfo.ApplicationPersonID).Result;
 
             if (Driver == null)
             {
@@ -252,7 +252,7 @@ namespace DVlD_BusinessLayer
                
                 //Driver.PersonID= this.ApplicationInfo.ApplicationPersonID; must modfy
                 Driver.CreatedByUserID= CreatedByUserID;
-                if (Driver.Save())
+                if (Driver.SaveAsync().Result)
                 {
                     //DriverID= Driver.DriverID;
                 }

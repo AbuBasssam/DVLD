@@ -94,7 +94,7 @@ namespace DVlD_BusinessLayer
             this.IssueReason = (clsLicense.enIssueReason)IssueReason;
             this.ApplicationInfo = clsApplication.Find(ApplicationID);
             this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
-            this.DriverInfo=clsDriver.FindByDriverID(DriverID);
+            this.DriverInfo=clsDriver.FindByDriverID(DriverID).Result;
             this.LicenseClassesInfo=clsLicenseClasses.Find(LicenseClass);
             this.DetainedInfo = clsDetainedLicense.FindByLicenseID(this.LicenseID);
 
@@ -196,7 +196,7 @@ namespace DVlD_BusinessLayer
         
         public static bool AlreadyHaveLicense(int PersonID,int LicenseClass)
         {
-           clsDriver Driver= clsDriver.FindByPersonID(PersonID);
+           clsDriver Driver= clsDriver.FindByPersonID(PersonID).Result;
             int DriverID = (Driver!=null)? (int)Driver.DriverID:-1;
             if (DriverID == -1)
                 return false;

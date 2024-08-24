@@ -61,16 +61,18 @@
     <Compile Include="clsTestAppointmentData.cs" />
     <Compile Include="clsTestTypes.cs" />
     <Compile Include="clsUserData.cs" />
-    <Compile Include="ListUsersView.cs" />
-    <Compile Include="Person.cs" />
-    <Compile Include="PersonView.cs" />
+    <Compile Include="Entities\Driver.cs" />
+    <Compile Include="Entities\DriverView.cs" />
+    <Compile Include="Entities\ListUsersView.cs" />
+    <Compile Include="Entities\Person.cs" />
+    <Compile Include="Entities\PersonView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="User.cs" />
+    <Compile Include="Entities\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

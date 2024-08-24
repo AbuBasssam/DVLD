@@ -9,50 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using DVLD_DataAccessLayer.Entities;
 
 namespace DVLD_DataAccessLayer
 {
-    public class Driver
-    {
-        public int DriverID { get; set; }
-        public int PersonID { get; set; }
-        public int CreatedByUserID { get; set; }
-        
-        public DateTime CreatedDate { get; set; }
-        public Driver( int DriverID,int PersonID,int CreatedByUserID,DateTime CreatedDate)
-        {
-            this.DriverID = DriverID;
-            this.PersonID = PersonID;
-            this.CreatedByUserID = CreatedByUserID;
-            this.CreatedDate = CreatedDate; 
-
-        }
-
-    }
-    public class DriverView
-    {
-        public int DriverID { get; set; }
-        public int PersonID { get; set; }
-        public string NationalNo { get; set; }
-        public string FullName { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public  byte NumberOfActiveLicenses {  get; set; }
-        public DriverView(int DriverID, int PersonID,string NationalNo,string FullName,DateTime CreatedDate, byte NumberOfActiveLicenses)
-        {
-            this.DriverID = DriverID;
-            this.PersonID = PersonID;
-            this.NationalNo = NationalNo;
-            this.FullName = FullName;
-            this.CreatedDate = CreatedDate;
-            this.NumberOfActiveLicenses = NumberOfActiveLicenses;
-
-
-        }
-    }
 
     public static class clsDriverData
     {
-        public static List<DriverView> GetAllDrivers()
+        public static async Task<IEnumerable<DriverView>> GetAllDriversAsync()
         {
 
             List<DriverView> DriversList = new List<DriverView>();
@@ -66,22 +30,14 @@ namespace DVLD_DataAccessLayer
 
                         connection.Open();
 
-                        using (var reader = command.ExecuteReader())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
 
                             {
                                 DriversList.Add
                                    (
-                                        new DriverView
-                                        (
-                                                 reader.GetInt32(reader.GetOrdinal("DriverID")),
-                                                 reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                                 reader.GetString(reader.GetOrdinal("NationalNo")),
-                                                 reader.GetString(reader.GetOrdinal("FullName")),
-                                                 reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
-                                                 Convert.ToByte(reader.GetInt32(reader.GetOrdinal("NumberOfActiveLicenses")))
-                                        )
+                                        MapReaderToDriverView(reader)
                                    );
                             }
                         }
@@ -113,7 +69,7 @@ namespace DVLD_DataAccessLayer
             return DriversList;
         }
     
-        public static Driver FindByDriverID(int DriverID)
+        public static async Task<Driver> FindByDriverIDAsync(int DriverID)
         {
             try
             {
@@ -124,19 +80,11 @@ namespace DVLD_DataAccessLayer
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@DriverID", DriverID);
                         connection.Open();
-                        using (var reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-
-                                return new Driver
-                                 (
-
-                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
-                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
-                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
-                                 );
+                                MapReaderToDriver(reader);
 
                             }
                         }
@@ -165,7 +113,7 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static Driver FindByPersonID(int PersonID)
+        public static async Task<Driver> FindByPersonIDAsync(int PersonID)
         {
 
             try
@@ -177,19 +125,13 @@ namespace DVLD_DataAccessLayer
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@PersonID", PersonID);
                         connection.Open();
-                        using (var reader = command.ExecuteReader())
+                        
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
 
-                                return new Driver
-                                 (
-
-                                     reader.GetInt32(reader.GetOrdinal("DriverID")),
-                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
-                                     reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
-                                     reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
-                                 );
+                                MapReaderToDriver(reader);
 
                             }
                         }
@@ -224,16 +166,14 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static Nullable<int> AddNewDriver(Driver DriverDTO)
+        public static async Task<int?> AddNewDriverAsync(Driver DriverDTO)
         {
 
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                   //INSERT INTO Drivers(PersonID,CreatedByUserID,CreatedDate) VALUES(@PersonID,@CreatedByUserID,@CreatedDate);
-                             //SELECT SCOPE_IDENTITY();";
-
+                   
                     using (var command = new SqlCommand("SP_AddNewDriver", connection))
                     {
                         command.CommandType= CommandType.StoredProcedure;
@@ -246,7 +186,7 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@CreatedByUserID", DriverDTO.CreatedByUserID);
                         command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         return (int)outputIdParam.Value;
                     }
                     
@@ -270,19 +210,13 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool UpdateDriver(Driver DriverDTO)
+        public static async Task<bool> UpdateDriverAsync(Driver DriverDTO)
         {
             int rowsAffected = 0;
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    //UPDATE Drivers
-                    //SET PersonID = @PersonID,
-                    //    CreatedByUserID= @CreatedByUserID
-                    //    WHERE DriverID=@DriverID
-
-
                     using (var command = new SqlCommand("SP_UpdateDriver", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -290,14 +224,15 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@CreatedByUserID", DriverDTO.CreatedByUserID);
                         command.Parameters.AddWithValue("@DriverID", DriverDTO.DriverID);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
+
                     }
-                    
 
 
 
 
-                    
+
+
                 }
                     
 
@@ -318,7 +253,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool DeleteDriver(int DriverID)
+        public static async Task<bool> DeleteDriverAsync(int DriverID)
         {
 
             int rowsAffected = 0;
@@ -332,7 +267,7 @@ namespace DVLD_DataAccessLayer
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@DriverID", DriverID);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
                     }
 
                     
@@ -355,7 +290,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool IsDriverExistByPersonID(int PersonID)
+        public static async Task<bool> IsDriverExistByPersonIDAsync(int PersonID)
         {
     
             try
@@ -373,7 +308,7 @@ namespace DVLD_DataAccessLayer
                         };
                         command.Parameters.Add(returnParameter);
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         return (int)returnParameter.Value == 1;
 
                     }
@@ -391,7 +326,7 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static bool IsDriverExists(int DriverID)
+        public static async Task<bool> IsDriverExistsAsync(int DriverID)
         {
 
             try
@@ -409,7 +344,7 @@ namespace DVLD_DataAccessLayer
                         };
                         command.Parameters.Add(returnParameter);
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         return (int)returnParameter.Value == 1;
 
                     }
@@ -425,6 +360,31 @@ namespace DVLD_DataAccessLayer
             }
             return false;
 
+        }
+
+        private static DriverView MapReaderToDriverView(IDataReader reader)
+        {
+            return new DriverView
+                                 (
+                                          reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                          reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                          reader.GetString(reader.GetOrdinal("NationalNo")),
+                                          reader.GetString(reader.GetOrdinal("FullName")),
+                                          reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+                                          Convert.ToByte(reader.GetInt32(reader.GetOrdinal("NumberOfActiveLicenses")))
+                                 );
+        }
+
+        private static Driver MapReaderToDriver(IDataReader reader)
+        {
+            return new Driver
+                                  (
+
+                                      reader.GetInt32(reader.GetOrdinal("DriverID")),
+                                      reader.GetInt32(reader.GetOrdinal("PersonID")),
+                                      reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
+                                      reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
+                                  );
         }
 
     }

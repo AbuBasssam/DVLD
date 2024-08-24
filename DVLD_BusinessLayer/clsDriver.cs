@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
 using DVlD_BusinessLayer.DTOs;
 
 namespace DVlD_BusinessLayer
@@ -27,8 +28,6 @@ namespace DVlD_BusinessLayer
         public int CreatedByUserID {  get; set; }
         public DateTime CreatedDate { get; set; }   
         public clsPerson PersonInfo { get; set; }
-        
-        
        
         public clsDriver(DriverDTO DriverDTO ,enMode cMode=enMode.AddNew)
         {
@@ -40,73 +39,59 @@ namespace DVlD_BusinessLayer
             this.Mode = cMode;
         }
 
-
-        public static clsDriver FindByDriverID(int DriverID)
+        public static async Task<clsDriver> FindByDriverID(int DriverID)
         {
             
-
-            //DriverDTO Driver= clsDriverData.FindByDriverID(DriverID);
-            //if (Driver!=null)
-            //{
-                
-            //    return new clsDriver(Driver,enMode.Update);
-            //}
-            //else
-                return null;
-
-
-
+            DriverDTO Driver= MapToDTO(await clsDriverData.FindByDriverIDAsync(DriverID));
+           
+            return (Driver!=null)? new clsDriver(Driver,enMode.Update):null;
+           
         }
 
-        public static clsDriver FindByPersonID(int PersonID)
+        public static async Task<clsDriver> FindByPersonID(int PersonID)
         {
-            //DriverDTO Driver = clsDriverData.FindByPersonID(PersonID);
-            //if (Driver != null)
-            //{
 
-            //    return new clsDriver(Driver, enMode.Update);
-            //}
-            //else
-                return null;
+            DriverDTO Driver = MapToDTO(await clsDriverData.FindByPersonIDAsync(PersonID));
 
-
+            return (Driver != null) ? new clsDriver(Driver, enMode.Update) : null;
 
         }
-        public static List<DriverView> GetAllDriver()
+       
+        public static async Task<IEnumerable<ListDriverDTO>> GetAllDriver()
         {
-            return clsDriverData.GetAllDrivers();
+            var Drivers = await clsDriverData.GetAllDriversAsync();
+            return MapToLDTOs(Drivers);
         }
-        
-        private bool _AddNewDriver()
+
+        private async Task<bool> _AddNewDriver()
         {
-            //this.DriverID=clsDriverData.AddNewDriver(DDTO);
+            this.DriverID= await clsDriverData.AddNewDriverAsync(MapToEntity(DDTO));
             return (this.DriverID != null);
         }
        
-        private bool _UpdateDriver()
+        private async Task<bool> _UpdateDriver()
         {
 
-            return false;// clsDriverData.UpdateDriver(DDTO);
+            return await clsDriverData.UpdateDriverAsync(MapToEntity(DDTO));
         }
 
-       
-        public static bool IsDriverExistByPersonID( int PersonID)
+        public static async Task<bool> IsDriverExistByPersonID( int PersonID)
         {
-            return clsDriverData.IsDriverExistByPersonID(PersonID);
+            return await clsDriverData.IsDriverExistByPersonIDAsync(PersonID);
         }
 
-        public static bool IsDriverExists(int DriverID)
+        public static async Task<bool> IsDriverExists(int DriverID)
         {
-            return clsDriverData.IsDriverExists(DriverID);
+            return await clsDriverData.IsDriverExistsAsync(DriverID);
         }
 
-        public bool Save()
+        public async Task<bool> SaveAsync()
         {
             switch (Mode)
             {
                 case enMode.AddNew:
 
-                    if (_AddNewDriver())
+                    if ( await _AddNewDriver())
                     {
                         Mode = enMode.Update;
                         return true;
@@ -116,7 +101,7 @@ namespace DVlD_BusinessLayer
 
                 case enMode.Update:
 
-                    return _UpdateDriver();
+                    return await _UpdateDriver();
 
 
                 default:
@@ -144,20 +129,55 @@ namespace DVlD_BusinessLayer
             return clsInternationalLicense.GetAllDriverInternationalLicenses((int)DriverID);
         }
 
+        private static DriverDTO MapToDTO(Driver Driver)
+        {
+            return new DriverDTO(
+
+               Driver.DriverID,
+               Driver.PersonID,
+               Driver.CreatedByUserID,
+               Driver.CreatedDate
+               
+
+            );
+        }
+
+        private static ListDriverDTO MapToLDTO(DriverView DriverView)
+        {
+            return new ListDriverDTO
+            (
+               DriverView.DriverID,
+               DriverView.PersonID,
+               DriverView.NationalNo,
+               DriverView.FullName,
+               DriverView.CreatedDate,
+               DriverView.NumberOfActiveLicenses
+            );
 
 
+        }
 
+        private static IEnumerable<ListDriverDTO> MapToLDTOs(IEnumerable<DriverView> Drivers)
+        {
+            var DriverDTOs = new List<ListDriverDTO>();
+            foreach (var Driver in Drivers)
+            {
+                DriverDTOs.Add(MapToLDTO(Driver));
+            }
+            return DriverDTOs;
+        }
 
+        private Driver MapToEntity(DriverDTO Driver)
+        {
+            return new Driver
+            (
 
-
-
-
-
-
-
-
-
-
+                Driver.DriverID,
+                Driver.PersonID,
+                Driver.CreatedByUserID,
+                Driver.CreatedDate
+            );
+        }
 
 
     }

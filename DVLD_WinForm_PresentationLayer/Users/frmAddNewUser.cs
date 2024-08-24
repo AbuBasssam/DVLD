@@ -141,7 +141,7 @@ namespace DVLD
             if (_User.UserName!="" && _User.Password != "")
             {
               
-                if (_User.Save())
+                if (_User.SaveAsync())
                 {
                     lblUserID.Text = _User.UserID.ToString();
                     lblTitle.Text = "Update User";

@@ -100,7 +100,7 @@ namespace DVLD
 
             _User.Password = txtPassword.Text.Trim();
 
-            if (_User.Save())
+            if (_User.SaveAsync())
             {
           
                 MessageBox.Show("Data Saved Successfully ", "Save", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
