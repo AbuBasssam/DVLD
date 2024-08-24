@@ -9,13 +9,13 @@
     "Parameters": [
       {
         "Name": "NewDriverDTO",
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -45,7 +45,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.ListDriverDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.DTOs.ListDriverDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -81,7 +81,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -126,7 +126,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -225,13 +225,13 @@
       },
       {
         "Name": "UpdatedDriver",
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DriverDTO",
+        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

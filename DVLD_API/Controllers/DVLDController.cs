@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DVlD_BusinessLayer;
+using DVlD_BusinessLayer.DTOs;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System;
-//using DVLD_DataAccessLayer;
 
 namespace DVLD_API.Controllers
 {
@@ -467,12 +467,12 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<ListDriverDTO>> GetAllDrivers()
         {
-            /*List<ListDriverDTO> DriversList = clsDriver.GetAllDriver();
+            var DriversList = clsDriver.GetAllDriver();
             if (DriversList.Count == 0)
             {
                 return NotFound("No Users Found!");
-            }*/
-            return Ok(true); // Returns the list of students.
+            }
+            return Ok(DriversList); 
 
         }
 
@@ -492,9 +492,9 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {DriverID}");
             }
 
-            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
+            clsDriver Driver = clsDriver.FindByDriverID(DriverID);
 
-            if (User == null)
+            if (Driver == null)
             {
                 return NotFound($"Driver with ID {DriverID} not found.");
             }
@@ -521,9 +521,9 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {PersonID}");
             }
 
-            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByPersonID(PersonID);
+            clsDriver Driver = clsDriver.FindByPersonID(PersonID);
 
-            if (User == null)
+            if (Driver == null)
             {
                 return NotFound($"Driver with PersonID {PersonID} not found.");
             }
@@ -546,25 +546,22 @@ namespace DVLD_API.Controllers
         public ActionResult<DriverDTO> AddDriver(DriverDTO NewDriverDTO)
         {
 
-            /*switch (clsUtil.UserCheckConstraints(NewUserDTO))
+            switch (clsUtil.DriverCheckConstraints(NewDriverDTO))
             {
-                case clsUtil.enUserBadRequestTypes.NullObject:
+                case clsUtil.enDriverBadRequestTypes.NullObject:
                     return BadRequest($"The Object is Null fill it ");
 
-                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                case clsUtil.enDriverBadRequestTypes.EmptyFileds:
                     return BadRequest($"Some fileds is empty,please fill it");
 
-                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
-                    return BadRequest($"The personID {NewUserDTO.PersonID} is not exists");
+                case clsUtil.enDriverBadRequestTypes.InvalidPersonID:
+                    return BadRequest($"The personID {NewDriverDTO.PersonID} is not exists");
 
-                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
-                    return BadRequest($"The UserName '{NewUserDTO.UserName}' already exists.");
+                case clsUtil.enDriverBadRequestTypes.AlreadyDriver:
+                    return BadRequest($"This person is already a Driver");
+            }
 
-                case clsUtil.enUserBadRequestTypes.AlreadyUser:
-                    return BadRequest($"This person is already a user");
-            }*/
-
-            DVlD_BusinessLayer.clsDriver Driver = new clsDriver(new DriverDTO(NewDriverDTO.DriverID, NewDriverDTO.PersonID,NewDriverDTO.CreatedByUserID, NewDriverDTO.CreatedDate));
+            clsDriver Driver = new clsDriver(new DriverDTO(NewDriverDTO.DriverID, NewDriverDTO.PersonID,NewDriverDTO.CreatedByUserID, NewDriverDTO.CreatedDate));
 
             Driver.Save();
 
@@ -583,39 +580,26 @@ namespace DVLD_API.Controllers
         public ActionResult<DriverDTO> UpdatDriver(int DriverID, DriverDTO UpdatedDriver)
         {
 
-            DVlD_BusinessLayer.clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
+           clsDriver Driver = DVlD_BusinessLayer.clsDriver.FindByDriverID(DriverID);
 
             if (Driver == null)
             {
                 return NotFound($"Driver with ID {DriverID} not found.");
             }
-
-
-            /*switch (clsUtil.UserCheckConstraints(UpdatedUser))
+            switch (clsUtil.DriverCheckConstraints(UpdatedDriver))
             {
-                case clsUtil.enUserBadRequestTypes.NullObject:
+                case clsUtil.enDriverBadRequestTypes.NullObject:
                     return BadRequest($"The Object is Null fill it ");
 
-                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                case clsUtil.enDriverBadRequestTypes.EmptyFileds:
                     return BadRequest($"Some fileds is empty,please fill it");
 
-                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
-                    return BadRequest($"The personID {UpdatedUser.PersonID} is not exists");
+                
+            }
 
-                case clsUtil.enUserBadRequestTypes.AlreadyUser:
-                    return BadRequest($"This person is already a user");
-
-                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
-                    if (User.UserName != UpdatedUser.UserName)
-                        return BadRequest($"The UserName '{UpdatedUser.UserName}' already exists.");
-                    else
-                        break;
-            }*/
-
-            //User.PersonID = UpdatedUser.PersonID;
-            //User.UserName = UpdatedUser.UserName;
-            //User.Password = UpdatedUser.Password;
-            //User.IsActive = UpdatedUser.IsActive;
+            Driver.PersonID = UpdatedDriver.PersonID;
+            Driver.CreatedDate = UpdatedDriver.CreatedDate;
+            Driver.CreatedByUserID = UpdatedDriver.CreatedByUserID;
 
 
             Driver.Save();

@@ -5,46 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer;
+using DVlD_BusinessLayer.DTOs;
 
 namespace DVlD_BusinessLayer
 {
-    public class DriverDTO
-    {
-        public int DriverID { get; set; }
-        public int PersonID { get; set; }
-        public int CreatedByUserID { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-        public DriverDTO(int DriverID, int PersonID, int CreatedByUserID, DateTime CreatedDate)
-        {
-            this.DriverID = DriverID;
-            this.PersonID = PersonID;
-            this.CreatedByUserID = CreatedByUserID;
-            this.CreatedDate = CreatedDate;
-
-        }
-
-    }
-    public class ListDriverDTO
-    {
-        public int DriverID { get; set; }
-        public int PersonID { get; set; }
-        public string NationalNo { get; set; }
-        public string FullName { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public byte NumberOfActiveLicenses { get; set; }
-        public ListDriverDTO(int DriverID, int PersonID, string NationalNo, string FullName, DateTime CreatedDate, byte NumberOfActiveLicenses)
-        {
-            this.DriverID = DriverID;
-            this.PersonID = PersonID;
-            this.NationalNo = NationalNo;
-            this.FullName = FullName;
-            this.CreatedDate = CreatedDate;
-            this.NumberOfActiveLicenses = NumberOfActiveLicenses;
-
-
-        }
-    }
 
     public class clsDriver
     {
