@@ -4,26 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DVlD_BusinessLayer
+namespace DVLD_DataAccessLayer
 {
-    public class UserDTO
+    public class UsersViewDTO
     {
         public int UserID { get; set; }
         public int PersonID { get; set; }
+        public string FullName { get; set; }
         public string UserName { get; set; }
-        public string Password { get; set; }
         public bool IsActive { get; set; }
-        public UserDTO(int UserID, int PersonID, string UserName, string Password, bool isActive)
+
+        public UsersViewDTO(int UserID, int PersonID, string FullName, string UserName, bool IsActive)
         {
             this.UserID = UserID;
             this.PersonID = PersonID;
+            this.FullName = FullName;
             this.UserName = UserName;
-            this.Password = Password;
-            this.IsActive = isActive;
-
-
+            this.IsActive = IsActive;
         }
-
     }
 
 }

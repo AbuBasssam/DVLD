@@ -1,39 +1,44 @@
 ﻿using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Interfaces;
+using DVlD_BusinessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DVLD_DataAccessLayer.Entities;
 
 namespace DVlD_BusinessLayer
 {
    
-    public class clsPerson
+    public class clsPerson:IPerson
     {
+        private  IPeopleDataInterface _PeopleDataInterface { get; set; }
+
         public enum enMode { AddNew = 0, Update = 1 }
         public enMode Mode = enMode.AddNew;
-        
-        public PersonDTO PDTO
+        private string GetFullName()
         {
+            return  this.FirstName + " " + this.SecondName + " " + this.ThirdName + " " + this.LastName;
+        }
+        
+        public PersonDTO PersonInfo
+        { 
             get
             {
-                return (new PersonDTO(this.PersonID, this.NationalNo,
-                this.FirstName, this.SecondName, this.ThirdName, this.LastName,
-                this.DateOfBirth, this.Gender, this.Address, this.Phone, this.Email,
-                this.Nationality, this._ImagePath));
+                return new PersonDTO(this.PersonID, NationalNo,
+                FirstName, SecondName, ThirdName, LastName,
+                DateOfBirth, Gender, Address, Phone,
+                Email, Nationality, _ImagePath);
             }
         }
-        public Nullable<int> PersonID { set; get; }
+        public int? PersonID { set; get; }
         public string NationalNo { set; get; }
         public string FirstName { set; get; }
         public string SecondName { set; get; }
         public string ThirdName { set; get; }
         public string LastName { set; get; }
-        public string FullName()
-        {
-            return FirstName + " " + SecondName + " " + ThirdName + " " + LastName;
-        }
         public DateTime DateOfBirth { set; get; }
         public byte Gender { set; get; }
         public string Address { set; get; }
@@ -47,9 +52,16 @@ namespace DVlD_BusinessLayer
             get { return _ImagePath; }
             set { _ImagePath = value; }
         }
-
-        public clsPerson(PersonDTO PDTO, enMode cMode = enMode.AddNew)
+        public string FullName()
         {
+           return GetFullName();
+        }
+       
+        private clsPerson(IPeopleDataInterface PeopleDataInterface,PersonDTO PDTO)
+        {
+            _PeopleDataInterface = PeopleDataInterface;
+
+
             this.PersonID = PDTO.PersonID;
             this.NationalNo = PDTO.NationalNo;
             this.FirstName = PDTO.FirstName;
@@ -62,36 +74,91 @@ namespace DVlD_BusinessLayer
             this.Phone = PDTO.Phone;
             this.Email = PDTO.Email;
             this.Nationality = PDTO.Nationality;
-            this.ImagePath = PDTO.ImagePath;
-            this.Mode = cMode;
+            this._ImagePath = PDTO.ImagePath;
+            
+            this.Mode = enMode.Update;
+        }
+        
+        public clsPerson(IPeopleDataInterface peopleDataInterface)
+        {
+            this._PeopleDataInterface= peopleDataInterface;
+            this.Mode=enMode.AddNew;
+        }
+      
+        public async Task<PersonDTO> GetPerson(string NationalNo)
+        {
+            PersonDTO PDTO =await _PeopleDataInterface.FindByNationalNoAsync(NationalNo);
+
+            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO).PersonInfo : null;
+
+        }
+        
+        public async Task<PersonDTO> GetPerson(int PersonID)
+        {
+            PersonDTO PDTO = await _PeopleDataInterface.FindByIDAsync(PersonID);
+
+            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO).PersonInfo : null;
+
         }
 
-        public static async Task< clsPerson> Find(string NationalNo)
+        public async Task<bool> CheckExistAsync(string NationalNo)
         {
-            PersonDTO PDTO=MapToDTO(await clsPeopleData.FindByNationalNoAsync(NationalNo));
+            return await _PeopleDataInterface.IsPersonExistAsync(NationalNo);
 
-            return( PDTO!=null)?new clsPerson(PDTO, enMode.Update): null;
+        }
 
+        public async Task<bool> CheckExistAsync(int PersonID)
+        {
 
+            return await _PeopleDataInterface.IsPersonExistAsync(PersonID);
+
+        }
+
+        public async Task<int?> CreatePerson(PersonDTO PersonDTO)
+        {
+
+             return await _PeopleDataInterface.AddNewPersonAsync(PersonDTO);
+            
+        }
+
+        public async Task<bool> UpdatePerson(PersonDTO PersonDTO)
+        {
+            return await _PeopleDataInterface.UpdatePersonAsync(PersonDTO);
+        }
+
+        public async Task<bool> DeleteAsync(int PersonID)
+        {
+            
+            return await _PeopleDataInterface.DeletePersonAsync(PersonID);
+        }
+
+        public  async Task<bool> DeleteAsync(string NationalNo)
+        {
+            
+            return await _PeopleDataInterface.DeletePersonAsync(NationalNo);
+
+        }
+
+        
+        public  async Task<IEnumerable<PersonViewDTO>> GetAllAsync()
+        {
+            return await _PeopleDataInterface.GetPeopleAsync();
 
 
 
         }
 
-        public static async Task<clsPerson> Find(int PersonID)
-        {
-            PersonDTO PDTO = MapToDTO(await clsPeopleData.FindByIDAsync(PersonID));
 
-            return (PDTO != null) ? new clsPerson(PDTO, enMode.Update) : null;
-        }
-
-        public async Task< bool> SaveAsync()
+        /*public async Task<bool> SaveAsync(PersonDTO Person = null, enMode Mode = enMode.AddNew)
         {
+            Person = Person ?? this.PersonInfo;
+            Mode = Mode == enMode.AddNew ? this.Mode : Mode;
+
             switch (Mode)
             {
                 case enMode.AddNew:
 
-                    if (await _AddNewPerson())
+                    if (await _CreatePerson(Person))
                     {
                         Mode = enMode.Update;
                         return true;
@@ -101,124 +168,71 @@ namespace DVlD_BusinessLayer
 
                 case enMode.Update:
 
-                    return await _UpdatePerson();
+                    return await _UpdatePerson(Person);
 
 
                 default:
                     return false;
 
             }
-        }
+        }*/
 
-        private async Task< bool> _AddNewPerson()
+        /*        public static async Task<bool> DeletePersonAsync(int PersonID)
         {
+            clsPeopleData DataLayer = new clsPeopleData();
+            return await DataLayer.DeletePersonAsync(PersonID);
+        }*/
 
-            this.PersonID =await clsPeopleData.AddNewPersonAsync(MapToEntity(PDTO));
-            return (PersonID != null);
-        }
 
-        private async Task<bool> _UpdatePerson()
+        /* public static async Task<bool> DeletePersonAsync(string NationalNo)
+         {
+             clsPeopleData DataLayer = new clsPeopleData();
+             return await DataLayer.DeletePersonAsync(NationalNo);
+
+         }
+ */
+
+
+        /*public static async Task<bool> IsPersonExistAsync(int ID)
         {
-            return await clsPeopleData.UpdatePersonAsync(MapToEntity(PDTO));
-        }
+            clsPeopleData DataLayer = new clsPeopleData();
+            return await DataLayer.IsPersonExistAsync(ID);
+        }*/
 
-        public static async Task<bool> DeletePersonAsync(int PersonID)
+        /*public static async Task<bool> IsPersonExistAsync(string NationalNo)
         {
-            return await clsPeopleData.DeletePersonAsync(PersonID);
-        }
+            clsPeopleData DataLayer = new clsPeopleData();
+            return await DataLayer.IsPersonExistAsync(NationalNo);
+        }*/
 
-        public static async Task<bool> DeletePersonAsync(string NationalNo)
+        /* public static async Task<IEnumerable<PersonViewDTO>> GetAllPeopleAsync()
+         {
+             clsPeopleData DataLayer = new clsPeopleData();
+             return await DataLayer.GetPeopleAsync();
+
+         }*/
+
+        /* public static async Task<clsPerson> Find(string NationalNo)
+       {
+           clsPeopleData DataLayer = new clsPeopleData();
+           PersonDTO PDTO =await DataLayer.FindByNationalNoAsync(NationalNo);
+
+           return (PDTO != null) ? new clsPerson(DataLayer, PDTO) : null;
+
+
+
+
+
+       }*/
+
+        /*public static async Task<clsPerson> Find(int PersonID)
         {
-            return await clsPeopleData.DeletePersonAsync(NationalNo);
+            clsPeopleData DataLayer = new clsPeopleData();
+            PersonDTO PDTO = await DataLayer.FindByIDAsync(PersonID);
 
-        }
+            return (PDTO != null) ? new clsPerson(DataLayer, PDTO) : null;
+        }*/
 
-        public static async Task<bool> IsPersonExistAsync(int ID)
-        {
-            return await clsPeopleData.IsPersonExistAsync(ID);
-        }
-
-        public static async Task<bool> IsPersonExistAsync(string NationalNo)
-        {
-            return await clsPeopleData.IsPersonExistAsync(NationalNo);
-        }
-
-        public static async Task <IEnumerable<ListPersonDTO>> GetAllPeopleAsync()
-        {
-            var persons = await clsPeopleData.GetPeopleAsync();
-            return MapToLDTOs(persons);
-        }
-        
-        private static PersonDTO MapToDTO(Person Person)
-        {
-            return new PersonDTO(
-
-               Person.PersonID,
-               Person.NationalNo,
-               Person.FirstName,
-               Person.SecondName,
-               Person.ThirdName,
-               Person.LastName,
-               Person.DateOfBirth,
-               Person.Gender,
-               Person.Address,
-               Person.Phone,
-               Person.Email,
-               Person.Nationality,
-               Person.ImagePath
-
-            );
-        }
-        
-        private static ListPersonDTO MapToLDTO(PersonView Person)
-        {
-            PersonDTO PDTO = new PersonDTO(Person.PersonID,
-               Person.NationalNo,
-               Person.FirstName,
-               Person.SecondName,
-               Person.ThirdName,
-               Person.LastName,
-               Person.DateOfBirth,
-               Person.Gender,
-               Person.Address,
-               Person.Phone,
-               Person.Email,
-               Person.Nationality,
-               Person.ImagePath);
-
-            return new ListPersonDTO(PDTO,Person.CountryName,Person.Genderstr);
-        }
-        
-        private Person MapToEntity(PersonDTO Person)
-        {
-            return new Person(
-
-                Person.PersonID,
-                Person.NationalNo,
-                Person.FirstName,
-                Person.SecondName,
-                Person.ThirdName,
-                Person.LastName,
-                Person.DateOfBirth,
-                Person.Gender,
-                Person.Address,
-                Person.Phone,
-                Person.Email,
-                Person.Nationality,
-                Person.ImagePath
-
-            );
-        }
-        
-        private static IEnumerable<ListPersonDTO> MapToLDTOs(IEnumerable<PersonView> persons)
-        {
-            var personDTOs = new List<ListPersonDTO>();
-            foreach (var person in persons)
-            {
-                personDTOs.Add(MapToLDTO(person));
-            }
-            return personDTOs;
-        }
     }
 
 

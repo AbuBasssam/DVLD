@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer
 {
-    public class PersonView
+    public class PersonViewDTO
     {
-        public Nullable<int> PersonID { set; get; }
+        public int? PersonID { set; get; }
         public string NationalNo { set; get; }
         public string FirstName { set; get; }
         public string SecondName { set; get; }
@@ -29,7 +29,7 @@ namespace DVLD_DataAccessLayer
         }
         public string CountryName { set; get; }
         public string Genderstr { set; get; }
-        public PersonView(Person PersonInfo, string CountryName, string Genderstr)
+        public PersonViewDTO(PersonDTO PersonInfo, string CountryName, string Genderstr)
         {
             this.PersonID = PersonInfo.PersonID;
             this.NationalNo = PersonInfo.NationalNo;

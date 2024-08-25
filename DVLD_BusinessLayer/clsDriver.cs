@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
-using DVlD_BusinessLayer.DTOs;
 
 namespace DVlD_BusinessLayer
 {
@@ -35,7 +34,7 @@ namespace DVlD_BusinessLayer
             this.PersonID = DriverDTO.PersonID;
             this.CreatedByUserID = DriverDTO.CreatedByUserID;
             this.CreatedDate = DriverDTO.CreatedDate;
-            this.PersonInfo=clsPerson.Find(PersonID).Result;
+            //this.PersonInfo=clsPerson.Find(PersonID).Result;
             this.Mode = cMode;
         }
 
@@ -57,22 +56,22 @@ namespace DVlD_BusinessLayer
 
         }
        
-        public static async Task<IEnumerable<ListDriverDTO>> GetAllDriver()
+        public static async Task<IEnumerable<DriverViewDTO>> GetAllDriver()
         {
             var Drivers = await clsDriverData.GetAllDriversAsync();
-            return MapToLDTOs(Drivers);
+            return Drivers;
         }
 
         private async Task<bool> _AddNewDriver()
         {
-            this.DriverID= await clsDriverData.AddNewDriverAsync(MapToEntity(DDTO));
+            this.DriverID= await clsDriverData.AddNewDriverAsync(DDTO);
             return (this.DriverID != null);
         }
        
         private async Task<bool> _UpdateDriver()
         {
 
-            return await clsDriverData.UpdateDriverAsync(MapToEntity(DDTO));
+            return await clsDriverData.UpdateDriverAsync(DDTO);
         }
 
         public static async Task<bool> IsDriverExistByPersonID( int PersonID)
@@ -129,7 +128,7 @@ namespace DVlD_BusinessLayer
             return clsInternationalLicense.GetAllDriverInternationalLicenses((int)DriverID);
         }
 
-        private static DriverDTO MapToDTO(Driver Driver)
+        private static DriverDTO MapToDTO(DriverDTO Driver)
         {
             return new DriverDTO(
 
@@ -142,42 +141,10 @@ namespace DVlD_BusinessLayer
             );
         }
 
-        private static ListDriverDTO MapToLDTO(DriverView DriverView)
-        {
-            return new ListDriverDTO
-            (
-               DriverView.DriverID,
-               DriverView.PersonID,
-               DriverView.NationalNo,
-               DriverView.FullName,
-               DriverView.CreatedDate,
-               DriverView.NumberOfActiveLicenses
-            );
+       
 
-
-        }
-
-        private static IEnumerable<ListDriverDTO> MapToLDTOs(IEnumerable<DriverView> Drivers)
-        {
-            var DriverDTOs = new List<ListDriverDTO>();
-            foreach (var Driver in Drivers)
-            {
-                DriverDTOs.Add(MapToLDTO(Driver));
-            }
-            return DriverDTOs;
-        }
-
-        private Driver MapToEntity(DriverDTO Driver)
-        {
-            return new Driver
-            (
-
-                Driver.DriverID,
-                Driver.PersonID,
-                Driver.CreatedByUserID,
-                Driver.CreatedDate
-            );
-        }
+        
+        
 
 
     }

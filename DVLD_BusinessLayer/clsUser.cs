@@ -37,7 +37,7 @@ namespace DVlD_BusinessLayer
             this.UserName = UDTO.UserName;
             this.Password = UDTO.Password;
             this.IsActive = UDTO.IsActive;
-            this.PersonInfo = clsPerson.Find(UDTO.PersonID).Result;
+           // this.PersonInfo = clsPerson.Find(UDTO.PersonID).Result;
             Mode = cMode;
 
         }
@@ -91,13 +91,13 @@ namespace DVlD_BusinessLayer
 
         private async Task<bool> _AddNewUserAsync()
         {
-            this.UserID =await clsUserData.AddNewUserAsync(MapToEntity(UDTO));
+            this.UserID =await clsUserData.AddNewUserAsync(UDTO);
                 return (UserID !=null);
         }
 
         private async Task< bool> _UpdateUser()
         {
-            return await clsUserData.UpdateUserAsync(MapToEntity(UDTO));
+            return await clsUserData.UpdateUserAsync(UDTO);
         }
 
         public static async Task<bool> DeleteUser(int UserID)
@@ -123,10 +123,10 @@ namespace DVlD_BusinessLayer
         public static async Task<IEnumerable<UsersViewDTO>> GetAllUsers()
         {
             var Users = await clsUserData.GetUsersAsync();
-            return MapToLDTOs(Users);
+            return Users;
         }
 
-        private static UserDTO MapToDTO(User User)
+        private static UserDTO MapToDTO(UserDTO User)
         {
             return new UserDTO(
 
@@ -139,42 +139,10 @@ namespace DVlD_BusinessLayer
             );
         }
 
-        private static UsersViewDTO MapToLDTO(ListUsersView UserView)
-        {
-            return new UsersViewDTO
-            (
-               UserView.UserID,
-               UserView.PersonID,
-               UserView.FullName,
-               UserView.UserName,
-               UserView.IsActive
-            );
-
-             
-        }
         
-        private User MapToEntity(UserDTO User)
-        {
-            return new User
-            (
-
-                User.UserID,
-                User.PersonID,
-                User.UserName,
-                User.Password,
-                User.IsActive
-            );
-        }
         
-        private static IEnumerable<UsersViewDTO> MapToLDTOs(IEnumerable<ListUsersView> Users)
-        {
-            var UserDTOs = new List<UsersViewDTO>();
-            foreach (var User in Users)
-            {
-                UserDTOs.Add(MapToLDTO(User));
-            }
-            return UserDTOs;
-        }
+        
+        
 
     }
 

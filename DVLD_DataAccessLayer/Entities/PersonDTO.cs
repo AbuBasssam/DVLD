@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DVlD_BusinessLayer
+namespace DVLD_DataAccessLayer
 {
     public class PersonDTO
     {
-
-        public Nullable<int> PersonID { set; get; }
+        public int? PersonID { set; get; }
         public string NationalNo { set; get; }
         public string FirstName { set; get; }
         public string SecondName { set; get; }
@@ -28,7 +27,8 @@ namespace DVlD_BusinessLayer
             get { return _ImagePath; }
             set { _ImagePath = value; }
         }
-        public PersonDTO(Nullable<int> PersonID, string NationalNo, string FirstName, string SecondName
+        
+        public PersonDTO(int? PersonID,string NationalNo, string FirstName, string SecondName
             , string ThirdName, string LastName, DateTime DateOfBirth, byte Gender,
             string Address, string Phone, string Email, int Nationality, string ImagePath)
         {
@@ -49,5 +49,9 @@ namespace DVlD_BusinessLayer
         }
 
 
+        
+
     }
+
+
 }

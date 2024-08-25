@@ -1,5 +1,7 @@
 ﻿using DVlD_BusinessLayer;
-using DVlD_BusinessLayer.DTOs;
+using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
 using System.Reflection.Metadata.Ecma335;
 
 namespace DVLD_API
@@ -42,7 +44,7 @@ namespace DVLD_API
             return (DateOfBirth - CompareDate).TotalDays > 0;
         }
         
-        public static enPersonBadRequestTypes PersonCheckConstraints( PersonDTO NewPersonDTO)
+        public static enPersonBadRequestTypes PersonCheckConstraints( IPerson PersonSetting,PersonDTO NewPersonDTO)
         {
             if (NewPersonDTO == null)
             {
@@ -58,10 +60,10 @@ namespace DVLD_API
             if (clsUtil.IsUnderAge(NewPersonDTO.DateOfBirth))
                 return enPersonBadRequestTypes.UnderAge;
 
-            var Exist = clsPerson.IsPersonExistAsync(NewPersonDTO.NationalNo);
-            if (Exist.Result)
+            
+            if (PersonSetting.CheckExistAsync(NewPersonDTO.NationalNo).Result)
             {
-                return enPersonBadRequestTypes.NationalNoDuplicate; 
+                return enPersonBadRequestTypes.NationalNoDuplicate;
             }
 
             return enPersonBadRequestTypes.None;
@@ -78,11 +80,11 @@ namespace DVLD_API
                 return enUserBadRequestTypes.EmptyFileds;
             }
 
-            if (clsPerson.Find(NewUserDTO.PersonID) == null)
+            /*if (clsPerson.Find(NewUserDTO.PersonID) == null)
             {
 
                 return enUserBadRequestTypes.InvalidPersonID;
-            }
+            }*/
 
             if (clsUser.IsAlreadyUserExist(NewUserDTO.PersonID).Result)
             {
@@ -112,11 +114,11 @@ namespace DVLD_API
                 return enDriverBadRequestTypes.EmptyFileds;
             }
             
-            if (clsPerson.Find(NewDriverDTO.PersonID) == null)
+            /*if (clsPerson.Find(NewDriverDTO.PersonID) == null)
             {
 
                 return enDriverBadRequestTypes.InvalidPersonID;
-            }
+            }*/
 
             if (clsDriver.FindByPersonID(NewDriverDTO.PersonID)!=null)
             {

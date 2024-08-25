@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer.Entities
 {
-    public class DriverView
+    public class DriverViewDTO
     {
         public int DriverID { get; set; }
         public int PersonID { get; set; }
@@ -14,7 +14,7 @@ namespace DVLD_DataAccessLayer.Entities
         public string FullName { get; set; }
         public DateTime CreatedDate { get; set; }
         public byte NumberOfActiveLicenses { get; set; }
-        public DriverView(int DriverID, int PersonID, string NationalNo, string FullName, DateTime CreatedDate, byte NumberOfActiveLicenses)
+        public DriverViewDTO(int DriverID, int PersonID, string NationalNo, string FullName, DateTime CreatedDate, byte NumberOfActiveLicenses)
         {
             this.DriverID = DriverID;
             this.PersonID = PersonID;

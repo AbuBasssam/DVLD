@@ -16,10 +16,10 @@ namespace DVLD_DataAccessLayer
 
     public static class clsDriverData
     {
-        public static async Task<IEnumerable<DriverView>> GetAllDriversAsync()
+        public static async Task<IEnumerable<DriverViewDTO>> GetAllDriversAsync()
         {
 
-            List<DriverView> DriversList = new List<DriverView>();
+            List<DriverViewDTO> DriversList = new List<DriverViewDTO>();
             try
             {
                 using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
@@ -69,7 +69,7 @@ namespace DVLD_DataAccessLayer
             return DriversList;
         }
     
-        public static async Task<Driver> FindByDriverIDAsync(int DriverID)
+        public static async Task<DriverDTO> FindByDriverIDAsync(int DriverID)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static async Task<Driver> FindByPersonIDAsync(int PersonID)
+        public static async Task<DriverDTO> FindByPersonIDAsync(int PersonID)
         {
 
             try
@@ -166,7 +166,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<int?> AddNewDriverAsync(Driver DriverDTO)
+        public static async Task<int?> AddNewDriverAsync(DriverDTO DriverDTO)
         {
 
             try
@@ -210,7 +210,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> UpdateDriverAsync(Driver DriverDTO)
+        public static async Task<bool> UpdateDriverAsync(DriverDTO DriverDTO)
         {
             int rowsAffected = 0;
             try
@@ -362,9 +362,9 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        private static DriverView MapReaderToDriverView(IDataReader reader)
+        private static DriverViewDTO MapReaderToDriverView(IDataReader reader)
         {
-            return new DriverView
+            return new DriverViewDTO
                                  (
                                           reader.GetInt32(reader.GetOrdinal("DriverID")),
                                           reader.GetInt32(reader.GetOrdinal("PersonID")),
@@ -375,9 +375,9 @@ namespace DVLD_DataAccessLayer
                                  );
         }
 
-        private static Driver MapReaderToDriver(IDataReader reader)
+        private static DriverDTO MapReaderToDriver(IDataReader reader)
         {
-            return new Driver
+            return new DriverDTO
                                   (
 
                                       reader.GetInt32(reader.GetOrdinal("DriverID")),

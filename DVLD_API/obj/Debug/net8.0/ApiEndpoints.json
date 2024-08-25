@@ -9,13 +9,13 @@
     "Parameters": [
       {
         "Name": "NewDriverDTO",
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -45,7 +45,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.DTOs.ListDriverDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.Entities.DriverViewDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -81,7 +81,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -126,7 +126,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -225,13 +225,13 @@
       },
       {
         "Name": "UpdatedDriver",
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.DTOs.DriverDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.DriverDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -270,13 +270,13 @@
     "Parameters": [
       {
         "Name": "NewPersonDTO",
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -306,7 +306,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.ListPersonDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.PersonViewDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -329,7 +329,48 @@
   {
     "ContainingType": "DVLD_API.Controllers.PeopleController",
     "Method": "DeletePerson",
-    "RelativePath": "api/DVLD/People/DeletePerson/{PersonID}",
+    "RelativePath": "api/DVLD/People/DeletePersonBy/NationalNo{NationalNo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NationalNo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "DeletePersonByNationalNo"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.PeopleController",
+    "Method": "DeletePerson",
+    "RelativePath": "api/DVLD/People/DeletePersonByID/{PersonID}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -365,7 +406,7 @@
         "StatusCode": 404
       }
     ],
-    "EndpointName": "DeletePerson"
+    "EndpointName": "DeletePersonByID"
   },
   {
     "ContainingType": "DVLD_API.Controllers.PeopleController",
@@ -383,7 +424,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -428,7 +469,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -527,13 +568,13 @@
       },
       {
         "Name": "UpdatedPerson",
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.PersonDTO",
+        "Type": "DVLD_DataAccessLayer.PersonDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -572,13 +613,13 @@
     "Parameters": [
       {
         "Name": "NewUserDTO",
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -608,7 +649,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVlD_BusinessLayer.UsersViewDTO, DVlD_BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.UsersViewDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -685,7 +726,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -730,7 +771,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -771,7 +812,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -838,13 +879,13 @@
       },
       {
         "Name": "UpdatedUser",
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "DVlD_BusinessLayer.UserDTO",
+        "Type": "DVLD_DataAccessLayer.UserDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

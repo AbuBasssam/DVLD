@@ -14,7 +14,7 @@ namespace DVLD_DataAccessLayer
 
     public class clsUserData
     {
-        public static async Task<User> FindByPersonIDAsync(int PersonID)
+        public static async Task<UserDTO> FindByPersonIDAsync(int PersonID)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
        
-        public static async Task<User> FindByUserIDAsync(int UserID)
+        public static async Task<UserDTO> FindByUserIDAsync(int UserID)
         {
             
             try
@@ -94,7 +94,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<User> FindAsync(string UserName,string Password)
+        public static async Task<UserDTO> FindAsync(string UserName,string Password)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<int?> AddNewUserAsync(User UserDTO)
+        public static async Task<int?> AddNewUserAsync(UserDTO UserDTO)
         {
            
             try
@@ -179,7 +179,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<bool> UpdateUserAsync(User UserDTO)
+        public static async Task<bool> UpdateUserAsync(UserDTO UserDTO)
         {
             int rowsAffected = 0;
           
@@ -370,10 +370,10 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
         
-        public static async Task<IEnumerable<ListUsersView>> GetUsersAsync()
+        public static async Task<IEnumerable<UsersViewDTO>> GetUsersAsync()
         {
 
-           List<ListUsersView> UsersList = new List<ListUsersView>();
+           List<UsersViewDTO> UsersList = new List<UsersViewDTO>();
             
             try
             {
@@ -412,9 +412,9 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        private static User MapReaderToUser(IDataReader reader)
+        private static UserDTO MapReaderToUser(IDataReader reader)
         {
-            return new User
+            return new UserDTO
                                 (
                                     reader.GetInt32(reader.GetOrdinal("UserID")),
                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
@@ -425,9 +425,9 @@ namespace DVLD_DataAccessLayer
                                 );
         }
 
-        private static ListUsersView MapReaderToUserView(IDataReader reader)
+        private static UsersViewDTO MapReaderToUserView(IDataReader reader)
         {
-            return new ListUsersView
+            return new UsersViewDTO
                                 (
                                     reader.GetInt32(reader.GetOrdinal("UserID")),
                                     reader.GetInt32(reader.GetOrdinal("PersonID")),
