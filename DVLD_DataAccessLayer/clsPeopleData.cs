@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
+using System.Configuration;
 
 namespace DVLD_DataAccessLayer
 {

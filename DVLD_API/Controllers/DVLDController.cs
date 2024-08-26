@@ -8,6 +8,7 @@ using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
 
 using DVLD_DataAccessLayer.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DVLD_API.Controllers
 {
@@ -263,18 +264,25 @@ namespace DVLD_API.Controllers
     [Route("api/DVLD/Users")]
     [ApiController]
     public class UsersController : ControllerBase
+
     {
+        private IUser _User;
+        public UsersController(IUser UserInterface)
+        {
+            _User = UserInterface;
+        }
+
         [HttpGet("AllUsers", Name = "GetAllUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<UsersViewDTO>> GetAllUsers()
         {
-           var UsersList = clsUser.GetAllUsers().Result;
-            if (UsersList.Count() == 0)
+           var UsersList = _User.GetAllUsers();
+            if (UsersList.Result.Count() == 0)
             {
                 return NotFound("No Users Found!");
             }
-            return Ok(UsersList); // Returns the list of students.
+            return Ok(UsersList.Result); 
 
         }
 
@@ -294,7 +302,7 @@ namespace DVLD_API.Controllers
                 return BadRequest($"Not accepted ID {UserID}");
             }
 
-           var User =clsUser.FindByUserID(UserID);
+           var User =_User.FindByUserID(UserID);
 
             if (User == null)
             {
@@ -302,10 +310,9 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            UserDTO UDTO = User.Result.UDTO;
 
-            //we return the DTO not the student object.
-            return Ok(UDTO);
+            //we return the DTO not the User object.
+            return Ok(User.Result.UDTO);
 
         }
 
@@ -318,7 +325,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<UserDTO> GetUserByPersonID(int PersonID){
 
-           var User = clsUser.FindByPersonID(PersonID);
+           var User = _User.FindByPersonID(PersonID);
 
             if (User == null)
             {
@@ -326,10 +333,8 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            UserDTO UDTO = User.Result.UDTO;
-
-            //we return the DTO not the student object.
-            return Ok(UDTO);
+            //we return the DTO not the User object.
+            return Ok(User.Result.UDTO); 
 
         }
         
@@ -343,16 +348,15 @@ namespace DVLD_API.Controllers
         public ActionResult<UserDTO> GetUserByUserNameAndPassword(string UserName,string Password)
         {
 
-           var User = clsUser.Find(UserName,Password);
+          var User = _User.Find(UserName,Password);
 
             if (User == null)
             {
                 return NotFound($"User with these information not found.");
             }
 
-            UserDTO UDTO = User.Result.UDTO;
 
-            return Ok(UDTO);
+            return Ok(User.Result.UDTO);
 
         }
 
@@ -362,8 +366,8 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<UserDTO> AddUser(UserDTO NewUserDTO)
         {
-            
-            /*switch (clsUtil.UserCheckConstraints(NewUserDTO))
+
+            switch (clsUtil.UserCheckConstraints(_User,NewUserDTO))
             {
                 case clsUtil.enUserBadRequestTypes.NullObject:
                     return BadRequest($"The Object is Null fill it ");
@@ -376,20 +380,23 @@ namespace DVLD_API.Controllers
 
                 case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
                     return BadRequest($"The UserName '{NewUserDTO.UserName}' already exists.");
-                
+
                 case clsUtil.enUserBadRequestTypes.AlreadyUser:
                     return BadRequest($"This person is already a user");
-            }*/
+            }
 
-           var User = new clsUser(new UserDTO(NewUserDTO.UserID, NewUserDTO.PersonID,
-                     NewUserDTO.UserName, NewUserDTO.Password, NewUserDTO.IsActive));
+            
+            
+            var User = _User.CreateUserAsync(new UserDTO(NewUserDTO.UserID, NewUserDTO.PersonID,
+                    NewUserDTO.UserName, NewUserDTO.Password, NewUserDTO.IsActive));
 
-                    var Result= User.SaveAsync();
 
-                     NewUserDTO.UserID = Convert.ToInt32(User.UserID);
+            NewUserDTO.UserID = (User.Result==null)? 0: User.Result.Value;
 
-                
-                 return CreatedAtRoute("GetUserByID", new { UserID = NewUserDTO.UserID }, NewUserDTO);
+            if (NewUserDTO.UserID != 0)
+                return CreatedAtRoute("GetUserByID", new { UserID = NewUserDTO.UserID }, NewUserDTO);
+            else
+                return BadRequest("Adding Failed");
 
         }
 
@@ -401,7 +408,7 @@ namespace DVLD_API.Controllers
         public ActionResult<UserDTO> UpdateUser(int UserID, UserDTO UpdatedUser)
         {
            
-           var User =clsUser.FindByUserID(UserID);
+           var User =_User.FindByUserID(UserID);
 
                  if (User == null)
                  {
@@ -409,7 +416,7 @@ namespace DVLD_API.Controllers
                  }
 
 
-            /*switch (clsUtil.UserCheckConstraints(UpdatedUser))
+            switch (clsUtil.UserCheckConstraints(_User,UpdatedUser))
             {
                 case clsUtil.enUserBadRequestTypes.NullObject:
                     return BadRequest($"The Object is Null fill it ");
@@ -420,25 +427,24 @@ namespace DVLD_API.Controllers
                 case clsUtil.enUserBadRequestTypes.InvalidPersonID:
                     return BadRequest($"The personID {UpdatedUser.PersonID} is not exists");
 
-                case clsUtil.enUserBadRequestTypes.AlreadyUser:
-                    return BadRequest($"This person is already a user");
+               
 
                 case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
                     if (User.Result.UserName != UpdatedUser.UserName)
                         return BadRequest($"The UserName '{UpdatedUser.UserName}' already exists.");
                     else
                         break;
-            }*/
+            }
 
-                 User.Result.PersonID = UpdatedUser.PersonID;
-                 User.Result.UserName = UpdatedUser.UserName;
-                 User.Result.Password = UpdatedUser.Password;
-                 User.Result.IsActive = UpdatedUser.IsActive;
-                 
+            User.Result.PersonID = UpdatedUser.PersonID;
+            User.Result.UserName = UpdatedUser.UserName;
+            User.Result.Password = UpdatedUser.Password;
+            User.Result.IsActive = UpdatedUser.IsActive;
 
-                var Result= User.Result.SaveAsync();
 
-                 return Ok(User.Result.UDTO);
+            var Result=_User.UpdateUser (User.Result.UDTO);
+
+            return Ok(User.Result.UDTO);
 
              }
         
@@ -453,31 +459,31 @@ namespace DVLD_API.Controllers
                 {
                     return BadRequest($"Not accepted ID {UserID}");
                 }
-                
-                if (clsUser.DeleteUser(UserID).Result)
 
-                    return Ok($"User with ID {UserID} has been deleted.");
-                else
-                    return NotFound($"User with ID {UserID} not found. no rows deleted!");
-            }
-        
-        
+            if (_User.DeleteUser(UserID).Result)
+
+                return Ok($"User with ID {UserID} has been deleted.");
+            else
+                return NotFound($"User with ID {UserID} not found. no rows deleted!");
+        }
+
+
         [HttpGet("IsUserExist/{UserID}", Name = "IsUserExist")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<bool> IsUserExists(int UserID)
             {
-                if (clsUser.IsUserExist(UserID).Result)
-                {
-                    return Ok(new { Exists = true, Message = "The user exists." });
+            if (_User.IsUserExist(UserID).Result)
+            {
+                return Ok("The user exists." );
 
-                }
-                else
-                {
-                  return NoContent();
-
-                }
             }
+            else
+            {
+                return NoContent();
+
+            }
+        }
         
 
     }

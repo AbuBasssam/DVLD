@@ -15,7 +15,7 @@ namespace DVLD_DataAccessLayer
     {
         //public static string ConnectionString = ConfigurationManager.ConnectionStrings["Admin"].ToString();
         
-         public static string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=sa123456;";
+        public static string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=sa123456;";
 
     }
 }

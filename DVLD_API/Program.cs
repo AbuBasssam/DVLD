@@ -11,6 +11,11 @@ builder.Services.AddScoped<IPeopleDataInterface, clsPeopleData>(); // Register t
 
 builder.Services.AddScoped<IPerson, clsPerson>();
 
+builder.Services.AddScoped<IUserDataInterface, clsUserData>(); // Register the implementation for IPeopleDataInterface
+
+builder.Services.AddScoped<IUser, clsUser>();
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

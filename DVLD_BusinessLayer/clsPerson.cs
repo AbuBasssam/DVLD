@@ -59,9 +59,7 @@ namespace DVlD_BusinessLayer
        
         private clsPerson(IPeopleDataInterface PeopleDataInterface,PersonDTO PDTO)
         {
-            _PeopleDataInterface = PeopleDataInterface;
-
-
+            this._PeopleDataInterface = PeopleDataInterface;
             this.PersonID = PDTO.PersonID;
             this.NationalNo = PDTO.NationalNo;
             this.FirstName = PDTO.FirstName;

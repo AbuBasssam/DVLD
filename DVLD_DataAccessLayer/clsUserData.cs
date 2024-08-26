@@ -7,14 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Security.Cryptography;
-
+using DVLD_DataAccessLayer.Interfaces;
 namespace DVLD_DataAccessLayer
 {
 
 
-    public class clsUserData
+    public class clsUserData:IUserDataInterface
     {
-        public static async Task<UserDTO> FindByPersonIDAsync(int PersonID)
+        public  async Task<UserDTO> FindByPersonIDAsync(int PersonID)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace DVLD_DataAccessLayer
                         {
                             if (await reader.ReadAsync())
                             {
-                                MapReaderToUser(reader);
+                               return MapReaderToUser(reader);
                             }
                         }
 
@@ -50,7 +50,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
        
-        public static async Task<UserDTO> FindByUserIDAsync(int UserID)
+        public  async Task<UserDTO> FindByUserIDAsync(int UserID)
         {
             
             try
@@ -69,7 +69,7 @@ namespace DVLD_DataAccessLayer
                         {
                             if (await reader.ReadAsync())
                             {
-                                MapReaderToUser(reader);
+                                return MapReaderToUser(reader);
 
                             }
                            
@@ -94,7 +94,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<UserDTO> FindAsync(string UserName,string Password)
+        public  async Task<UserDTO> FindAsync(string UserName,string Password)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace DVLD_DataAccessLayer
                             if (await reader.ReadAsync())
                             {
 
-                                MapReaderToUser(reader);
+                               return MapReaderToUser(reader);
 
                             }
                            
@@ -136,7 +136,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<int?> AddNewUserAsync(UserDTO UserDTO)
+        public  async Task<int?> AddNewUserAsync(UserDTO UserDTO)
         {
            
             try
@@ -179,7 +179,7 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public static async Task<bool> UpdateUserAsync(UserDTO UserDTO)
+        public  async Task<bool> UpdateUserAsync(UserDTO UserDTO)
         {
             int rowsAffected = 0;
           
@@ -219,7 +219,7 @@ namespace DVLD_DataAccessLayer
             return (rowsAffected==1);
         }
 
-        public static async Task<bool> DeleteUserAsync(int UserID)
+        public  async Task<bool> DeleteUserAsync(int UserID)
         {
 
             int rowsAffected = 0;
@@ -254,7 +254,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> IsUserExistAsync(int UserID)
+        public  async Task<bool> IsUserExistAsync(int UserID)
         {
            bool IsExist=false;
 
@@ -292,7 +292,7 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
         
-        public static async Task<bool> IsUserExistAsync(string UserName)
+        public  async Task<bool> IsUserExistAsync(string UserName)
         {
             bool IsExist = false;
 
@@ -330,7 +330,7 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
 
-        public static async Task<bool> IsAlreadyUserExistAsync(int PersonID)
+        public  async Task<bool> IsAlreadyUserExistAsync(int PersonID)
         {
             bool IsExist = false;
             try
@@ -370,7 +370,7 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
         
-        public static async Task<IEnumerable<UsersViewDTO>> GetUsersAsync()
+        public  async Task<IEnumerable<UsersViewDTO>> GetUsersAsync()
         {
 
            List<UsersViewDTO> UsersList = new List<UsersViewDTO>();
@@ -412,7 +412,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        private static UserDTO MapReaderToUser(IDataReader reader)
+        private  UserDTO MapReaderToUser(IDataReader reader)
         {
             return new UserDTO
                                 (
@@ -425,7 +425,7 @@ namespace DVLD_DataAccessLayer
                                 );
         }
 
-        private static UsersViewDTO MapReaderToUserView(IDataReader reader)
+        private  UsersViewDTO MapReaderToUserView(IDataReader reader)
         {
             return new UsersViewDTO
                                 (

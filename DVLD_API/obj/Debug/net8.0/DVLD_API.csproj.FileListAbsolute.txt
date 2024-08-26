@@ -43,3 +43,4 @@ C:\Users\Hp\source\repos\Git_DVLD\DVLD_API\obj\Debug\net8.0\DVLD_API.genruntimec
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_API\obj\Debug\net8.0\ref\DVLD_API.dll
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_API\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\Hp\source\repos\Git_DVLD\DVLD_API\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\Hp\source\repos\Git_DVLD\DVLD_API\obj\Debug\net8.0\DVLD_API.MvcApplicationPartsAssemblyInfo.cs

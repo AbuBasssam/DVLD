@@ -22,7 +22,7 @@ namespace DVLD_API
                 clsUtil.IsFieldEmpty(NewPersonDTO.Address) ||
                 clsUtil.IsFieldEmpty(NewPersonDTO.Phone)
                 );
-        }
+        }//Nationality constraint
         private static bool HasUserHaveEmptyFileds(UserDTO NewUserDTO)
         {
             return (
@@ -69,7 +69,7 @@ namespace DVLD_API
             return enPersonBadRequestTypes.None;
         }
 
-        public static enUserBadRequestTypes UserCheckConstraints(UserDTO NewUserDTO)
+        public static enUserBadRequestTypes UserCheckConstraints(IUser UserSetting,UserDTO NewUserDTO)
         {
             if (NewUserDTO == null)
             {
@@ -80,25 +80,25 @@ namespace DVLD_API
                 return enUserBadRequestTypes.EmptyFileds;
             }
 
-            /*if (clsPerson.Find(NewUserDTO.PersonID) == null)
+            if (UserSetting.FindByPersonID(NewUserDTO.PersonID) == null)
             {
 
                 return enUserBadRequestTypes.InvalidPersonID;
-            }*/
+            }
 
-            if (clsUser.IsAlreadyUserExist(NewUserDTO.PersonID).Result)
+            if (UserSetting.IsAlreadyUserExist(NewUserDTO.PersonID).Result)
             {
 
                 return enUserBadRequestTypes.AlreadyUser;
             }
 
-            if (clsUser.IsUserExist(NewUserDTO.UserName).Result)
+            if (UserSetting.IsUserExist(NewUserDTO.UserName).Result)
             {
                 return enUserBadRequestTypes.UserNameDuplicate;
             }
-            
 
-            
+
+
 
             return enUserBadRequestTypes.None;
         }

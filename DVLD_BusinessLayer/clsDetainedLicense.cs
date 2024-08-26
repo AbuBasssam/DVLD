@@ -58,12 +58,12 @@ namespace DVlD_BusinessLayer
             this.DetainDate = DetainDate;
             this.FineFees = FineFees;
             this.CreatedByUserID = CreatedByUserID;
-            this.CreatedByUserInfo = clsUser.FindByUserID(this.CreatedByUserID).Result;
+            //this.CreatedByUserInfo = clsUser.FindByUserID(this.CreatedByUserID).Result;
             this.IsReleased = IsReleased;
             this.ReleaseDate = ReleaseDate;
             this.ReleasedByUserID = ReleasedByUserID;
             this.ReleaseApplicationID = ReleaseApplicationID;
-            this.ReleasedByUserInfo = clsUser.FindByPersonID(this.ReleasedByUserID).Result;
+            //this.ReleasedByUserInfo = clsUser.FindByPersonID(this.ReleasedByUserID).Result;
             Mode = enMode.Update;
         }
 

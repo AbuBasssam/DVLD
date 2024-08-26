@@ -93,7 +93,7 @@ namespace DVlD_BusinessLayer
             this.IsActive = IsActive;
             this.IssueReason = (clsLicense.enIssueReason)IssueReason;
             this.ApplicationInfo = clsApplication.Find(ApplicationID);
-            this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
+            //this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
             this.DriverInfo=clsDriver.FindByDriverID(DriverID).Result;
             this.LicenseClassesInfo=clsLicenseClasses.Find(LicenseClass);
             this.DetainedInfo = clsDetainedLicense.FindByLicenseID(this.LicenseID);
