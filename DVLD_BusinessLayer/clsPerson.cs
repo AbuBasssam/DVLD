@@ -83,19 +83,19 @@ namespace DVlD_BusinessLayer
             this.Mode=enMode.AddNew;
         }
       
-        public async Task<PersonDTO> GetPerson(string NationalNo)
+        public async Task<clsPerson> GetPerson(string NationalNo)
         {
             PersonDTO PDTO =await _PeopleDataInterface.FindByNationalNoAsync(NationalNo);
 
-            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO).PersonInfo : null;
+            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO) : null;
 
         }
         
-        public async Task<PersonDTO> GetPerson(int PersonID)
+        public async Task<clsPerson> GetPerson(int PersonID)
         {
             PersonDTO PDTO = await _PeopleDataInterface.FindByIDAsync(PersonID);
 
-            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO).PersonInfo : null;
+            return (PDTO != null) ? new clsPerson(_PeopleDataInterface, PDTO) : null;
 
         }
 

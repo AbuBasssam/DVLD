@@ -59,7 +59,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            PersonDTO PDTO = Person.Result;
+            PersonDTO PDTO = Person.Result.PersonInfo;
 
             //we return the DTO not the student object.
             return Ok(PDTO);
@@ -83,7 +83,7 @@ namespace DVLD_API.Controllers
             }
 
             //here we get only the DTO object to send it back.
-            PersonDTO PDTO = Person.Result;
+            PersonDTO PDTO = Person.Result.PersonInfo;
 
             //we return the DTO not the student object.
             return Ok(PDTO);
@@ -174,9 +174,9 @@ namespace DVLD_API.Controllers
             Person.Result.Nationality = UpdatedPerson.Nationality;
             Person.Result.ImagePath = UpdatedPerson.ImagePath;
 
-            var result = _Person.UpdatePerson(Person.Result);
+            var result = _Person.UpdatePerson(Person.Result.PersonInfo);
 
-            return Ok(Person.Result);
+            return Ok(Person.Result.PersonInfo);
 
         }
 

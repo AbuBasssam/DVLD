@@ -11,8 +11,8 @@ namespace DVlD_BusinessLayer.Interfaces
 {
     public interface IPerson
     {
-        Task<PersonDTO> GetPerson(string NationalNo);
-        Task<PersonDTO> GetPerson(int PersonID);
+        Task<clsPerson> GetPerson(string NationalNo);
+        Task<clsPerson> GetPerson(int PersonID);
         Task<int?> CreatePerson(PersonDTO PersonDTO);
         Task<bool> UpdatePerson(PersonDTO PersonDTO);
         Task<bool> DeleteAsync(int PersonID);
