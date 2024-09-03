@@ -96,21 +96,22 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<PersonDTO> AddPerson(PersonDTO NewPersonDTO)
         {
-
-            //this code without verfying opreatoin
-            switch (clsUtil.PersonCheckConstraints(_Person,NewPersonDTO))
+            switch (_Person.IsValid(NewPersonDTO))
             {
-                case clsUtil.enPersonBadRequestTypes.NullObject:
+                case clsPerson.enPersonValidationType.NullObject:
                     return BadRequest($"The Object is Null fill it ");
 
-                case clsUtil.enPersonBadRequestTypes.EmptyFileds:
+                case clsPerson.enPersonValidationType.EmptyFileds:
                     return BadRequest($"Some fileds is empty,please fill it");
 
-                case clsUtil.enPersonBadRequestTypes.UnderAge:
+                case clsPerson.enPersonValidationType.UnderAge:
                     return BadRequest($"Invalid Date of birth  the age is under 18");
 
-                case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
+                case clsPerson.enPersonValidationType.NationalNoDuplicate:
                     return BadRequest($"The National number '{NewPersonDTO.NationalNo}' already exists.");
+                
+                case clsPerson.enPersonValidationType.WrongNationality:
+                    return BadRequest($"The NationalityID '{NewPersonDTO.Nationality}' is out of range the NationalityID show between 1 and 193 .");
             }
 
 
@@ -123,8 +124,6 @@ namespace DVLD_API.Controllers
            
            return CreatedAtRoute("GetPersonByID", new { PersonID = NewPersonDTO.PersonID }, NewPersonDTO);
             
-            
-
         }
 
 
@@ -142,24 +141,27 @@ namespace DVLD_API.Controllers
              {
                  return NotFound($"Person with ID {PersonID} not found.");
              }
-             switch (clsUtil.PersonCheckConstraints(_Person,UpdatedPerson))
+
+             switch (_Person.IsValid(UpdatedPerson))
              {
-                 case clsUtil.enPersonBadRequestTypes.NullObject:
+                 case clsPerson.enPersonValidationType.NullObject:
                      return BadRequest($"The Object is Null fill it ");
 
-                 case clsUtil.enPersonBadRequestTypes.EmptyFileds:
+                 case clsPerson.enPersonValidationType.EmptyFileds:
                      return BadRequest($"Some fileds is empty,please fill it");
 
-                 case clsUtil.enPersonBadRequestTypes.UnderAge:
+                 case clsPerson.enPersonValidationType.UnderAge:
                      return BadRequest($"Invalid Date of birth  the age is under 18");
 
-                 case clsUtil.enPersonBadRequestTypes.NationalNoDuplicate:
+                 case clsPerson.enPersonValidationType.NationalNoDuplicate:
 
                      if (Person.Result.NationalNo != UpdatedPerson.NationalNo)
                          return BadRequest($"The National number '{UpdatedPerson.NationalNo}' already exists.");
                      else
                          break;
-             }
+                case clsPerson.enPersonValidationType.WrongNationality:
+                    return BadRequest($"The NationalityID '{UpdatedPerson.Nationality}' is out of range the NationalityID show between 1 and 193 .");
+            }
 
             Person.Result.NationalNo = UpdatedPerson.NationalNo;
             Person.Result.FirstName = UpdatedPerson.FirstName;
@@ -171,7 +173,7 @@ namespace DVLD_API.Controllers
             Person.Result.Address = UpdatedPerson.Address;
             Person.Result.Phone = UpdatedPerson.Phone;
             Person.Result.Email = UpdatedPerson.Email;
-            Person.Result.Nationality = UpdatedPerson.Nationality;
+            Person.Result.Nationality = (clsPerson.enNatinoality) UpdatedPerson.Nationality;
             Person.Result.ImagePath = UpdatedPerson.ImagePath;
 
             var result = _Person.UpdatePerson(Person.Result.PersonInfo);
@@ -367,21 +369,21 @@ namespace DVLD_API.Controllers
         public ActionResult<UserDTO> AddUser(UserDTO NewUserDTO)
         {
 
-            switch (clsUtil.UserCheckConstraints(_User,NewUserDTO))
+            switch (_User.IsValid(NewUserDTO))
             {
-                case clsUtil.enUserBadRequestTypes.NullObject:
+                case clsUser.enUserValidationType.NullObject:
                     return BadRequest($"The Object is Null fill it ");
 
-                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                case clsUser.enUserValidationType.EmptyFileds:
                     return BadRequest($"Some fileds is empty,please fill it");
 
-                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
+                case clsUser.enUserValidationType.InvalidPersonID:
                     return BadRequest($"The personID {NewUserDTO.PersonID} is not exists");
 
-                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
+                case clsUser.enUserValidationType.UserNameDuplicate:
                     return BadRequest($"The UserName '{NewUserDTO.UserName}' already exists.");
 
-                case clsUtil.enUserBadRequestTypes.AlreadyUser:
+                case clsUser.enUserValidationType.AlreadyUser:
                     return BadRequest($"This person is already a user");
             }
 
@@ -416,20 +418,20 @@ namespace DVLD_API.Controllers
                  }
 
 
-            switch (clsUtil.UserCheckConstraints(_User,UpdatedUser))
+            switch (_User.IsValid(UpdatedUser))
             {
-                case clsUtil.enUserBadRequestTypes.NullObject:
+                case clsUser.enUserValidationType.NullObject:
                     return BadRequest($"The Object is Null fill it ");
 
-                case clsUtil.enUserBadRequestTypes.EmptyFileds:
+                case clsUser.enUserValidationType.EmptyFileds:
                     return BadRequest($"Some fileds is empty,please fill it");
 
-                case clsUtil.enUserBadRequestTypes.InvalidPersonID:
+                case clsUser.enUserValidationType.InvalidPersonID:
                     return BadRequest($"The personID {UpdatedUser.PersonID} is not exists");
 
                
 
-                case clsUtil.enUserBadRequestTypes.UserNameDuplicate:
+                case clsUser.enUserValidationType.UserNameDuplicate:
                     if (User.Result.UserName != UpdatedUser.UserName)
                         return BadRequest($"The UserName '{UpdatedUser.UserName}' already exists.");
                     else

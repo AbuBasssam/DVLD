@@ -97,7 +97,6 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
 
-                //Console.WriteLine("Error: " + ex.Message);
                 
             }
 
@@ -439,7 +438,7 @@ namespace DVLD_DataAccessLayer
                  reader.GetString(reader.GetOrdinal("Address")),
                  reader.GetString(reader.GetOrdinal("Phone")),
                  reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                 reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
+                 Convert.ToByte(reader.GetInt32(reader.GetOrdinal("NationalityCountryID"))),
                  reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
 
             );
@@ -459,7 +458,7 @@ namespace DVLD_DataAccessLayer
                                  reader.GetString(reader.GetOrdinal("Address")),
                                  reader.GetString(reader.GetOrdinal("Phone")),
                                  reader.IsDBNull(reader.GetOrdinal("Email")) ? "" : reader.GetString(reader.GetOrdinal("Email")),
-                                 reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
+                                 Convert.ToByte(reader.GetInt32(reader.GetOrdinal("NationalityCountryID"))),
                                  reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? "" : reader.GetString(reader.GetOrdinal("ImagePath"))
 
                 

@@ -6,15 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 
 namespace DVlD_BusinessLayer
 {
 
     public class clsDriver
     {
-        public enum enMode { AddNew, Update };
-        
-        public enMode Mode = enMode.AddNew; 
+        public enum enDriverValidationTypes { EmptyFileds = 1, InvalidPersonID = 2, NullObject = 3, AlreadyDriver = 4, None = 5 };
+
+        private IDriverData _DriverDAL {  get; set; }
         public DriverDTO DDTO
         {
             get
@@ -26,16 +27,14 @@ namespace DVlD_BusinessLayer
         public int PersonID { get; set; }
         public int CreatedByUserID {  get; set; }
         public DateTime CreatedDate { get; set; }   
-        public clsPerson PersonInfo { get; set; }
        
-        public clsDriver(DriverDTO DriverDTO ,enMode cMode=enMode.AddNew)
+        private clsDriver(IDriverData DriverDAL,DriverDTO DriverDTO )
         {
+            _DriverDAL = DriverDAL;
             this.DriverID = DriverDTO.DriverID;
             this.PersonID = DriverDTO.PersonID;
             this.CreatedByUserID = DriverDTO.CreatedByUserID;
             this.CreatedDate = DriverDTO.CreatedDate;
-            //this.PersonInfo=clsPerson.Find(PersonID).Result;
-            this.Mode = cMode;
         }
 
         public static async Task<clsDriver> FindByDriverID(int DriverID)

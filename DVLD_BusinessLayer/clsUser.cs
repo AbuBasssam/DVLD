@@ -15,10 +15,8 @@ namespace DVlD_BusinessLayer
 
     public class clsUser:IUser
     {
-        public enum enMode { AddNew = 0, Update = 1}
-        public enMode Mode = enMode.AddNew;
         private IUserDataInterface _UserDataInterface { get; set; }
-
+        public enum enUserValidationType { EmptyFileds = 1, InvalidPersonID = 2, UserNameDuplicate = 3, NullObject = 4, AlreadyUser = 5, Valid = 6 };
         public UserDTO UDTO
         {
             get
@@ -32,12 +30,10 @@ namespace DVlD_BusinessLayer
         public string UserName { get; set; }
         public string Password { get; set; }
         public bool   IsActive {  get; set; }
-        public clsPerson PersonInfo { get; set; }
 
         public clsUser(IUserDataInterface UserDataInterface)
         {
             this._UserDataInterface = UserDataInterface;
-            this.Mode = enMode.AddNew;
         }
         private clsUser(IUserDataInterface UserDataInterface, UserDTO UDTO)
         {
@@ -47,10 +43,53 @@ namespace DVlD_BusinessLayer
             this.UserName=UDTO.UserName;
             this.Password=UDTO.Password;
             this.IsActive=UDTO.IsActive;
-            this.Mode = enMode.Update;
         }
-        
-        public  async Task<clsUser> FindByPersonID(int PersonID)
+
+        private Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
+        private bool HasUserHaveEmptyFileds(UserDTO NewUserDTO)
+        {
+            return (
+                NewUserDTO.PersonID == 0 ||
+               IsFieldEmpty(NewUserDTO.UserName) ||
+               IsFieldEmpty(NewUserDTO.Password)
+                );
+        }
+
+        public enUserValidationType IsValid(UserDTO NewUserDTO)
+        {
+            if (NewUserDTO == null)
+            {
+                return enUserValidationType.NullObject;
+            }
+            if (HasUserHaveEmptyFileds(NewUserDTO))
+            {
+                return enUserValidationType.EmptyFileds;
+            }
+
+            if (FindByPersonID(NewUserDTO.PersonID) == null)
+            {
+
+                return enUserValidationType.InvalidPersonID;
+            }
+
+            if (IsAlreadyUserExist(NewUserDTO.PersonID).Result)
+            {
+
+                return enUserValidationType.AlreadyUser;
+            }
+
+            if (IsUserExist(NewUserDTO.UserName).Result)
+            {
+                return enUserValidationType.UserNameDuplicate;
+            }
+
+
+
+
+            return enUserValidationType.Valid;
+        }
+
+        public async Task<clsUser> FindByPersonID(int PersonID)
         {
 
             UserDTO UDTO =await _UserDataInterface.FindByPersonIDAsync(PersonID);
@@ -65,6 +104,7 @@ namespace DVlD_BusinessLayer
 
             return (UDTO != null) ? new clsUser(_UserDataInterface, UDTO) : null;
         }
+        
         public  async Task<clsUser> Find(string UserName,string Password)
         {
             UserDTO UDTO =await _UserDataInterface.FindAsync(UserName, Password);
@@ -110,16 +150,15 @@ namespace DVlD_BusinessLayer
         }
 
 
+        /*public static async Task<clsUser> FindByPersonID(int PersonID)
+        {
 
-        /*        public static async Task<clsUser>FindByPersonID(int PersonID)
-                {
+            UserDTO UDTO = await _UserDataInterface.FindByPersonIDAsync(PersonID);
 
-                    UserDTO UDTO = MapToDTO(await clsUserData.FindByPersonIDAsync(PersonID));
+            return (UDTO != null) ? new clsUser(_UserDataInterface, UDTO) : null;
 
-                    return (UDTO!=null)? new clsUser(UDTO, enMode.Update):null;
+        }*/
 
-                }
-        */
 
         /*public clsUser(UserDTO UDTO, enMode cMode = enMode.AddNew)
         {

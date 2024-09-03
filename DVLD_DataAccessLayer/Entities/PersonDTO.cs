@@ -19,7 +19,7 @@ namespace DVLD_DataAccessLayer
         public string Address { set; get; }
         public string Phone { set; get; }
         public string Email { set; get; }
-        public int Nationality { set; get; }
+        public byte Nationality { set; get; }
 
         private string _ImagePath;
         public string ImagePath
@@ -30,7 +30,7 @@ namespace DVLD_DataAccessLayer
         
         public PersonDTO(int? PersonID,string NationalNo, string FirstName, string SecondName
             , string ThirdName, string LastName, DateTime DateOfBirth, byte Gender,
-            string Address, string Phone, string Email, int Nationality, string ImagePath)
+            string Address, string Phone, string Email, byte Nationality, string ImagePath)
         {
             this.PersonID = PersonID;
             this.NationalNo = NationalNo;

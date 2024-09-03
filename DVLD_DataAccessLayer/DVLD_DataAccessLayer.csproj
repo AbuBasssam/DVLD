@@ -69,6 +69,7 @@
     <Compile Include="Entities\UsersViewDTO.cs" />
     <Compile Include="Entities\PersonDTO.cs" />
     <Compile Include="Entities\PersonViewDTO.cs" />
+    <Compile Include="Interfaces\IDriverData.cs" />
     <Compile Include="Interfaces\PeopleDataInterface.cs" />
     <Compile Include="Interfaces\UserDataInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
