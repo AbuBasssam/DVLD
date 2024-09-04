@@ -15,13 +15,19 @@ namespace DVLD_DataAccessLayer
 {
     public class clsApplicationTypesData : IApplicationTypesDAL
     {
+        private string _ConnectionString;
+        public clsApplicationTypesData(string ConnectionString)
+        {
+            _ConnectionString = ConnectionString;
+
+        }
         public async Task<IEnumerable<ApplicationTypeDTO>> GetAllApplicationTypesAsync()
         {
             List<ApplicationTypeDTO> applicationTypesList = new List<ApplicationTypeDTO>();
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = "SELECT * FROM ApplicationTypes";
 
@@ -53,7 +59,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = "SELECT * FROM ApplicationTypes WHERE ApplicationTypeID = @ApplicationTypeID";
 
@@ -86,7 +92,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = @"
                     INSERT INTO ApplicationTypes (ApplicationTypeTitle, ApplicationFees)
@@ -122,7 +128,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = @"
                     UPDATE ApplicationTypes
