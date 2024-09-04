@@ -10,19 +10,27 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 
 namespace DVLD_DataAccessLayer
 {
 
-    public static class clsDriverData
+    public  class clsDriverData : IDriverData
     {
-        public static async Task<IEnumerable<DriverViewDTO>> GetAllDriversAsync()
+        private string _ConnectionString { get; set; }
+        public clsDriverData(string ConnectionString)
+        {
+            this._ConnectionString = ConnectionString;
+        }
+                                                        //"Server=.;Database=DVLD;User Id=sa;Password=sa123456;Encrypt=False;TrustServerCertificate=True;Connection Timeout=30;";
+
+        public async Task<IEnumerable<DriverViewDTO>> GetAllDriversAsync()
         {
 
             List<DriverViewDTO> DriversList = new List<DriverViewDTO>();
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_GetDriversList", connection))
                     {
@@ -69,11 +77,11 @@ namespace DVLD_DataAccessLayer
             return DriversList;
         }
     
-        public static async Task<DriverDTO> FindByDriverIDAsync(int DriverID)
+        public  async Task<DriverDTO> FindByDriverIDAsync(int DriverID)
         {
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_FindDriverByID", connection))
                     {
@@ -113,12 +121,12 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static async Task<DriverDTO> FindByPersonIDAsync(int PersonID)
+        public  async Task<DriverDTO> FindByPersonIDAsync(int PersonID)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_FindDriverByPersonID", connection))
                     {
@@ -166,12 +174,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<int?> AddNewDriverAsync(DriverDTO DriverDTO)
+        public  async Task<int?> AddNewDriverAsync(DriverDTO DriverDTO)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                    
                     using (var command = new SqlCommand("SP_AddNewDriver", connection))
@@ -210,12 +218,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> UpdateDriverAsync(DriverDTO DriverDTO)
+        public  async Task<bool> UpdateDriverAsync(DriverDTO DriverDTO)
         {
             int rowsAffected = 0;
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_UpdateDriver", connection))
                     {
@@ -253,13 +261,13 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> DeleteDriverAsync(int DriverID)
+        public  async Task<bool> DeleteDriverAsync(int DriverID)
         {
 
             int rowsAffected = 0;
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     
                     using (var command = new SqlCommand("SP_DeleteDriver", connection))
@@ -290,12 +298,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> IsDriverExistByPersonIDAsync(int PersonID)
+        public  async Task<bool> IsDriverExistByPersonIDAsync(int PersonID)
         {
     
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckDriverExistsByPersonID", connection))
@@ -326,12 +334,12 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static async Task<bool> IsDriverExistsAsync(int DriverID)
+        public  async Task<bool> IsDriverExistsAsync(int DriverID)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckDriverExists", connection))

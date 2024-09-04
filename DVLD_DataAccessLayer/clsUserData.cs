@@ -10,8 +10,6 @@ using System.Security.Cryptography;
 using DVLD_DataAccessLayer.Interfaces;
 namespace DVLD_DataAccessLayer
 {
-
-
     public class clsUserData:IUserDataInterface
     {
         public  async Task<UserDTO> FindByPersonIDAsync(int PersonID)

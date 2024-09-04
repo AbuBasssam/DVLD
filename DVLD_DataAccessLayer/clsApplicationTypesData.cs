@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,188 +13,151 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer
 {
-    public static class clsApplicationTypesData
+    public class clsApplicationTypesData : IApplicationTypesDAL
     {
-        public static  DataTable GetAllApplication() 
+        public async Task<IEnumerable<ApplicationTypeDTO>> GetAllApplicationTypesAsync()
         {
-            DataTable dt = new DataTable();
-            
+            List<ApplicationTypeDTO> applicationTypesList = new List<ApplicationTypeDTO>();
+
             try
             {
-                using(SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    string query = "SELECT * From ApplicationTypes";
+                    string query = "SELECT * FROM ApplicationTypes";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         connection.Open();
 
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-
-                            if (reader.HasRows)
-
+                            while (await reader.ReadAsync())
                             {
-                                dt.Load(reader);
+                                applicationTypesList.Add(MapReaderToApplicationType(reader));
                             }
-
                         }
-
-
                     }
-
-
                 }
-
-
-
             }
-
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
             }
 
-            return dt;
+            return applicationTypesList;
         }
 
-        public static bool FindByID(int ApplicationTypeID, ref string Title, ref int ApplicationFees)
+        public async Task<ApplicationTypeDTO> FindByIDAsync(int ApplicationTypeID)
         {
-            bool isFound = false;
+            ApplicationTypeDTO applicationType = null;
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
                     string query = "SELECT * FROM ApplicationTypes WHERE ApplicationTypeID = @ApplicationTypeID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
-
                         connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-                                // The record was found
-                                isFound = true;
-                                ApplicationTypeID = (int)reader["ApplicationTypeID"];
-                                Title = (string)reader["ApplicationTypeTitle"];
-                                ApplicationFees = Convert.ToInt32(reader["ApplicationFees"]);
-
-
+                                applicationType = MapReaderToApplicationType(reader);
                             }
-                            else
-                            {
-                                // The record was not found
-                                isFound = false;
-                            }
-
                         }
                     }
-
                 }
-                    
-                   
-                
-
-
-
-
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
             }
-           
-            return isFound;
+
+            return applicationType;
         }
 
-        public static int AddNewApplicationType(string Title, float Fees)
+        public async Task<int?> AddNewApplicationTypeAsync(ApplicationTypeDTO ATDTO)
         {
-            int ApplicationTypeID = -1;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Insert Into ApplicationTypes (ApplicationTypeTitle,ApplicationFees)
-                            Values (@Title,@Fees)
-                            
-                            SELECT SCOPE_IDENTITY();";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@ApplicationTypeTitle", Title);
-            command.Parameters.AddWithValue("@ApplicationFees", Fees);
+            int? ApplicationTypeID = null;
 
             try
             {
-                connection.Open();
-
-                object result = command.ExecuteScalar();
-
-                if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    ApplicationTypeID = insertedID;
-                }
-            }
+                    string query = @"
+                    INSERT INTO ApplicationTypes (ApplicationTypeTitle, ApplicationFees)
+                    VALUES (@Title, @Fees);
+                    SELECT SCOPE_IDENTITY();";
 
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-
-            }
-
-            finally
-            {
-                connection.Close();
-            }
-
-
-            return ApplicationTypeID;
-
-        }
-
-        public static bool UpdateApplication(int ApplicationTypeID, string Title, int ApplicationFees)
-        {
-            int rowsAffected = 0;
-           
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
-                {
-                    string query = @"Update  ApplicationTypes  
-                            set ApplicationFees=@ApplicationFees,
-                                ApplicationTypeTitle=@ApplicationTypeTitle
-                                where ApplicationTypeID = @ApplicationTypeID";
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@Title", ATDTO.Title);
+                        command.Parameters.AddWithValue("@Fees", ATDTO.Fees);
 
-
-                        command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
-                        command.Parameters.AddWithValue("@ApplicationTypeTitle", Title);
-                        command.Parameters.AddWithValue("@ApplicationFees", ApplicationFees);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+
+                        var result = await command.ExecuteScalarAsync();
+                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        {
+                            ApplicationTypeID = insertedID;
+                        }
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return false;
             }
 
-           
-            return (rowsAffected > 0);
+            return ApplicationTypeID;
         }
 
+        public async Task<bool> UpdateApplicationTypeAsync(ApplicationTypeDTO ATDTO)
+        {
+            int rowsAffected = 0;
 
+            try
+            {
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                    string query = @"
+                    UPDATE ApplicationTypes
+                    SET ApplicationFees = @ApplicationFees,
+                        ApplicationTypeTitle = @Title
+                    WHERE ApplicationTypeID = @ApplicationTypeID";
 
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ApplicationTypeID", ATDTO.ApplicationID);
+                        command.Parameters.AddWithValue("@Title", ATDTO.Title);
+                        command.Parameters.AddWithValue("@ApplicationFees", ATDTO.Fees);
 
+                        connection.Open();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
+            }
 
+            return rowsAffected > 0;
+        }
+
+        private  ApplicationTypeDTO MapReaderToApplicationType(IDataReader reader)
+        {
+            return new ApplicationTypeDTO
+            {
+                ApplicationID = reader.GetInt32(reader.GetOrdinal("ApplicationTypeID")),
+                Title = reader.GetString(reader.GetOrdinal("ApplicationTypeTitle")),
+                Fees = reader.GetFloat(reader.GetOrdinal("ApplicationFees"))
+            };
+        }
     }
+
 }

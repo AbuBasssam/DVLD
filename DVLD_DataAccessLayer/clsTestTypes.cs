@@ -5,35 +5,52 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DVLD_DataAccessLayer.Interfaces;
+using DVLD_DataAccessLayer.Entities;
+using System.Runtime.Remoting.Messaging;
 
 namespace DVLD_DataAccessLayer
 {
-    public static class clsTestTypesData
+    public  class clsTestTypesData :IDALTestTypes
     {
-
-        public static DataTable GetAllTest()
+        private string _ConnectoinString {  get; set; }
+        clsTestTypesData(string ConnectoinString)
         {
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT * From TestTypes";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
+            this._ConnectoinString = ConnectoinString;
+        }
+        public  async Task<IEnumerable<TestTypeDTO>> GetTestTypesAsync()
+        {
+           List<TestTypeDTO>TestTypeList = new List<TestTypeDTO>();
             try
             {
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-
+                using (var connection = new SqlConnection(_ConnectoinString))
                 {
-                    dt.Load(reader);
+                    string query = "SELECT * From TestTypes";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+
+
+                        connection.Open();
+
+                        var reader = await command.ExecuteReaderAsync();
+
+                        while (await reader.ReadAsync())
+                        {
+                            _MapReaderToTestType(reader);
+                        }
+
+
+                    }
+
+               
+                    
+
+
+
                 }
 
-                reader.Close();
-
+                
 
             }
 
@@ -41,142 +58,149 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message);
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
-            return dt;
+            return TestTypeList;
         }
 
-        public static bool FindByID(int TestTypeID, ref string Title, ref string Description, ref int TestFees)
+        public async Task<TestTypeDTO> FindByIDAsync(int TestTypeID)
         {
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = "SELECT * FROM TestTypes WHERE TestTypeID = @TestTypeID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            bool isFound = false;
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
+                using (var connection = new SqlConnection(_ConnectoinString))
                 {
-                    // The record was found
-                    isFound = true;
-                    TestTypeID = (int)reader["TestTypeID"];
-                    Title = (string)reader["TestTypeTitle"];
-                    Description= (string)reader["TestTypeDescription"];
-                    TestFees = Convert.ToInt32(reader["TestTypeFees"]);
+                    string query = "SELECT * FROM TestTypes WHERE TestTypeID = @TestTypeID";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+
+                        connection.Open();
+                        using (var reader =await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                return _MapReaderToTestType(reader);
+
+
+                            }
+                        }
+
+                        
+                    }
+                        
+                    
+
 
 
                 }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
-
-                reader.Close();
-
-
+                
+                
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
-            }
-            finally
-            {
-                connection.Close();
             }
 
-            return isFound;
+
+            return null;
         }
 
-        public static bool UpdateTest(int TestTypeID, string Title, string Description, int TestFees)
+        public async Task<bool> UpdateTestAsync(TestTypeDTO TestTypeDTO)
         {
             int rowsAffected = 0;
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectoinString))
+                {
 
-            string query = @"Update TestTypes  
+                    string query = @"Update TestTypes  
                             set TestTypeFees=@TestFees,
                                 TestTypeTitle=@TestTypeTitle,
                                 TestTypeDescription=@Description
                                 where TestTypeID = @TestTypeID";
 
-            SqlCommand command = new SqlCommand(query, connection);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@TestTypeID", TestTypeDTO.TestTypeID);
+                        command.Parameters.AddWithValue("@TestTypeTitle",TestTypeDTO.Title);
+                        command.Parameters.AddWithValue("@Description", TestTypeDTO.Description);
+                        command.Parameters.AddWithValue("@TestFees",TestTypeDTO.TestFees);
 
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            command.Parameters.AddWithValue("@TestTypeTitle", Title);
-            command.Parameters.AddWithValue("@Description", Description);
-            command.Parameters.AddWithValue("@TestFees", TestFees);
+                        connection.Open();
+                        rowsAffected = await command.ExecuteNonQueryAsync();
+                    }
 
-            try
-            {
-                connection.Open();
-                rowsAffected = command.ExecuteNonQuery();
+                    
 
+
+                }
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                return false;
             }
 
-            finally
-            {
-                connection.Close();
-            }
+            
 
-            return (rowsAffected > 0);
+            return (rowsAffected ==1);
         }
 
-        public static int AddNewTestType(string Title, string Description, float Fees)
+        public async Task<int?> AddNewTestTypeAsync(TestTypeDTO TestTypeDTO)
         {
-            int TestTypeID = -1;
+            int? TestTypeID = -1;
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectoinString))
+                {
 
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Insert Into TestTypes (TestTypeTitle,TestTypeTitle,TestTypeFees)
+                    string query = @"Insert Into TestTypes (TestTypeTitle,TestTypeTitle,TestTypeFees)
                             Values (@TestTypeTitle,@TestTypeDescription,@ApplicationFees)
                             where TestTypeID = @TestTypeID;
                             SELECT SCOPE_IDENTITY();";
 
-            SqlCommand command = new SqlCommand(query, connection);
+                    using (var command = new SqlCommand(query, connection))
+                    {
 
-            command.Parameters.AddWithValue("@TestTypeTitle", Title);
-            command.Parameters.AddWithValue("@TestTypeDescription", Description);
-            command.Parameters.AddWithValue("@ApplicationFees", Fees);
+                        command.Parameters.AddWithValue("@TestTypeTitle", TestTypeDTO.Title);
+                        command.Parameters.AddWithValue("@TestTypeDescription", TestTypeDTO.Description);
+                        command.Parameters.AddWithValue("@ApplicationFees", TestTypeDTO.TestFees);
 
-            try
-            {
-                connection.Open();
 
-                object result = command.ExecuteScalar();
+                        connection.Open();
 
-                if (result != null && int.TryParse(result.ToString(), out int insertedID))
-                {
-                    TestTypeID = insertedID;
+                        object result = await command.ExecuteScalarAsync();
+
+                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        {
+                            TestTypeID = insertedID;
+                        }
+                    }
                 }
             }
-
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
 
             }
 
-            finally
-            {
-                connection.Close();
-            }
-
-
             return TestTypeID;
 
         }
+
+        private TestTypeDTO _MapReaderToTestType(IDataReader reader)
+        {
+            return new TestTypeDTO
+                                (
+                                    reader.GetInt32(reader.GetOrdinal("TestTypeID")),
+                                    reader.GetString(reader.GetOrdinal("TestTypeTitle")),
+                                    reader.GetString(reader.GetOrdinal("Description")),
+                                    reader.GetFloat(reader.GetOrdinal("TestFees"))
+
+                                );
+        }
+
     }
+
 }
+
