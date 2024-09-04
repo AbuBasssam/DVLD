@@ -67,6 +67,7 @@
     <Compile Include="Entities\ApplicationTypeDTO.cs" />
     <Compile Include="Entities\DriverDTO.cs" />
     <Compile Include="Entities\DriverViewDTO.cs" />
+    <Compile Include="Entities\TestAppointmentDTO.cs" />
     <Compile Include="Entities\TestDTO.cs" />
     <Compile Include="Entities\TestTypeDTO.cs" />
     <Compile Include="Entities\UsersViewDTO.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Entities\PersonViewDTO.cs" />
     <Compile Include="Interfaces\IApplicationTypesDAL.cs" />
     <Compile Include="Interfaces\IDALTest.cs" />
+    <Compile Include="Interfaces\IDALTestAppointment.cs" />
     <Compile Include="Interfaces\IDALTestTypes.cs" />
     <Compile Include="Interfaces\IDriverData.cs" />
     <Compile Include="Interfaces\PeopleDataInterface.cs" />
