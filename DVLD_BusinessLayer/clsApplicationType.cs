@@ -1,6 +1,10 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,88 +12,59 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsApplicationType
+    public class clsApplicationType:IBLLApplicationTypes
     {
-        public enum enMode { AddNew, Update}
-        
-        public enMode Mode=enMode.AddNew;
-        public int ApplicationID { set; get;}
+        public enum enApplicationTypes
+        {
+            NewLocalDrivingLicense =1,
+            RenewDrivingLicense=2,
+            ReplacementForALostDrivingLicense =3,
+            ReplacementForADamagedDrivingLicense=4,
+            ReleaseDetainedDrivingLicsense=5,
+            NewInternationalLicense=6,
+            RetakeTest= 7
+        }
+        private IApplicationTypesDAL _DALApplicationType {  get; set; }
+        public ApplicationTypeDTO ATDTO { get { return new ApplicationTypeDTO((int)this.ApplicationID, this.Title, this.Fees); } }
+        public enApplicationTypes ApplicationID { set; get;}
         public string Title {  set; get; }  
-        public int Fees { set; get; }
+        public float Fees { set; get; }
 
-        public clsApplicationType()
+        public clsApplicationType(IApplicationTypesDAL applicationTypesDAL)
         {
-            this.ApplicationID = -1;
-            this.Title ="";
-            this.Fees = 0;
-            Mode = enMode.AddNew;
+            this._DALApplicationType = applicationTypesDAL;
         }
 
-        private clsApplicationType( int ApplicationID, string Title,int Fees)
+        private clsApplicationType(IApplicationTypesDAL applicationTypesDAL,ApplicationTypeDTO ATDTO)
         { 
-            this.ApplicationID = ApplicationID;
-            this.Title = Title; 
-            this.Fees = Fees;
-            Mode = enMode.Update;
+            this.ApplicationID = (enApplicationTypes) ATDTO.ApplicationID;
+            this.Title = ATDTO.Title; 
+            this.Fees = ATDTO.Fees;
         }
         
-        public static DataTable GetAllApplicatoinTypes()
+        public async Task<IEnumerable<ApplicationTypeDTO>> GetAllApplicatoinTypes()
         {
-            return clsApplicationTypesData.GetAllApplication();
+            return await _DALApplicationType.GetAllApplicationTypesAsync();
         }
         
-        public static clsApplicationType Find(int ApplicationID)
+        public async Task< clsApplicationType> Find(int ApplicationID)
         {
-            string Title = "";
-            int ApplicationFees = 0;
-            if (clsApplicationTypesData.FindByID(ApplicationID, ref Title, ref ApplicationFees))
-            {
-                return new clsApplicationType(ApplicationID, Title, ApplicationFees);
-            }
-            else
-                return null;
+            ApplicationTypeDTO ATDTO=await _DALApplicationType.FindByIDAsync(ApplicationID);
+           
+            return (ATDTO!=null)? new clsApplicationType(_DALApplicationType, ATDTO) : null;
         }
 
-        private bool _AddNewApplicationType()
+        private async Task<int?> AddNewApplicationType(ApplicationTypeDTO ATDTO)
         {
-            //call DataAccess Layer 
+            return await _DALApplicationType.AddNewApplicationTypeAsync(ATDTO);
 
-            this.ApplicationID = clsApplicationTypesData.AddNewApplicationType(this.Title, this.Fees);
-
-
-            return (this.ApplicationID != -1);
         }
 
-
-
-        private bool _UpdateApplicationType()
+        public async Task<bool> UpdateApplicationType(ApplicationTypeDTO ATDTO)
         {
-            return clsApplicationTypesData.UpdateApplication(ApplicationID, Title, Fees);
+            return await _DALApplicationType.UpdateApplicationTypeAsync(ATDTO);
         }
 
-        public bool Save()
-        {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-                    if (_AddNewApplicationType())
-                    {
-
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case enMode.Update:
-
-                    return _UpdateApplicationType();
-
-            }
-
-            return false;
-        }
+        
     }
 }

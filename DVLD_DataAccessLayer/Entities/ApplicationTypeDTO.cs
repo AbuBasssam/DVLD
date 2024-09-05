@@ -11,5 +11,11 @@ namespace DVLD_DataAccessLayer.Entities
         public int ApplicationID { set; get; }
         public string Title { set; get; }
         public float Fees { set; get; }
+        public ApplicationTypeDTO(int ApplicationID, string Title, float Fees)
+        {
+            this.ApplicationID = ApplicationID;
+            this.Title = Title;
+            this.Fees = Fees;
+        }
     }
 }

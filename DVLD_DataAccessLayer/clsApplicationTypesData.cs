@@ -158,11 +158,11 @@ namespace DVLD_DataAccessLayer
         private  ApplicationTypeDTO MapReaderToApplicationType(IDataReader reader)
         {
             return new ApplicationTypeDTO
-            {
-                ApplicationID = reader.GetInt32(reader.GetOrdinal("ApplicationTypeID")),
-                Title = reader.GetString(reader.GetOrdinal("ApplicationTypeTitle")),
-                Fees = reader.GetFloat(reader.GetOrdinal("ApplicationFees"))
-            };
+                (
+                    reader.GetInt32(reader.GetOrdinal("ApplicationTypeID")),
+                    reader.GetString(reader.GetOrdinal("ApplicationTypeTitle")),
+                    reader.GetFloat(reader.GetOrdinal("ApplicationFees"))
+                );
         }
     }
 
