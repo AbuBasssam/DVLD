@@ -1,4 +1,7 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,92 +11,66 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsTestTypes
+    public class clsTestTypes:IBLLTestTypes
     {
 
-        public enum enMode { AddNew = 0, Update = 1 };
-        public enMode Mode = enMode.AddNew;
-        public enum enTestType { VisionTest = 1, WrittenTest = 2, StreetTest = 3 };
-
-        public clsTestTypes.enTestType ID { set; get; }
+        private IDALTestTypes _DALTestypes {  get; set; }
+        public enum enTestType {VisionTest = 1, WrittenTest = 2, StreetTest = 3 };
+        public TestTypeDTO TestTypeDTO
+        {
+            get
+            {
+                return  new TestTypeDTO(Convert.ToInt32(this.TestTypeDTO), this.Title, this.Description, this.Fees);
+            }
+        } 
+        public enTestType TestTypeID { set; get; }
         public string Title { set; get; }
         public string Description { set; get; }
-        public int Fees { set; get; }
+        public float Fees { set; get; }
 
-        public clsTestTypes()
+        public clsTestTypes(IDALTestTypes DALTestTypes)
         {
-            this.ID = clsTestTypes.enTestType.VisionTest;
-            this.Title = "";
-            this.Description = "";
-            this.Fees = 0;
-            Mode = enMode.AddNew;
+            this._DALTestypes = DALTestTypes;
         }
         
-        private clsTestTypes(clsTestTypes.enTestType ID, string Title, string Description, int Fees)
+        private clsTestTypes(IDALTestTypes dALTestTypes,TestTypeDTO TTDOT)
         {
-            this.ID = ID;
-            this.Title = Title;
-            this.Description = Description; 
-            this.Fees = Fees;
-            Mode = enMode.Update;
+            this.ID = (enTestType) TTDOT.TestTypeID;
+            this.Title = TTDOT.Title;
+            this.Description = TTDOT.Description; 
+            this.Fees = TTDOT.TestFees;
+            
 
         }
 
-        public static DataTable GetAllTestTypes()
+        public async Task<IEnumerable<TestTypeDTO>> GetAllTestTypes()
         {
-            return clsTestTypesData.GetAllTest();
+            return await _DALTestypes.GetTestTypesAsync();
         }
 
-        public static clsTestTypes Find(clsTestTypes.enTestType TestTypeID)
+        public async Task<clsTestTypes> Find(enTestType TestTypeID)
         {
-            string Title = "", Description="";
-            int ApplicationFees = 0;
-            if (clsTestTypesData.FindByID((int)TestTypeID, ref Title, ref Description, ref ApplicationFees))
-            {
-                return new clsTestTypes(TestTypeID, Title, Description, ApplicationFees);
-            }
-            else
-                return null;
+            TestTypeDTO TTDTO = await _DALTestypes.FindByIDAsync((int)TestTypeID);
+
+                return (TTDTO!=null)? new clsTestTypes(_DALTestypes,TTDTO):null;
+            
+            
         }
         
-        private bool _AddNewTestType()
+        private async Task<int?>  AddNewTestType()
         {
             //call DataAccess Layer 
 
-            this.ID = (clsTestTypes.enTestType)clsTestTypesData.AddNewTestType(this.Title, this.Description, this.Fees);
+            return await _DALTestypes.AddNewTestTypeAsync(TestTypeDTO);
 
-            return (this.Title != "");
         }
 
-        private bool _UpdateTestType()
+        public async Task< bool> UpdateTestType()
         {
-            return clsTestTypesData.UpdateTest((int)this.ID, Title, Description, Fees);
+            return await _DALTestypes.UpdateTestAsync(TestTypeDTO);
         }
 
-        public bool Save()
-        {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-                    if (_AddNewTestType())
-                    {
-
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case enMode.Update:
-
-                    return _UpdateTestType();
-
-            }
-
-            return false;
-        }
+        
 
     }
 }
