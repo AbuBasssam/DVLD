@@ -13,8 +13,7 @@ namespace DVLD_DataAccessLayer.Interfaces
         Task<int?> AddNewTestAsync(TestDTO testDTO);
         Task<bool> UpdateTestAsync(TestDTO testDTO);
         Task<byte> GetPassedTestCountAsync(int LocalDrivingLicenseApplicationID);
-        Task<bool> GetLastTestByPersonAndTestTypeAndLicenseClassAsync(
-            int PersonID, int LicenseClassID, int TestTypeID, TestDTO testDTO);
+        Task<TestDTO> GetLastTestByPersonAndTestTypeAndLicenseClassAsync(int PersonID, int LicenseClassID, int TestTypeID);
     }
 
 }

@@ -14,11 +14,16 @@ namespace DVLD_DataAccessLayer
 {
     public class clsTestData:IDALTest
     {
+        private readonly string _ConnectionString;
+        public clsTestData(string connectionString)
+        {
+            _ConnectionString = connectionString;
+        }
         public async Task<TestDTO> FindAsync(int TestID)
         {
             string query = "SELECT * FROM Tests WHERE TestID = @TestID";
 
-            using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+            using (var connection = new SqlConnection(_ConnectionString))
             using (var command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@TestID", TestID);
@@ -51,7 +56,7 @@ namespace DVLD_DataAccessLayer
                             SET IsLocked = 1 WHERE TestAppointmentID = @TestAppointmentID;
                          SELECT SCOPE_IDENTITY();";
 
-            using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_ConnectionString))
             
             using (SqlCommand command = new SqlCommand(query, connection))
             {
@@ -87,7 +92,7 @@ namespace DVLD_DataAccessLayer
                              Notes = @Notes
                          WHERE TestID = @TestID";
 
-            using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_ConnectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@TestAppointmentID", testDTO.TestAppointmentID);
@@ -116,7 +121,7 @@ namespace DVLD_DataAccessLayer
                          TestAppointments ON Tests.TestAppointmentID = TestAppointments.TestAppointmentID
                          WHERE LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID AND TestResult = 1";
 
-            using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_ConnectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
@@ -139,8 +144,8 @@ namespace DVLD_DataAccessLayer
             return PassedTestCount;
         }
 
-        public async Task<bool> GetLastTestByPersonAndTestTypeAndLicenseClassAsync(
-            int PersonID, int LicenseClassID, int TestTypeID, TestDTO testDTO)
+        public async Task<TestDTO> GetLastTestByPersonAndTestTypeAndLicenseClassAsync(
+            int PersonID, int LicenseClassID, int TestTypeID)
         {
             bool isFound = false;
             string query = @"SELECT TOP 1 Tests.TestID, 
@@ -168,22 +173,17 @@ namespace DVLD_DataAccessLayer
 
                     if (await reader.ReadAsync())
                     {
-                        isFound = true;
-                        testDTO.TestID = (int)reader["TestID"];
-                        testDTO.TestAppointmentID = (int)reader["TestAppointmentID"];
-                        testDTO.TestResult = Convert.ToByte(reader["TestResult"]);
-                        testDTO.Notes = reader["Notes"] != DBNull.Value ? (string)reader["Notes"] : "";
-                        testDTO.CreatedBy = (int)reader["CreatedByUserID"];
+                      return _MapReaderToTest(reader);
+                        
                     }
                     reader.Close();
                 }
                 catch (Exception ex)
                 {
                     clsEventLog.SetEventLog(ex.Message);
-                    isFound = false;
                 }
             }
-            return isFound;
+            return null;
         }
 
         private TestDTO _MapReaderToTest(IDataReader reader)
