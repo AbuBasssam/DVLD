@@ -14,7 +14,7 @@ namespace DVLD_DataAccessLayer
 {
     public  class clsTestAppointmentData:IDALTestAppointment
     {
-        private string _ConnectionString {  get; set; }
+        private readonly string _ConnectionString;
         public clsTestAppointmentData(string connectionString)
         {
             _ConnectionString = connectionString;

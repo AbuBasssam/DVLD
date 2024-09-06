@@ -9,12 +9,19 @@ using System.Net;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using DVLD_DataAccessLayer.Entities;
 
 namespace DVLD_DataAccessLayer
 {
     public class clsLicensesData
     {
-        public static DataTable GetAllLicenses()
+        private readonly string _ConnetionString;
+        public clsLicensesData(string connetionString)
+        {
+            _ConnetionString = connetionString;
+        }
+
+        public async Task<IEnumerable<LicenseDTO> >GetAllLicenses()
         {
             DataTable dt = new DataTable();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
@@ -326,15 +333,15 @@ namespace DVLD_DataAccessLayer
                 {
                     // The record was found
                     isFound = true;
-                    LicenseID = (int)reader["LicenseID"];
-                    DriverID = (int)reader["DriverID"];
-                    LicenseClass = (int)reader["LicenseClass"];
-                    IssueDate = Convert.ToDateTime(reader["IssueDate"]);
+                    LicenseID =     (int)reader["LicenseID"];
+                    DriverID =      (int)reader["DriverID"];
+                    LicenseClass =  (int)reader["LicenseClass"];
+                    IssueDate =      Convert.ToDateTime(reader["IssueDate"]);
                     ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]);
-                    PaidFees = Convert.ToInt32(reader["PaidFees"]);
-                    IsActive = Convert.ToByte(reader["IsActive"]);
-                    IssueReason = Convert.ToByte(reader["IssueReason"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
+                    PaidFees =       Convert.ToInt32(reader["PaidFees"]);
+                    IsActive =       Convert.ToByte(reader["IsActive"]);
+                    IssueReason =    Convert.ToByte(reader["IssueReason"]);
+                    CreatedByUserID= (int)reader["CreatedByUserID"];
 
                     //Notes: allows null in database so we should handle null
                     if (reader["Notes"] != DBNull.Value)
@@ -686,6 +693,28 @@ namespace DVLD_DataAccessLayer
             }
 
             return (rowsAffected > 0);
+        }
+        private LicenseDTO _MapReaderToDTO(IDataReader reader)
+        {
+            return new LicenseDTO
+                (
+                    (int)reader["LicenseID"],
+                    (int)reader["ApplicationID"],
+                    (int)reader["DriverID"],
+                    Convert.ToByte((int)reader["LicenseClass"]),
+                    Convert.ToDateTime(reader["IssueDate"]),
+                    Convert.ToDateTime(reader["ExpirationDate"]),
+                    (string)reader["Notes"],
+                    Convert.ToSingle(reader["PaidFees"]),
+                    Convert.ToByte(reader["IsActive"]),
+                    Convert.ToByte(reader["IssueReason"]),
+                    (int)reader["CreatedByUserID"]
+
+
+
+
+
+                );
         }
 
 
