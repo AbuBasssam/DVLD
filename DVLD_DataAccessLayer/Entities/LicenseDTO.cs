@@ -8,17 +8,17 @@ namespace DVLD_DataAccessLayer.Entities
 {
     public class LicenseDTO
     {
-        public int LicenseID;
-        public int ApplicationID;
-        public int DriverID;
-        public byte LicenseClass;
-        public DateTime IssueDate;
-        public DateTime ExpirationDate;
-        public string Notes;
-        public float PaidFees;
-        public byte IsActive;
-        public byte IssueReason;
-        public int CreatedByUserID;
+        public int LicenseID { get; set; }
+        public int ApplicationID { get; set; }
+        public int DriverID { get; set; }
+        public byte LicenseClass { get; set; }
+        public DateTime IssueDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        public string Notes { get; set; }
+        public float PaidFees { get; set; }
+        public byte IsActive { get; set; }
+        public byte IssueReason { get; set; }
+        public int CreatedByUserID { get; set; }
         public LicenseDTO(int LicenseID, int ApplicationID,int DriverID, byte LicenseClass,
             DateTime IssueDate, DateTime ExpirationDate, string Notes, float PaidFees, byte IsActive, byte IssueReason, int CreatedByUserID)
         {

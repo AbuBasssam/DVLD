@@ -6,43 +6,57 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DVLD_DataAccessLayer
 {
-    public class clsLicensesData
+    public class clsLicensesData:IDALLicense
     {
-        private readonly string _ConnetionString;
+        private readonly string _ConnectionString;
         public clsLicensesData(string connetionString)
         {
-            _ConnetionString = connetionString;
+            _ConnectionString = connetionString;
         }
 
         public async Task<IEnumerable<LicenseDTO> >GetAllLicenses()
         {
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT * FROM Licenses";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
+            List<LicenseDTO> LicensesList = new List<LicenseDTO>();
             try
             {
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
-                    dt.Load(reader);
+                    string query = "SELECT * FROM Licenses";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                LicensesList.Add(_MapReaderToDTO(reader));
+
+                            }
+                        
+                        }
+
+                            
+                    }
+
+
+                        
+
+
                 }
 
-                reader.Close();
+                    
 
 
             }
@@ -51,260 +65,97 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message);
             }
-            finally
-            {
-                connection.Close();
-            }
-
-            return dt;
-
-        }
-        public static DataTable GetAllDriverLicenses(int DriverID)
-        {
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT Licenses.LicenseID, Licenses.ApplicationID, LicenseClasses.ClassName, Licenses.IssueDate, Licenses.ExpirationDate, Licenses.IsActive\r\nFROM     Licenses INNER JOIN\r\n                  LicenseClasses ON Licenses.LicenseClass = LicenseClasses.LicenseClassID where DriverID=@DriverID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-
-            try
-            {
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-
-                {
-                    dt.Load(reader);
-                }
-
-                reader.Close();
-
-
-            }
-
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return dt;
-
-        }
-
-        public static bool FindByLicenseID(int LicenseID,ref int ApplicationID, ref int DriverID, ref int LicenseClass, ref
-           DateTime IssueDate, ref DateTime ExpirationDate, ref string Notes, ref int PaidFees, ref byte IsActive, ref byte IssueReason, ref int CreatedByUserID)
-        {
-
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"Select * From Licenses where LicenseID=@LicenseID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
             
-            bool isFound = false;
+
+            return LicensesList;
+
+        }
+        
+        public async Task<IEnumerable<DriverLicensesDTO>> GetAllDriverLicenses(int DriverID)
+        {
+            List<DriverLicensesDTO> DriverLicensesList = new List<DriverLicensesDTO>();
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = "SELECT Licenses.LicenseID, Licenses.ApplicationID, LicenseClasses.ClassName, Licenses.IssueDate, Licenses.ExpirationDate, Licenses.IsActive\r\nFROM     Licenses INNER JOIN\r\nLicenseClasses ON Licenses.LicenseClass = LicenseClasses.LicenseClassID where DriverID=@DriverID";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+
+
+                        connection.Open();
+
+                        using (var reader =await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                DriverLicensesList.Add(_MapReaderToDriverLicenseDTO(reader));
+                            }
+                        }
+
+                            
+
+
+
+
+                    }
+                        
+
+                }
+
+
+
+
+
+            }
+
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
             
+            return DriverLicensesList;
+
+        }
+
+        public async Task<LicenseDTO> FindByLicenseID(int LicenseID)
+        {
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.Read())
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
-                    // The record was found
-                    isFound = true;
-                    ApplicationID = (int)reader["ApplicationID"];
-                    DriverID = (int)reader["DriverID"];
-                    LicenseClass = (int)reader["LicenseClass"];
-                    IssueDate =Convert.ToDateTime(reader["IssueDate"]);
-                    ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]);
-                    PaidFees = Convert.ToInt32(reader["PaidFees"]);
-                    IsActive = Convert.ToByte(reader["IsActive"]);
-                    IssueReason = Convert.ToByte(reader["IssueReason"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
+                    string query = @"Select * From Licenses where LicenseID=@LicenseID";
 
-                    //Notes: allows null in database so we should handle null
-                    if (reader["Notes"] != DBNull.Value)
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        Notes = (string)reader["Notes"];
-                    }
-                    else
-                    {
-                        Notes = "";
+                        command.Parameters.AddWithValue("@LicenseID", LicenseID);
+
+                        connection.Open();
+                        using (var reader = await command.ExecuteReaderAsync())
+
+                            if (await reader.ReadAsync())
+                                return _MapReaderToDTO(reader);
                     }
 
-                }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
+                    
 
-                reader.Close();
+                    
+
+                }
+                
+
 
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
             }
-            finally
-            {
-                connection.Close();
-            }
-
-            return isFound;
-
-
-
-
-
-        }
-
-        public static bool FindByLicenseIDAndLicenseClass(int LicenseID, ref int ApplicationID, ref int DriverID,  int LicenseClass, ref
-          DateTime IssueDate, ref DateTime ExpirationDate, ref string Notes, ref int PaidFees, ref byte IsActive, ref byte IssueReason, ref int CreatedByUserID)
-        {
-
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"Select * From Licenses where LicenseID=@LicenseID and LicenseClass=@LicenseClass ";
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-
-
-            bool isFound = false;
-
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    // The record was found
-                    isFound = true;
-                    ApplicationID = (int)reader["ApplicationID"];
-                    DriverID = (int)reader["DriverID"];
-                    IssueDate = Convert.ToDateTime(reader["IssueDate"]);
-                    ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]);
-                    PaidFees = Convert.ToInt32(reader["PaidFees"]);
-                    IsActive = Convert.ToByte(reader["IsActive"]);
-                    IssueReason = Convert.ToByte(reader["IssueReason"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-
-                    //Notes: allows null in database so we should handle null
-                    if (reader["Notes"] != DBNull.Value)
-                    {
-                        Notes = (string)reader["Notes"];
-                    }
-                    else
-                    {
-                        Notes = "";
-                    }
-
-                }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
-
-                reader.Close();
-
-
-            }
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return isFound;
-
-
-
-
-
-        }
-
-        public static bool FindByDriverID(ref int LicenseID, ref int ApplicationID,  int DriverID, ref int LicenseClass, ref
-           DateTime IssueDate, ref DateTime ExpirationDate, ref string Notes, ref int PaidFees, ref byte IsActive, ref byte IssueReason, ref int CreatedByUserID)
-        {
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"Select * From Licenses where DriverID=@DriverID";
-
             
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-
-            bool isFound = false;
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    // The record was found
-                    isFound = true;
-                    LicenseID = (int)reader["LicenseID"];
-                    ApplicationID = (int)reader["ApplicationID"];
-                    LicenseClass = (int)reader["LicenseClass"];
-                    IssueDate = Convert.ToDateTime(reader["IssueDate"]);
-                    ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]);
-                    PaidFees = Convert.ToInt32(reader["PaidFees"]);
-                    IsActive = Convert.ToByte(reader["IsActive"]);
-                    IssueReason = Convert.ToByte(reader["IssueReason"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-
-                    //Notes: allows null in database so we should handle null
-                    if (reader["Notes"] != DBNull.Value)
-                    {
-                        Notes = (string)reader["Notes"];
-                    }
-                    else
-                    {
-                        Notes = "";
-                    }
-
-                }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
-
-                reader.Close();
-
-
-            }
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return isFound;
+            return null;
 
 
 
@@ -312,69 +163,42 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool FindByApplicationID(ref int LicenseID,  int ApplicationID, ref int DriverID, ref int LicenseClass, ref
-           DateTime IssueDate, ref DateTime ExpirationDate, ref string Notes, ref int PaidFees, ref byte IsActive, ref byte IssueReason, ref int CreatedByUserID)
+        public async Task<LicenseDTO> FindByLicenseIDAndLicenseClass(int LicenseClass)
         {
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"Select * From Licenses where ApplicationID=@ApplicationID";
-
-
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-
-            bool isFound = false;
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.Read())
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
-                    // The record was found
-                    isFound = true;
-                    LicenseID =     (int)reader["LicenseID"];
-                    DriverID =      (int)reader["DriverID"];
-                    LicenseClass =  (int)reader["LicenseClass"];
-                    IssueDate =      Convert.ToDateTime(reader["IssueDate"]);
-                    ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]);
-                    PaidFees =       Convert.ToInt32(reader["PaidFees"]);
-                    IsActive =       Convert.ToByte(reader["IsActive"]);
-                    IssueReason =    Convert.ToByte(reader["IssueReason"]);
-                    CreatedByUserID= (int)reader["CreatedByUserID"];
+                    string query = @"Select * From Licenses where LicenseID=@LicenseID and LicenseClass=@LicenseClass ";
 
-                    //Notes: allows null in database so we should handle null
-                    if (reader["Notes"] != DBNull.Value)
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        Notes = (string)reader["Notes"];
-                    }
-                    else
-                    {
-                        Notes = "";
-                    }
+                        command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
 
+                        if (await reader.ReadAsync())
+                            return _MapReaderToDTO(reader);
+                    }
+                        
                 }
-                else
-                {
-                    // The record was not found
-                    isFound = false;
-                }
+                
 
-                reader.Close();
+           
+                
+
+                
 
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
-            return isFound;
+            return null;
 
 
 
@@ -382,41 +206,143 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static int AddNewLicense(int ApplicationID, int DriverID, int LicenseClass,
-            DateTime IssueDate, DateTime ExpirationDate, string Notes, int PaidFees, byte IsActive, byte IssueReason, int CreatedByUserID)
+        public async Task<LicenseDTO> FindByDriverID(int DriverID)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"Select * From Licenses where DriverID=@DriverID";
+
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+
+
+                        connection.Open();
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                // The record was found
+                               return _MapReaderToDTO(reader);
+
+                            }
+                            
+                        }
+
+                            
+                    }
+                        
+                }
+                    
+
+
+
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
+            
+
+            return null;
+
+
+
+
+
+        }
+
+        public async Task<LicenseDTO> FindByApplicationID(int ApplicationID)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"Select * From Licenses where ApplicationID=@ApplicationID";
+
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
+
+
+                        connection.Open();
+                        var reader =await command.ExecuteReaderAsync();
+
+                        if (await reader.ReadAsync())
+                        {
+                            // The record was found
+                          return  _MapReaderToDTO(reader);
+
+                        }
+                       
+                    }
+                   
+                }
+                    
+
+
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
+           
+
+            return null;
+
+
+
+
+
+        }
+
+        public async Task<int?> AddNewLicense(LicenseDTO LDTO)
          {
-            int LicenseID = -1;
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"INSERT INTO Licenses(ApplicationID,DriverID,LicenseClass,IssueDate,ExpirationDate,Notes,PaidFees,IsActive,IssueReason,CreatedByUserID)
+            int? LicenseID = null;
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"INSERT INTO Licenses(ApplicationID,DriverID,LicenseClass,IssueDate,ExpirationDate,Notes,PaidFees,IsActive,IssueReason,CreatedByUserID)
                              VALUES(@ApplicationID,@DriverID,@LicenseClass,@IssueDate,@ExpirationDate,@Notes,@PaidFees,@IsActive,@IssueReason,@CreatedByUserID);
                              SELECT SCOPE_IDENTITY();";
 
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-            command.Parameters.AddWithValue("@IssueDate", IssueDate);
-            command.Parameters.AddWithValue("@ExpirationDate", ExpirationDate);
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
-            command.Parameters.AddWithValue("@IssueReason", IssueReason);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            if (Notes != "")
-                command.Parameters.AddWithValue("@Notes", Notes);
-            else
-                command.Parameters.AddWithValue("@Notes", System.DBNull.Value);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ApplicationID", LDTO.ApplicationID);
+                        command.Parameters.AddWithValue("@DriverID", LDTO.DriverID);
+                        command.Parameters.AddWithValue("@LicenseClass", LDTO.LicenseClass);
+                        command.Parameters.AddWithValue("@IssueDate", LDTO.IssueDate);
+                        command.Parameters.AddWithValue("@ExpirationDate", LDTO.ExpirationDate);
+                        command.Parameters.AddWithValue("@PaidFees", LDTO.PaidFees);
+                        command.Parameters.AddWithValue("@IsActive", LDTO.IsActive);
+                        command.Parameters.AddWithValue("@IssueReason", LDTO.IssueReason);
+                        command.Parameters.AddWithValue("@CreatedByUserID", LDTO.CreatedByUserID);
 
-            try
-            {
-                connection.Open();
-
-                object result = command.ExecuteScalar();
+                        if (LDTO.Notes != "")
+                            command.Parameters.AddWithValue("@Notes", LDTO.Notes);
+                        else
+                            command.Parameters.AddWithValue("@Notes", System.DBNull.Value);
 
 
-                if (result != null && int.TryParse(result.ToString(), out int insertedID))
-                {
-                    LicenseID = insertedID;
+                        connection.Open();
+
+                        object result = await command.ExecuteScalarAsync();
+
+
+                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        {
+                            LicenseID = insertedID;
+                        }
+
+                    }
+                   
                 }
+                   
             }
 
             catch (Exception ex)
@@ -425,29 +351,21 @@ namespace DVLD_DataAccessLayer
 
             }
 
-            finally
-            {
-                connection.Close();
-            }
 
 
             return LicenseID;
 
+        }
 
-
-
-
-
-
-
-         }
-        public static bool UpdateLicense(int LicenseID, int ApplicationID, int DriverID, int LicenseClass,
-            DateTime IssueDate, DateTime ExpirationDate, string Notes, int PaidFees, byte IsActive, byte IssueReason, int CreatedByUserID)
+        public async Task< bool> UpdateLicense(LicenseDTO LDTO)
         {
+            int rowsAffected = 0;
 
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-            string query = @"UPDATE Licenses
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"UPDATE Licenses
                                   SET ApplicationID = @ApplicationID,
                                       DriverID=@DriverID,
                                       LicenseClass=@LicenseClass,
@@ -460,30 +378,30 @@ namespace DVLD_DataAccessLayer
                                      CreatedByUserID= @CreatedByUserID
                                       Where LicenseID=@LicenseID";
 
-            int rowsAffected = 0;
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@IssueDate", IssueDate);
-            command.Parameters.AddWithValue("@ExpirationDate", ExpirationDate);
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
-            command.Parameters.AddWithValue("@IssueReason", IssueReason);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
-            if (Notes != "")
-                command.Parameters.AddWithValue("@Notes", Notes);
-            else
-                command.Parameters.AddWithValue("@Notes", System.DBNull.Value);
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@ApplicationID",LDTO. ApplicationID);
+                    command.Parameters.AddWithValue("@LicenseClass",LDTO. LicenseClass);
+                    command.Parameters.AddWithValue("@DriverID", LDTO.DriverID);
+                    command.Parameters.AddWithValue("@IssueDate", LDTO.IssueDate);
+                    command.Parameters.AddWithValue("@ExpirationDate", LDTO.ExpirationDate);
+                    command.Parameters.AddWithValue("@PaidFees", LDTO.PaidFees);
+                    command.Parameters.AddWithValue("@IsActive", LDTO.IsActive);
+                    command.Parameters.AddWithValue("@IssueReason", LDTO.IssueReason);
+                    command.Parameters.AddWithValue("@CreatedByUserID", LDTO.CreatedByUserID);
+                    command.Parameters.AddWithValue("@LicenseID",  LDTO.LicenseID);
+                    if (LDTO.Notes != "")
+                        command.Parameters.AddWithValue("@Notes", LDTO.Notes);
+                    else
+                        command.Parameters.AddWithValue("@Notes", System.DBNull.Value);
 
 
 
 
-            try
-            {
-                connection.Open();
-                rowsAffected = command.ExecuteNonQuery();
+
+                    connection.Open();
+                    rowsAffected =await command.ExecuteNonQueryAsync();
+                }
+            
 
             }
             catch (Exception ex)
@@ -492,12 +410,9 @@ namespace DVLD_DataAccessLayer
                 return false;
             }
 
-            finally
-            {
-                connection.Close();
-            }
+           
 
-            return (rowsAffected > 0);
+            return (rowsAffected ==1);
 
 
 
@@ -505,119 +420,132 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static bool DeleteLicense(int LicenseID)
+        public async Task<bool> DeleteLicense(int LicenseID)
         {
 
             int rowsAffected = 0;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Delete Licenses 
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"Delete Licenses 
                                 where LicenseID = @LicenseID";
 
-            SqlCommand command = new SqlCommand(query, connection);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@LicenseID", LicenseID);
 
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
 
-            try
-            {
-                connection.Open();
+                        connection.Open();
 
-                rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
+                    }
+
+                    
+                } 
+
+           
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
             }
-            finally
-            {
+            
 
-                connection.Close();
-
-            }
-
-            return (rowsAffected > 0);
+            return (rowsAffected==1);
 
         }
 
-        public static bool AlreadyHaveLicense(int DriverID, int LicenseClass)
+        public async Task<bool> AlreadyHaveLicense(int DriverID, int LicenseClass)
         {
             bool isFound = false;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT Found=1 FROM Licenses WHERE DriverID = @DriverID and LicenseClass=@LicenseClass ";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-
-
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = "SELECT Found=1 FROM Licenses WHERE DriverID = @DriverID and LicenseClass=@LicenseClass ";
 
-                isFound = reader.HasRows;
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@DriverID", DriverID);
+                        command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
 
-                reader.Close();
+
+
+                        connection.Open();
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            isFound = reader.HasRows;
+                        }
+
+                        
+
+
+                    }
+
+                    
+
+
+                }
+
+            
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
             return isFound;
         }
 
-        public static bool  IsLicneseExist(int ApplicationID)
+        public async Task<bool> IsLicneseExist(int ApplicationID)
         {
             bool isFound = false;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = "SELECT Found=1 FROM Licenses WHERE ApplicationID = @ApplicationID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-
             try
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = "SELECT Found=1 FROM Licenses WHERE ApplicationID = @ApplicationID";
 
-                isFound = reader.HasRows;
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
 
-                reader.Close();
+
+                        connection.Open();
+                        using (var reader =await command.ExecuteReaderAsync())
+                        {
+                            isFound = reader.HasRows;
+                        }
+
+                            
+                    }
+
+                        
+
+                }
+
+            
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                isFound = false;
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
             return isFound;
         }
 
-        public static int GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID)
+        public async Task<int?> GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID)
         {
-            int LicenseID = -1;
-
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"SELECT        Licenses.LicenseID
+            int? LicenseID = null;
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"SELECT        Licenses.LicenseID
                             FROM Licenses INNER JOIN
                                                      Drivers ON Licenses.DriverID = Drivers.DriverID
                             WHERE  
@@ -626,21 +554,26 @@ namespace DVLD_DataAccessLayer
                               AND Drivers.PersonID = @PersonID
                               And IsActive=1;";
 
-            SqlCommand command = new SqlCommand(query, connection);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@PersonID", PersonID);
+                        command.Parameters.AddWithValue("@LicenseClass", LicenseClassID);
 
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClassID);
 
-            try
-            {
-                connection.Open();
+                        connection.Open();
 
-                object result = command.ExecuteScalar();
+                        object result =await command.ExecuteScalarAsync();
 
-                if (result != null && int.TryParse(result.ToString(), out int insertedID))
-                {
-                    LicenseID = insertedID;
+                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        {
+                            LicenseID = insertedID;
+                        }
+                    }
+
+                        
                 }
+
+                    
             }
 
             catch (Exception ex)
@@ -649,51 +582,53 @@ namespace DVLD_DataAccessLayer
 
             }
 
-            finally
-            {
-                connection.Close();
-            }
+            
 
 
             return LicenseID;
         }
 
-        public static bool DeactivateLicense(int LicenseID)
+        public async Task<bool> DeactivateLicense(int LicenseID)
         {
 
             int rowsAffected = 0;
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
-            string query = @"UPDATE Licenses
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"UPDATE Licenses
                            SET 
                               IsActive = 0
                              
                          WHERE LicenseID=@LicenseID";
 
-            SqlCommand command = new SqlCommand(query, connection);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@LicenseID", LicenseID);
+                        connection.Open();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
 
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
+                    }
 
 
-            try
-            {
-                connection.Open();
-                rowsAffected = command.ExecuteNonQuery();
+
+                   
+                }
+
+                    
 
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                return false;
             }
 
-            finally
-            {
-                connection.Close();
-            }
+           
 
-            return (rowsAffected > 0);
+            return (rowsAffected ==1);
         }
+        
         private LicenseDTO _MapReaderToDTO(IDataReader reader)
         {
             return new LicenseDTO
@@ -704,7 +639,7 @@ namespace DVLD_DataAccessLayer
                     Convert.ToByte((int)reader["LicenseClass"]),
                     Convert.ToDateTime(reader["IssueDate"]),
                     Convert.ToDateTime(reader["ExpirationDate"]),
-                    (string)reader["Notes"],
+                    (reader["Notes"] != DBNull.Value)? (string)reader["Notes"]: "",
                     Convert.ToSingle(reader["PaidFees"]),
                     Convert.ToByte(reader["IsActive"]),
                     Convert.ToByte(reader["IssueReason"]),
@@ -716,6 +651,25 @@ namespace DVLD_DataAccessLayer
 
                 );
         }
+        private DriverLicensesDTO _MapReaderToDriverLicenseDTO(IDataReader reader)
+        {
+            return new DriverLicensesDTO
+                (
+                    (int)reader["LicenseID"],
+                    (int)reader["ApplicationID"],
+                   (string)reader["ClassName"],
+                    Convert.ToDateTime(reader["IssueDate"]),
+                    Convert.ToDateTime(reader["ExpirationDate"]),
+                    Convert.ToByte(reader["IsActive"])
+
+
+
+
+
+
+                );
+        }
+
 
 
     }
