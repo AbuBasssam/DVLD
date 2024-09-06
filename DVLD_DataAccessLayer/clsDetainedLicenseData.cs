@@ -1,4 +1,5 @@
 ﻿using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DVLD_DataAccessLayer
 {
-    public class clsDetainedLicenseData    
+    public class clsDetainedLicenseData : IDALDetainedLicense
     {
         private readonly string _ConnectionString;
         public clsDetainedLicenseData( string ConnectionString)
