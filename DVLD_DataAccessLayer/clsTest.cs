@@ -147,7 +147,6 @@ namespace DVLD_DataAccessLayer
         public async Task<TestDTO> GetLastTestByPersonAndTestTypeAndLicenseClassAsync(
             int PersonID, int LicenseClassID, int TestTypeID)
         {
-            bool isFound = false;
             string query = @"SELECT TOP 1 Tests.TestID, 
                          Tests.TestAppointmentID, Tests.TestResult, 
                          Tests.Notes, Tests.CreatedByUserID

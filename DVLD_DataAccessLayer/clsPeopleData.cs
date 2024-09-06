@@ -12,18 +12,25 @@ using System.Threading.Tasks;
 using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace DVLD_DataAccessLayer
 {
-    public class clsPeopleData:IPeopleDataInterface
+    public class clsPeopleData : IPeopleDataInterface
     {
+        private readonly string _ConnectionString;
+        public  clsPeopleData(string ConnectionString)
+        {
+          this._ConnectionString=ConnectionString;
+        }
+    
         public  async Task<PersonDTO> FindByNationalNoAsync(string NationalNO)
         {
 
             try
             {
 
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_FindPersonByNationalNO", connection))
@@ -64,7 +71,7 @@ namespace DVLD_DataAccessLayer
         {
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_FindPerson", connection))
@@ -110,7 +117,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
 
@@ -182,7 +189,7 @@ namespace DVLD_DataAccessLayer
             try
             {
 
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_UpdatePerson", connection))
@@ -240,7 +247,7 @@ namespace DVLD_DataAccessLayer
             
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
 
@@ -277,7 +284,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_DeletePersonByNationalNO", connection))
@@ -311,7 +318,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (SqlCommand command = new SqlCommand("SP_CheckPersonExists", connection))
@@ -349,7 +356,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (SqlCommand command = new SqlCommand("SP_CheckPersonExistsByNationalNo", connection))
@@ -388,7 +395,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
 

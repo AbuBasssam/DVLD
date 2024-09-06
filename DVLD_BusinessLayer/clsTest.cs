@@ -66,6 +66,7 @@ namespace DVlD_BusinessLayer
         {
             return await _DALTest.GetPassedTestCountAsync(LocalDrivingLicenseApplicationID);
         }
+    
         public async Task<bool> PassedAllTests(int LocalDrivingLicenseApplicationID)
         {
             //if total passed test less than 3 it will return false otherwise will return true

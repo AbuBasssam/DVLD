@@ -52,7 +52,7 @@ namespace DVlD_BusinessLayer
             this.IsActive = IsActive;
             this.ApplicationInfo = clsApplication.Find(ApplicationID);
            // this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
-            this.DriverInfo = clsDriver.FindByDriverID(DriverID).Result;
+            //this.DriverInfo = clsDriver.FindByDriverID(DriverID).Result;
             this.Mode = enMode.AddNew;
 
         }

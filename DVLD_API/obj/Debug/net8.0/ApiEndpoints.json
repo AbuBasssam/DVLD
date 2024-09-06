@@ -37,7 +37,7 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.DriversController",
-    "Method": "GetAllDrivers",
+    "Method": "GetDriversList",
     "RelativePath": "api/DVLD/Drivers/AllDrivers",
     "HttpMethod": "GET",
     "IsController": true,

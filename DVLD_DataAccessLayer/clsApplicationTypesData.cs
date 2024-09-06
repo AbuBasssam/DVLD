@@ -15,7 +15,7 @@ namespace DVLD_DataAccessLayer
 {
     public class clsApplicationTypesData : IApplicationTypesDAL
     {
-        private string _ConnectionString;
+        private readonly string _ConnectionString;
         public clsApplicationTypesData(string ConnectionString)
         {
             _ConnectionString = ConnectionString;

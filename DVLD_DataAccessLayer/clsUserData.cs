@@ -10,13 +10,18 @@ using System.Security.Cryptography;
 using DVLD_DataAccessLayer.Interfaces;
 namespace DVLD_DataAccessLayer
 {
-    public class clsUserData:IUserDataInterface
+    public class clsUserData : IUserDataInterface
     {
-        public  async Task<UserDTO> FindByPersonIDAsync(int PersonID)
+        private readonly string _ConndctionString;
+        public clsUserData(string ConndctionString)
+        {
+            this._ConndctionString = ConndctionString;
+        }
+        public async Task<UserDTO> FindByPersonIDAsync(int PersonID)
         {
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (var command = new SqlCommand("SP_FindUserByPersonID", connection))
@@ -25,37 +30,37 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@PersonID", PersonID);
 
                         connection.Open();
-                        using (var reader =await command.ExecuteReaderAsync())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (await reader.ReadAsync())
                             {
-                               return MapReaderToUser(reader);
+                                return MapReaderToUser(reader);
                             }
                         }
 
-                            
+
                     }
-                        
+
                 }
-                    
+
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                
+
             }
-           
+
             return null;
         }
-       
-        public  async Task<UserDTO> FindByUserIDAsync(int UserID)
+
+        public async Task<UserDTO> FindByUserIDAsync(int UserID)
         {
-            
+
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
-                    
+
 
                     using (var command = new SqlCommand("SP_FindUserByID", connection))
                     {
@@ -63,19 +68,19 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@UserID", UserID);
 
                         connection.Open();
-                        using (var reader =await command.ExecuteReaderAsync())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (await reader.ReadAsync())
                             {
                                 return MapReaderToUser(reader);
 
                             }
-                           
+
                         }
 
-                            
+
                     }
-                        
+
 
 
                 }
@@ -85,23 +90,23 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                
+
             }
-           
+
 
             return null;
         }
 
-        public  async Task<UserDTO> FindAsync(string UserName,string Password)
+        public async Task<UserDTO> FindAsync(string UserName, string Password)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (SqlCommand command = new SqlCommand("SP_FindUserByUserNameAndPassword", connection))
                     {
-                        command.CommandType= CommandType.StoredProcedure;
+                        command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@UserName", UserName);
                         command.Parameters.AddWithValue("@Password", Password);
 
@@ -111,10 +116,10 @@ namespace DVLD_DataAccessLayer
                             if (await reader.ReadAsync())
                             {
 
-                               return MapReaderToUser(reader);
+                                return MapReaderToUser(reader);
 
                             }
-                           
+
 
 
                         }
@@ -130,16 +135,16 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message);
             }
-           
+
             return null;
         }
 
-        public  async Task<int?> AddNewUserAsync(UserDTO UserDTO)
+        public async Task<int?> AddNewUserAsync(UserDTO UserDTO)
         {
-           
+
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (var command = new SqlCommand("SP_AddNewUser", connection))
@@ -157,13 +162,13 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.AddWithValue("@IsActive", UserDTO.IsActive);
                         connection.Open();
 
-                        int result =await command.ExecuteNonQueryAsync();
+                        int result = await command.ExecuteNonQueryAsync();
 
                         return (int)outputIdParam.Value;
                     }
 
                 }
-                    
+
             }
 
             catch (Exception ex)
@@ -177,15 +182,15 @@ namespace DVLD_DataAccessLayer
             return null;
         }
 
-        public  async Task<bool> UpdateUserAsync(UserDTO UserDTO)
+        public async Task<bool> UpdateUserAsync(UserDTO UserDTO)
         {
             int rowsAffected = 0;
-          
+
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
-                   
+
 
                     using (var command = new SqlCommand("SP_UpdateUser", connection))
                     {
@@ -212,19 +217,19 @@ namespace DVLD_DataAccessLayer
                 return false;
             }
 
-          
 
-            return (rowsAffected==1);
+
+            return (rowsAffected == 1);
         }
 
-        public  async Task<bool> DeleteUserAsync(int UserID)
+        public async Task<bool> DeleteUserAsync(int UserID)
         {
 
             int rowsAffected = 0;
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (var command = new SqlCommand("SP_DeleteUser", connection))
@@ -248,24 +253,24 @@ namespace DVLD_DataAccessLayer
                 clsEventLog.SetEventLog(ex.Message);
             }
 
-            return (rowsAffected==1);
+            return (rowsAffected == 1);
 
         }
 
-        public  async Task<bool> IsUserExistAsync(int UserID)
+        public async Task<bool> IsUserExistAsync(int UserID)
         {
-           bool IsExist=false;
+            bool IsExist = false;
 
 
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckUserExists", connection))
                     {
-                        command.CommandType=CommandType.StoredProcedure;
+                        command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@UserID", UserID);
                         SqlParameter returnParameter = new SqlParameter("@ReturnVal", SqlDbType.Int)
                         {
@@ -274,14 +279,14 @@ namespace DVLD_DataAccessLayer
                         command.Parameters.Add(returnParameter);
                         connection.Open();
                         await command.ExecuteNonQueryAsync();
-                        IsExist=(int)returnParameter.Value==1;
+                        IsExist = (int)returnParameter.Value == 1;
 
                     }
 
 
                 }
 
-                    
+
             }
             catch (Exception ex)
             {
@@ -289,8 +294,8 @@ namespace DVLD_DataAccessLayer
             }
             return IsExist;
         }
-        
-        public  async Task<bool> IsUserExistAsync(string UserName)
+
+        public async Task<bool> IsUserExistAsync(string UserName)
         {
             bool IsExist = false;
 
@@ -298,7 +303,7 @@ namespace DVLD_DataAccessLayer
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckUserExistsByUserName", connection))
@@ -328,12 +333,12 @@ namespace DVLD_DataAccessLayer
             return IsExist;
         }
 
-        public  async Task<bool> IsAlreadyUserExistAsync(int PersonID)
+        public async Task<bool> IsAlreadyUserExistAsync(int PersonID)
         {
             bool IsExist = false;
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConndctionString))
                 {
 
 
@@ -351,7 +356,7 @@ namespace DVLD_DataAccessLayer
                         IsExist = (int)returnParameter.Value == 1;
 
                     }
-                        
+
 
 
                 }
@@ -361,56 +366,60 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message);
-                
+
             }
-            
+
 
             return IsExist;
         }
-        
-        public  async Task<IEnumerable<UsersViewDTO>> GetUsersAsync()
+
+        public async Task<IEnumerable<UsersViewDTO>> GetUsersAsync()
         {
 
-           List<UsersViewDTO> UsersList = new List<UsersViewDTO>();
-            
-            try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+
+                List<UsersViewDTO> UsersList = new List<UsersViewDTO>();
+
+                try
                 {
-                   
-
-                    using (var command = new SqlCommand("SP_GetAllUsers", connection))
+                    using (var connection = new SqlConnection(_ConndctionString))
                     {
-                        connection.Open();
 
-                        using (var reader = await command.ExecuteReaderAsync())
+
+                        using (var command = new SqlCommand("SP_GetAllUsers", connection))
                         {
-                            while (await reader.ReadAsync())
-                            {
-                                UsersList.Add(MapReaderToUserView(reader));
-                               
-                            }
+                            connection.Open();
 
+                            using (var reader = await command.ExecuteReaderAsync())
+                            {
+                                while (await reader.ReadAsync())
+                                {
+                                    UsersList.Add(MapReaderToUserView(reader));
+
+                                }
+
+                            }
                         }
+
+
                     }
+
 
 
                 }
 
+                catch (Exception ex)
+                {
+                    clsEventLog.SetEventLog(ex.Message);
+                }
 
+                return UsersList;
 
             }
 
-            catch (Exception ex)
-            {
-                clsEventLog.SetEventLog(ex.Message);
-            }
-
-            return UsersList;
 
         }
-
-        private  UserDTO MapReaderToUser(IDataReader reader)
+        private UserDTO MapReaderToUser(IDataReader reader)
         {
             return new UserDTO
                                 (
@@ -423,7 +432,7 @@ namespace DVLD_DataAccessLayer
                                 );
         }
 
-        private  UsersViewDTO MapReaderToUserView(IDataReader reader)
+        private UsersViewDTO MapReaderToUserView(IDataReader reader)
         {
             return new UsersViewDTO
                                 (

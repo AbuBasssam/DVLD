@@ -57,6 +57,9 @@ namespace DVlD_BusinessLayer
 
         public enUserValidationType IsValid(UserDTO NewUserDTO)
         {
+            string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=sa123456;Encrypt=False;TrustServerCertificate=True;Connection Timeout=30;";
+            clsPeopleData Person= new clsPeopleData(ConnectionString);
+
             if (NewUserDTO == null)
             {
                 return enUserValidationType.NullObject;
@@ -65,8 +68,7 @@ namespace DVlD_BusinessLayer
             {
                 return enUserValidationType.EmptyFileds;
             }
-
-            if (FindByPersonID(NewUserDTO.PersonID) == null)
+            if (!Person.IsPersonExistAsync(NewUserDTO.PersonID).Result)
             {
 
                 return enUserValidationType.InvalidPersonID;
@@ -88,6 +90,7 @@ namespace DVlD_BusinessLayer
 
             return enUserValidationType.Valid;
         }
+        
 
         public async Task<clsUser> FindByPersonID(int PersonID)
         {
@@ -149,59 +152,6 @@ namespace DVlD_BusinessLayer
             return Users;
         }
 
-
-        /*public static async Task<clsUser> FindByPersonID(int PersonID)
-        {
-
-            UserDTO UDTO = await _UserDataInterface.FindByPersonIDAsync(PersonID);
-
-            return (UDTO != null) ? new clsUser(_UserDataInterface, UDTO) : null;
-
-        }*/
-
-
-        /*public clsUser(UserDTO UDTO, enMode cMode = enMode.AddNew)
-        {
-            this.UserID = UDTO.UserID;
-            this.PersonID = UDTO.PersonID;
-            this.UserName = UDTO.UserName;
-            this.Password = UDTO.Password;
-            this.IsActive = UDTO.IsActive;
-          //this.PersonInfo = clsPerson.Find(UDTO.PersonID).Result;
-            Mode = cMode;
-
-        }*/
-
-        /*public static async Task<clsUser> FindByUserID(int UserID)
-        {
-            UserDTO UDTO =MapToDTO( await clsUserData.FindByUserIDAsync(UserID));
-
-            return (UDTO != null) ? new clsUser(UDTO, enMode.Update) : null;
-        }*/
-        /*        public async Task<bool> SaveAsync()
-        {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-
-                    if ( await _AddNewUserAsync())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else return false;
-
-
-                case enMode.Update:
-
-                    return await _UpdateUser();
-
-
-                default:
-                    return false;
-            }
-        }
-*/
     }
 
 

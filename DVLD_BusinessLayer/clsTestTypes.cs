@@ -14,7 +14,7 @@ namespace DVlD_BusinessLayer
     public class clsTestTypes:IBLLTestTypes
     {
 
-        private IDALTestTypes _DALTestypes {  get; set; }
+        private readonly IDALTestTypes _DALTestypes ;
         public enum enTestType {VisionTest = 1, WrittenTest = 2, StreetTest = 3 };
         public TestTypeDTO TestTypeDTO
         {
@@ -35,7 +35,7 @@ namespace DVlD_BusinessLayer
         
         private clsTestTypes(IDALTestTypes dALTestTypes,TestTypeDTO TTDOT)
         {
-            this.ID = (enTestType) TTDOT.TestTypeID;
+            this.TestTypeID = (enTestType) TTDOT.TestTypeID;
             this.Title = TTDOT.Title;
             this.Description = TTDOT.Description; 
             this.Fees = TTDOT.TestFees;

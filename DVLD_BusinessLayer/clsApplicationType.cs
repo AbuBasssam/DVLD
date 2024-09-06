@@ -24,7 +24,8 @@ namespace DVlD_BusinessLayer
             NewInternationalLicense=6,
             RetakeTest= 7
         }
-        private IApplicationTypesDAL _DALApplicationType {  get; set; }
+        
+        private readonly IApplicationTypesDAL _DALApplicationType;
         public ApplicationTypeDTO ATDTO { get { return new ApplicationTypeDTO((int)this.ApplicationID, this.Title, this.Fees); } }
         public enApplicationTypes ApplicationID { set; get;}
         public string Title {  set; get; }  

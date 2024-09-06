@@ -17,12 +17,11 @@ namespace DVLD_DataAccessLayer
 
     public  class clsDriverData : IDriverData
     {
-        private string _ConnectionString { get; set; }
+        private readonly string _ConnectionString;
         public clsDriverData(string ConnectionString)
         {
             this._ConnectionString = ConnectionString;
         }
-                                                        //"Server=.;Database=DVLD;User Id=sa;Password=sa123456;Encrypt=False;TrustServerCertificate=True;Connection Timeout=30;";
 
         public async Task<IEnumerable<DriverViewDTO>> GetAllDriversAsync()
         {
@@ -92,7 +91,7 @@ namespace DVLD_DataAccessLayer
                         {
                             if (await reader.ReadAsync())
                             {
-                                MapReaderToDriver(reader);
+                                return MapReaderToDriver(reader);
 
                             }
                         }
@@ -139,7 +138,7 @@ namespace DVLD_DataAccessLayer
                             if (await reader.ReadAsync())
                             {
 
-                                MapReaderToDriver(reader);
+                                return MapReaderToDriver(reader);
 
                             }
                         }

@@ -60,10 +60,7 @@ namespace DVlD_BusinessLayer
 
         public int CreatedBy { get; set; }
 
-        public clsUser User { get; set; }
-        public clsApplicationType ApplicationType { get; set; }
 
-        public clsPerson Person { get; set; }
         public clsApplication()
         {
             this.ApplicationID = null;
@@ -74,7 +71,6 @@ namespace DVlD_BusinessLayer
             this.LastStauteDate = DateTime.Today;
             this.PaidFees = PaidFees;
             this.CreatedBy = -1;
-            this.ApplicationType = new clsApplicationType();
             Mode = enMode.AddNew;
 
 
@@ -92,7 +88,6 @@ namespace DVlD_BusinessLayer
             this.CreatedBy = CreatedBy;
             //this.User = clsUser.FindByUserID(CreatedBy).Result;
             //this.Person = clsPerson.Find(applicationPersonID);
-            this.ApplicationType = clsApplicationType.Find(ApplicationTypeID);
             Mode = enMode.Update;
 
 

@@ -12,14 +12,10 @@ namespace DVLD_API
         //public enum enUserBadRequestTypes { EmptyFileds = 1, InvalidPersonID = 2,UserNameDuplicate = 3, NullObject = 4,AlreadyUser=5, None = 6};
 //        public enum enDriverBadRequestTypes { EmptyFileds = 1, InvalidPersonID = 2, NullObject = 3, AlreadyDriver = 4, None = 5 };
 
-        private static bool HasDriverHaveEmptyFileds(DriverDTO NewDriverDTO)
-        {
-            return (NewDriverDTO.PersonID == 0||NewDriverDTO.CreatedByUserID==0);
-        }
-
+       
         public static Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
         
-        public static enDriverBadRequestTypes DriverCheckConstraints(DriverDTO NewDriverDTO)
+        /*public static enDriverBadRequestTypes DriverCheckConstraints(DriverDTO NewDriverDTO)
         {
             if (NewDriverDTO == null)
             {
@@ -30,11 +26,11 @@ namespace DVLD_API
                 return enDriverBadRequestTypes.EmptyFileds;
             }
             
-            /*if (clsPerson.Find(NewDriverDTO.PersonID) == null)
+            *//*if (clsPerson.Find(NewDriverDTO.PersonID) == null)
             {
 
                 return enDriverBadRequestTypes.InvalidPersonID;
-            }*/
+            }*//*
 
             if (clsDriver.FindByPersonID(NewDriverDTO.PersonID)!=null)
             {
@@ -43,7 +39,7 @@ namespace DVLD_API
             }
 
             return enDriverBadRequestTypes.None;
-        }
+        }*/
 
         /*private static bool HasPersonHaveEmptyFileds(PersonDTO NewPersonDTO)
                         {

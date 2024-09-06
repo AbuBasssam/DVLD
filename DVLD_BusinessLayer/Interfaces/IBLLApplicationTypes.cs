@@ -25,6 +25,6 @@ namespace DVlD_BusinessLayer.Interfaces
          float Fees { set; get; }
          Task<IEnumerable<ApplicationTypeDTO>> GetAllApplicatoinTypes();
          Task<clsApplicationType> Find(int ApplicationID);
-         Task<bool> UpdateApplicationType(ApplicationTypeDTO ATDTO)
+        Task<bool> UpdateApplicationType(ApplicationTypeDTO ATDTO);
     }
 }

@@ -211,35 +211,35 @@ namespace DVlD_BusinessLayer
             return clsLocalDrivingLicenseApplicationData.IsThereAnActiveScheduledTest(this.LocalDrivingLicenseApplicationID, (int)TestTypeID);
         }
 
-        public byte GetPassedTestCount()
+        /*public byte GetPassedTestCount()
         {
             return clsTest.GetPassedTestCount(this.LocalDrivingLicenseApplicationID);
         }
+*/
 
-
-          public clsTest GetLastTestPerTestType(clsTestTypes.enTestType TestTypeID)
+         /* public clsTest GetLastTestPerTestType(clsTestTypes.enTestType TestTypeID)
         {
             return clsTest.FindLastTestPerPersonAndLicenseClass(this.ApplicationInfo.ApplicationPersonID,LicenseClassID, TestTypeID);
-        }
+        }*/
 
         
-        public static byte GetPassedTestCount(int LocalDrivingLicenseApplicationID)
+       /* public static byte GetPassedTestCount(int LocalDrivingLicenseApplicationID)
         {
             return clsTest.GetPassedTestCount(LocalDrivingLicenseApplicationID);
-        }
+        }*/
 
-        public bool PassedAllTests()
+        /*public bool PassedAllTests()
         {
             return clsTest.PassedAllTests(this.LocalDrivingLicenseApplicationID);
-        }
+        }*/
 
-        public static bool PassedAllTests(int LocalDrivingLicenseApplicationID)
+        /*public static bool PassedAllTests(int LocalDrivingLicenseApplicationID)
         {
             //if total passed test less than 3 it will return false otherwise will return true
             return clsTest.PassedAllTests(LocalDrivingLicenseApplicationID);
-        }
+        }*/
         
-        public int IssueLicenseForTheFirtTime(string Notes, int CreatedByUserID)
+        /*public int IssueLicenseForTheFirtTime(string Notes, int CreatedByUserID)
         {
             int DriverID = -1;
 
@@ -289,7 +289,7 @@ namespace DVlD_BusinessLayer
                
             else
                 return -1;
-        }
+        }*/
 
         public bool IsLicenseIssued()
         {

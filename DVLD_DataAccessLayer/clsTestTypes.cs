@@ -13,7 +13,7 @@ namespace DVLD_DataAccessLayer
 {
     public  class clsTestTypesData :IDALTestTypes
     {
-        private string _ConnectoinString {  get; set; }
+        private readonly string _ConnectoinString;
         clsTestTypesData(string ConnectoinString)
         {
             this._ConnectoinString = ConnectoinString;
