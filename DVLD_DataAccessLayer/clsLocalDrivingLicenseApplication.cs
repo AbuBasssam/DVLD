@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 
 namespace DVLD_DataAccessLayer
 {
-    public  class clsLocalDrivingLicenseApplicationData
+    public  class clsLocalDrivingLicenseApplicationData:IDALLocalDrivingLicenseApplication
     {
         private readonly string _ConnectionString;
         public clsLocalDrivingLicenseApplicationData(string ConnectionString)
