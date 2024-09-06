@@ -8,7 +8,7 @@ namespace DVLD_DataAccessLayer.Entities
 {
     public class ApplicationDTO
     {
-        public int ApplicationID { get; set; }
+        public int? ApplicationID { get; set; }
         public int ApplicationPersonID {  get; set; }
 
         public DateTime ApplicationDate { get; set; }
@@ -23,7 +23,7 @@ namespace DVLD_DataAccessLayer.Entities
         
         public  int CreatedBy {  get; set; }
 
-        public ApplicationDTO(int ApplicationID, int applicationPersonID, DateTime applicationDate, int applicationTypeID, byte staute, DateTime lastStauteDate, float peadFees, int createdBy)
+        public ApplicationDTO(int? ApplicationID, int applicationPersonID, DateTime applicationDate, int applicationTypeID, byte staute, DateTime lastStauteDate, float peadFees, int createdBy)
         {
             this.ApplicationID = ApplicationID;
             ApplicationPersonID = applicationPersonID;
