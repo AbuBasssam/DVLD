@@ -32,5 +32,6 @@ namespace DVLD_DataAccessLayer.Interfaces
 
         // Method to check if a driver exists by their DriverID asynchronously, returning a boolean indicating existence
         Task<bool> IsDriverExistsAsync(int DriverID);
+        Task<IEnumerable<DriverLicensesDTO>> AllDriverLicenses(int DriverID);
     }
 }

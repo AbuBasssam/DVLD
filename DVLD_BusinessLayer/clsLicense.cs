@@ -1,4 +1,6 @@
 ﻿using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,19 +14,37 @@ namespace DVlD_BusinessLayer
 {
     public class clsLicense
     {
+        private readonly IDALLicense _DALLicense;
         public enum enIssueReason { FirstTime = 1, Renew = 2, ReplacementForDamaged = 3, ReplacementForLost = 4 }
-        
-        public enum enMode { AddNew,Update};
-        
-        public enMode Mode { get; set; }
-        
+        LicenseDTO LDTO
+        {
+            get
+            {
+
+                return new LicenseDTO
+                    (
+                        this.LicenseID,
+                        this.ApplicationID,
+                        this.DriverID,
+                        Convert.ToByte(this.LicenseClass),
+                        this.IssueDate,
+                        this.ExpirationDate,
+                        this.Notes,
+                        this.PaidFees,
+                        this.IsActive,
+                        Convert.ToByte(this.IssueReason),
+                        this.CreatedByUserID
+
+                    );
+            }
+        }
         public int LicenseID { get; set; }
         
         public int ApplicationID { get; set; }
         
         public int DriverID { get; set; }
         
-        public int LicenseClass { get; set; }
+        public clsLicenseClasses.enLicenseClasses LicenseClass { get; set; }
         
         public DateTime IssueDate { get; set; }
         
@@ -32,7 +52,7 @@ namespace DVlD_BusinessLayer
         
         public string Notes { get; set; }
         
-        public int PaidFees { get; set; }
+        public float PaidFees { get; set; }
         
         public byte IsActive { get; set; }
         
@@ -47,193 +67,92 @@ namespace DVlD_BusinessLayer
         }
        
         public int CreatedByUserID { get; set; }
-        
-        public clsApplication ApplicationInfo { get; set; }
-        
-        public clsUser UserInfo { get; set; }
-        
-        public clsLicenseClasses LicenseClassesInfo { get; set; }
-        
-        public clsDriver DriverInfo { get; set; }
 
-        public clsDetainedLicense DetainedInfo { set; get; }
         public bool IsDetained
         {
             get { return clsDetainedLicense.IsLicenseDetained(this.LicenseID);}
         }
-        public clsLicense()
+        public clsLicense(IDALLicense DAL)
         {
-            this.LicenseID = -1;
-            this.ApplicationID = -1;
-            this.DriverID = -1;
-            this.LicenseClass = -1;
-            this.CreatedByUserID = -1;
-            this.IssueDate=DateTime.MinValue;
-            this.ExpirationDate = DateTime.MinValue;
-            this.Notes = string.Empty;
-            this.PaidFees = 0;
-            this.IsActive = 0;
-            this.IssueReason = enIssueReason.FirstTime;
-            this.Mode =enMode.AddNew;
-        }
-
-        private clsLicense(int LicenseID, int ApplicationID, int DriverID, int LicenseClass,
-            DateTime IssueDate, DateTime ExpirationDate, string Notes, int PaidFees, byte IsActive, byte IssueReason, int CreatedByUserID)
-        {
-
-            this.LicenseID = LicenseID;
-            this.ApplicationID = ApplicationID;
-            this.DriverID = DriverID;
-            this.LicenseClass = LicenseClass;
-            this.CreatedByUserID = CreatedByUserID;
-            this.IssueDate = IssueDate;
-            this.ExpirationDate = ExpirationDate;
-            this.Notes = Notes;
-            this.PaidFees = PaidFees;
-            this.IsActive = IsActive;
-            this.IssueReason = (clsLicense.enIssueReason)IssueReason;
-            this.ApplicationInfo = clsApplication.Find(ApplicationID);
-            //this.UserInfo = clsUser.FindByUserID(CreatedByUserID).Result;
-            //this.DriverInfo = clsDriver.FindByDriverID(DriverID).Result;
-            this.LicenseClassesInfo = clsLicenseClasses.Find(LicenseClass);
-            this.DetainedInfo = clsDetainedLicense.FindByLicenseID(this.LicenseID);
-
-            this.Mode = enMode.Update;
+            this._DALLicense = DAL;
 
         }
 
-        public static  clsLicense Find(int LicenseID)
+        private clsLicense(IDALLicense DAL,LicenseDTO LDTO)
         {
-            int ApplicationID=-1, DriverID = -1, LicenseClass = -1, PaidFees = -1, CreatedByUserID = -1;
-            DateTime IssueDate=DateTime.Now, ExpirationDate = DateTime.Now;
-            string Notes = "" ;
-            byte IsActive=0, IssueReason=0;
-            if(clsLicensesData.FindByLicenseID(LicenseID,ref ApplicationID, ref DriverID, ref LicenseClass,
-                ref IssueDate, ref ExpirationDate, ref Notes, ref PaidFees, ref IsActive, ref IssueReason, ref CreatedByUserID))
 
-                return new clsLicense(LicenseID,ApplicationID,DriverID,LicenseClass,
-                    IssueDate,ExpirationDate,Notes,PaidFees,IsActive,IssueReason,CreatedByUserID);
-            
-            else
-                return null;
+            this.LicenseID = LDTO.LicenseID;
+            this.ApplicationID = LDTO.ApplicationID;
+            this.DriverID = LDTO.DriverID;
+            this.LicenseClass = (clsLicenseClasses.enLicenseClasses) LDTO.LicenseClass;
+            this.CreatedByUserID = LDTO.CreatedByUserID;
+            this.IssueDate = LDTO.IssueDate;
+            this.ExpirationDate = LDTO.ExpirationDate;
+            this.Notes = LDTO.Notes;
+            this.PaidFees = LDTO. PaidFees;
+            this.IsActive = LDTO.IsActive;
+            this.IssueReason = (clsLicense.enIssueReason)LDTO.IssueReason;
+           
+
+        }
+
+        public async Task<clsLicense> Find(int LicenseID)
+        {  
+            LicenseDTO LDTO= await _DALLicense.FindByLicenseID(LicenseID);
+                return(LDTO!= null)?new clsLicense(_DALLicense, LDTO):null;
             
         }
 
-        public static clsLicense Find(int LicenseID,int LicenseClassID)
+        public async Task<clsLicense> Find(int LicenseID,int LicenseClassID)
         {
-            int ApplicationID = -1, DriverID = -1, LicenseClass = -1, PaidFees = -1, CreatedByUserID = -1;
-            DateTime IssueDate = DateTime.Now, ExpirationDate = DateTime.Now;
-            string Notes = "";
-            byte IsActive = 0, IssueReason = 0;
-            if (clsLicensesData.FindByLicenseIDAndLicenseClass(LicenseID, ref ApplicationID, ref DriverID,  LicenseClassID,
-                ref IssueDate, ref ExpirationDate, ref Notes, ref PaidFees, ref IsActive, ref IssueReason, ref CreatedByUserID))
-
-                return new clsLicense(LicenseID, ApplicationID, DriverID, LicenseClass,
-                    IssueDate, ExpirationDate, Notes, PaidFees, IsActive, IssueReason, CreatedByUserID);
-
-            else
-                return null;
-
-        }
-        public static DataTable GetAllDriverLicenses(int DriverID)
-        {
-            return clsLicensesData.GetAllDriverLicenses(DriverID);
-
-        }
-
-        public static clsLicense FindByDriverID(int DriverID)
-        {
-            int ApplicationID = -1, LicenseID = -1, LicenseClass = -1, PaidFees = -1, CreatedByUserID = -1;
-            DateTime IssueDate = DateTime.Now, ExpirationDate = DateTime.Now;
-            string Notes = "";
-            byte IsActive = 0, IssueReason = 0;
-            if (clsLicensesData.FindByDriverID(ref LicenseID, ref ApplicationID, DriverID, ref LicenseClass,
-                ref IssueDate, ref ExpirationDate, ref Notes, ref PaidFees, ref IsActive, ref IssueReason, ref CreatedByUserID))
-
-                return new clsLicense(LicenseID, ApplicationID, DriverID, LicenseClass,
-                    IssueDate, ExpirationDate, Notes, PaidFees, IsActive, IssueReason, CreatedByUserID);
-
-            else
-                return null;
-
-        }
-
-        public static clsLicense FindByApplicationID(int ApplicationID)
-        {
-            int DriverID = -1, LicenseID = -1, LicenseClass = -1, PaidFees = -1, CreatedByUserID = -1;
-            DateTime IssueDate = DateTime.Now, ExpirationDate = DateTime.Now;
-            string Notes = "";
-            byte IsActive = 0, IssueReason = 0;
-            if (clsLicensesData.FindByApplicationID(ref LicenseID,  ApplicationID, ref DriverID, ref LicenseClass,
-                ref IssueDate, ref ExpirationDate, ref Notes, ref PaidFees, ref IsActive, ref IssueReason, ref CreatedByUserID))
-
-                return new clsLicense(LicenseID, ApplicationID, DriverID, LicenseClass,
-                    IssueDate, ExpirationDate, Notes, PaidFees, IsActive, IssueReason, CreatedByUserID);
-
-            else
-                return null;
-
-        }
-
-        private bool _AddNewLLicense()
-        {
-            this.LicenseID=clsLicensesData.AddNewLicense(ApplicationID, DriverID, LicenseClass,IssueDate,ExpirationDate,Notes,PaidFees,IsActive,(byte)IssueReason, CreatedByUserID);
-            return (this.LicenseID != -1);
-
+            LicenseDTO LDTO = await _DALLicense.FindByLicenseIDAndLicenseClass(LicenseID,LicenseClassID);
+            return (LDTO != null) ? new clsLicense(_DALLicense, LDTO) : null;
         }
         
-        private bool _UpdateLLicense()
+        public async Task<IEnumerable<DriverLicensesDTO>> GetAllDriverLicenses(int DriverID)
         {
-            return clsLicensesData.UpdateLicense(LicenseID,ApplicationID, DriverID, LicenseClass, IssueDate, ExpirationDate, Notes, PaidFees, IsActive, (byte)IssueReason, CreatedByUserID);
+            return await _DALLicense.GetAllDriverLicenses(DriverID);
+
+        }
+
+        public async Task<clsLicense> FindByDriverID(int DriverID)
+        {
+
+            LicenseDTO LDTO = await _DALLicense.FindByDriverID(DriverID);
+            return (LDTO != null) ? new clsLicense(_DALLicense, LDTO) : null;
+
+        }
+
+        public async Task<clsLicense> FindByApplicationID(int ApplicationID)
+        {
+
+            LicenseDTO LDTO = await _DALLicense.FindByApplicationID(ApplicationID);
+            return (LDTO != null) ? new clsLicense(_DALLicense, LDTO) : null;
+        }
+
+        public async Task<int?> AddNewLLicense(LicenseDTO LDTO)
+        {
+           return await _DALLicense.AddNewLicense(LDTO);
+
+        }
+
+        public async Task< bool> UpdateLLicense(LicenseDTO LDTO)
+        {
+            return await _DALLicense.UpdateLicense(LDTO);
             
 
         }
 
-        public static bool DeleteLicense(int LicenseID)
+        public async Task<bool> DeleteLicense(int LicenseID)
         {
-            return clsLicensesData.DeleteLicense(LicenseID);
+            return await _DALLicense.DeleteLicense(LicenseID);
         }
         
-       /* public static bool AlreadyHaveLicense(int PersonID,int LicenseClass)
+        public async Task< bool> IsLicenseExist(int ApplicationID)
         {
-           clsDriver Driver= clsDriver.FindByPersonID(PersonID).Result;
-            int DriverID = (Driver!=null)? (int)Driver.DriverID:-1;
-            if (DriverID == -1)
-                return false;
-            else
-                return clsLicensesData.AlreadyHaveLicense(DriverID,LicenseClass);
-        }*/
-        
-        public static bool IsLicenseExist(int ApplicationID)
-        {
-            return clsLicensesData.IsLicneseExist(ApplicationID);
+            return await _DALLicense.IsLicneseExist(ApplicationID);
         }
        
-        public bool Save()
-        {
-
-            switch (Mode)
-            {
-                case enMode.AddNew:
-
-                    if (_AddNewLLicense())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else return false;
-
-
-                case enMode.Update:
-
-                    return _UpdateLLicense();
-
-
-                default:
-                    return false;
-            }
-        }
-
         public static string GetIssueReasonText(enIssueReason IssueReason)
         {
 
@@ -252,31 +171,44 @@ namespace DVlD_BusinessLayer
             }
         }
 
-        public static bool IsLicenseExistByPersonID(int PersonID, int LicenseClassID)
+        public async Task<bool> IsLicenseExistByPersonID(int PersonID, int LicenseClassID)
         {
-            return (GetActiveLicenseIDByPersonID(PersonID, LicenseClassID) != -1);
+            return (await GetActiveLicenseIDByPersonID(PersonID, LicenseClassID) != null);
         }
 
-        public static int GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID)
+        public async Task<int?> GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID)
         {
 
-            return clsLicensesData.GetActiveLicenseIDByPersonID(PersonID, LicenseClassID);
+            return await _DALLicense.GetActiveLicenseIDByPersonID(PersonID, LicenseClassID);
 
         }
 
-        public Boolean IsLicenseExpired()
+        public bool IsLicenseExpired()
         {
 
             return (this.ExpirationDate < DateTime.Now);
 
         }
 
-        public bool DeactivateCurrentLicense()
+        public async Task<bool> DeactivateCurrentLicense()
         {
-            return (clsLicensesData.DeactivateLicense(this.LicenseID));
+            return (await _DALLicense.DeactivateLicense(this.LicenseID));
         }
 
-        public int Detain(float FineFees, int CreatedByUserID)
+        public async Task<int?> Detain(float FineFees, int CreatedByUserID)
+        {
+            DetainedLicenseDTO detainedLicense = new DetainedLicenseDTO(-1, this.LicenseID, DateTime.Now, FineFees, CreatedByUserID,false,null,null,null);
+            detainedLicense.LicenseID = this.LicenseID;
+            detainedLicense.DetainDate = DateTime.Now;
+            detainedLicense.FineFees = (int)(FineFees);
+            detainedLicense.CreatedByUserID = CreatedByUserID;
+
+            return await _DALLicense.Detain(detainedLicense);
+
+        }
+        
+        
+        /*public async Task<int?> Detain(float FineFees, int CreatedByUserID)
         {
             clsDetainedLicense detainedLicense = new clsDetainedLicense();
             detainedLicense.LicenseID = this.LicenseID;
@@ -284,15 +216,9 @@ namespace DVlD_BusinessLayer
             detainedLicense.FineFees = (int)(FineFees);
             detainedLicense.CreatedByUserID = CreatedByUserID;
 
-            if (!detainedLicense.Save())
-            {
+            return (detainedLicense.Save())? detainedLicense.DetainID:null;
 
-                return -1;
-            }
-
-            return detainedLicense.DetainID;
-
-        }
+        }*/
 
         /*public bool ReleaseDetainedLicense(int ReleasedByUserID, ref int ApplicationID)
         {
@@ -320,7 +246,7 @@ namespace DVlD_BusinessLayer
             return this.DetainedInfo.ReleaseDetainedLicense(ReleasedByUserID, (int)Application.ApplicationID);
         }*/
 
-        public clsLicense RenewLicense(string Notes, int CreatedByUserID)
+        /*public clsLicense RenewLicense(string Notes, int CreatedByUserID)
         {
 
             //First Create Applicaiton 
@@ -365,9 +291,9 @@ namespace DVlD_BusinessLayer
             DeactivateCurrentLicense();
 
             return NewLicense;
-        }
+        }*/
 
-        public clsLicense Replace(enIssueReason IssueReason, int CreatedByUserID)
+        /*public clsLicense Replace(enIssueReason IssueReason, int CreatedByUserID)
         {
 
 
@@ -415,7 +341,16 @@ namespace DVlD_BusinessLayer
             DeactivateCurrentLicense();
 
             return NewLicense;
-        }
+        }*/
 
+        /* public static bool AlreadyHaveLicense(int PersonID,int LicenseClass)
+        {
+           clsDriver Driver= clsDriver.FindByPersonID(PersonID).Result;
+            int DriverID = (Driver!=null)? (int)Driver.DriverID:-1;
+            if (DriverID == -1)
+                return false;
+            else
+                return clsLicensesData.AlreadyHaveLicense(DriverID,LicenseClass);
+        }*/
     }
 }

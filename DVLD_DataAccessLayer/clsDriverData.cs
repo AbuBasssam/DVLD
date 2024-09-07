@@ -393,6 +393,9 @@ namespace DVLD_DataAccessLayer
                                       reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
                                   );
         }
-
+        public async Task<IEnumerable<DriverLicensesDTO>> AllDriverLicenses(int DriverID)
+        {
+            return await  new clsLicensesData(_ConnectionString).GetAllDriverLicenses(DriverID);
+        }
     }
 }

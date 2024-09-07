@@ -163,7 +163,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public async Task<LicenseDTO> FindByLicenseIDAndLicenseClass(int LicenseClass)
+        public async Task<LicenseDTO> FindByLicenseIDAndLicenseClass(int LicenseID, int LicenseClass)
         {
             try
             {
@@ -174,7 +174,9 @@ namespace DVLD_DataAccessLayer
 
                     using (var command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@LicenseID", LicenseID);
                         command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
+
                         connection.Open();
                         SqlDataReader reader = command.ExecuteReader();
 
@@ -627,6 +629,10 @@ namespace DVLD_DataAccessLayer
            
 
             return (rowsAffected ==1);
+        }
+        public async Task<int?>Detain(DetainedLicenseDTO DLDTO)
+        {
+           return await  new clsDetainedLicenseData(_ConnectionString).AddNewDetainedLicense(DLDTO); 
         }
         
         private LicenseDTO _MapReaderToDTO(IDataReader reader)

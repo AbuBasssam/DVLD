@@ -122,25 +122,25 @@ namespace DVlD_BusinessLayer
             return await _DriverDAL.IsDriverExistsAsync(DriverID);
         }
 
-        public static DataTable GetLicenses(int DriverID)
+        public async Task<IEnumerable<DriverLicensesDTO>> GetDriverLicenses(int DriverID)
         {
-            return clsLicense.GetAllDriverLicenses(DriverID);
+            return await _DriverDAL.AllDriverLicenses(DriverID);
         }
 
-        public static DataTable GetInternationalLicenses(int DriverID)
+        /*public static DataTable GetInternationalLicenses(int DriverID)
         {
             return clsInternationalLicense.GetAllDriverInternationalLicenses(DriverID);
-        }
+        }*/
 
-        public  DataTable GetLicenses()
+        public async Task<IEnumerable<DriverLicensesDTO>> GetLicenses()
         {
-            return clsLicense.GetAllDriverLicenses((int)DriverID);
+            return await GetDriverLicenses((int)DriverID);
         }
 
-        public  DataTable GetInternationalLicenses()
+        /*public  DataTable GetInternationalLicenses()
         {
             return clsInternationalLicense.GetAllDriverInternationalLicenses((int)DriverID);
-        }
+        }*/
 
         
 
