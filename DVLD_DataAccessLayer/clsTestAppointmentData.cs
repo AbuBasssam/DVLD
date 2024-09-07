@@ -20,9 +20,9 @@ namespace DVLD_DataAccessLayer
             _ConnectionString = connectionString;
         }
 
-        public async Task<DataTable> GetAllAppointmentAsync()
+        public async Task<IEnumerable<TestAppointmentDTO>> GetAllAppointmentAsync()
         {
-            DataTable dt = new DataTable();
+            List<TestAppointmentDTO> TestAppointmentsList = new List<TestAppointmentDTO>();
             using (SqlConnection connection = new SqlConnection(_ConnectionString))
             {
                 string query = "SELECT * FROM TestAppointments";
@@ -31,12 +31,12 @@ namespace DVLD_DataAccessLayer
                 try
                 {
                     await connection.OpenAsync();
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.HasRows)
-                        {
-                            dt.Load(reader);
-                        }
+                       while (await reader.ReadAsync())
+                       {
+                            TestAppointmentsList.Add(_MapReaderToTestAppointmentDTO((reader)));
+                       }
                     }
                 }
                 catch (Exception ex)
@@ -45,37 +45,39 @@ namespace DVLD_DataAccessLayer
                 }
             }
 
-            return dt;
+            return TestAppointmentsList;
         }
 
-        public  async Task<DataTable> GetApplicationTestAppointmentsPerTestTypeAsync(int LicenseApplicationID, int TestTypeID)
+        public  async Task<IEnumerable<AppointmentTestTypeDTO>> GetApplicationTestAppointmentsPerTestTypeAsync(int LicenseApplicationID, byte TestTypeID)
         {
-            DataTable dt = new DataTable();
-            using (SqlConnection connection = new SqlConnection(_ConnectionString))
+            List<AppointmentTestTypeDTO> ATTList = new List<AppointmentTestTypeDTO>();
+            try
             {
-                string query = "SELECT TestAppointmentID, AppointmentDate, PaidFees, IsLocked FROM TestAppointments WHERE LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID AND TestTypeID = @TestTypeID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LicenseApplicationID);
-                command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-
-                try
+                using (SqlConnection connection = new SqlConnection(_ConnectionString))
                 {
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    string query = "SELECT TestAppointmentID, AppointmentDate, PaidFees, IsLocked FROM TestAppointments WHERE LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID AND TestTypeID = @TestTypeID";
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        if (reader.HasRows)
+                        command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LicenseApplicationID);
+                        command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+                        await connection.OpenAsync();
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            dt.Load(reader);
+                            while (await reader.ReadAsync())
+                            {
+                                ATTList.Add(_MapReaderToAppointmentTestTypeDTO(reader));
+                            }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    clsEventLog.SetEventLog(ex.Message);
-                }
-            }
 
-            return dt;
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                clsEventLog.SetEventLog(ex.Message);
+            }
+                return ATTList;
         }
 
         public  async Task<TestAppointmentDTO> FindByIDAsync(int TestAppointmentID)
@@ -210,40 +212,9 @@ namespace DVLD_DataAccessLayer
             return isFound;
         }
 
-        public  async Task<int> TrailAsync(int TestTypeID, int LicenseApplicationID)
+
+        public  async Task<TestAppointmentDTO> GetLastTestAppointmentAsync(int LocalDrivingLicenseApplicationID,byte TestTypeID)
         {
-            int numberOfTrails = -1;
-            using (SqlConnection connection = new SqlConnection(_ConnectionString))
-            {
-                string query = @"SELECT COUNT(*) FROM TestAppointments WHERE LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID AND TestTypeID = @TestTypeID AND IsLocked = 1";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-                command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LicenseApplicationID);
-
-                try
-                {
-                    await connection.OpenAsync();
-                    object result = await command.ExecuteScalarAsync();
-                    if (result != null && int.TryParse(result.ToString(), out int trails))
-                    {
-                        numberOfTrails = trails;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    clsEventLog.SetEventLog(ex.Message);
-                }
-            }
-
-            return numberOfTrails;
-        }
-
-        public  async Task<bool> GetLastTestAppointmentAsync(
-            int LocalDrivingLicenseApplicationID, int TestTypeID,
-            CancellationToken cancellationToken,
-            TestAppointmentDTO appointmentDto)
-        {
-            bool isFound = false;
             using (SqlConnection connection = new SqlConnection(_ConnectionString))
             {
                 string query = @"SELECT TOP 1 * FROM TestAppointments
@@ -256,24 +227,69 @@ namespace DVLD_DataAccessLayer
 
                 try
                 {
-                    await connection.OpenAsync(cancellationToken);
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken))
+                    await connection.OpenAsync();
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync(cancellationToken))
+                        if (await reader.ReadAsync())
                         {
-                            isFound = true;
-                            _MapReaderToTestAppointmentDTO(reader);
+                            
+                           return _MapReaderToTestAppointmentDTO(reader);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     clsEventLog.SetEventLog(ex.Message);
-                    isFound = false;
                 }
             }
 
-            return isFound;
+            return null;
+        }
+
+        public async Task<int> GetTestIDAsync(int TestAppointmentID)
+        {
+            int TestID = -1;
+
+            try
+            {
+                using (var connection = new SqlConnection(_ConnectionString))
+                {
+                    string query = @"select TestID from Tests where TestAppointmentID=@TestAppointmentID;";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID);
+
+
+                        connection.Open();
+
+                        object result =await command.ExecuteScalarAsync();
+
+                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        {
+                            TestID = insertedID;
+                        }
+                    }
+
+
+                        
+
+                }
+
+           
+            }
+
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+
+            }
+
+           
+
+
+            return TestID;
+
         }
 
         private TestAppointmentDTO _MapReaderToTestAppointmentDTO(IDataReader reader)
@@ -281,7 +297,7 @@ namespace DVLD_DataAccessLayer
             return new TestAppointmentDTO
             (
              reader.GetInt32(reader.GetOrdinal("TestAppointmentID")),
-             reader.GetInt32(reader.GetOrdinal("TestTypeID")),
+             Convert.ToByte(reader.GetInt32(reader.GetOrdinal("TestTypeID"))),
              reader.GetInt32(reader.GetOrdinal("LocalDrivingLicenseApplicationID")),
              reader.GetDateTime(reader.GetOrdinal("AppointmentDate")),
              reader.GetFloat(reader.GetOrdinal("PaidFees")),
@@ -289,6 +305,17 @@ namespace DVLD_DataAccessLayer
              reader.GetBoolean(reader.GetOrdinal("IsLocked")),
              reader.IsDBNull(reader.GetOrdinal("RetakeTestApplicationID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("RetakeTestApplicationID"))
             );
+        }
+        private AppointmentTestTypeDTO _MapReaderToAppointmentTestTypeDTO(IDataReader reader)
+        {
+            return new AppointmentTestTypeDTO
+                (
+                    reader.GetInt32(reader.GetOrdinal("TestAppointmentID")),
+                    reader.GetDateTime(reader.GetOrdinal("AppointmentDate")),
+                    reader.GetFloat(reader.GetOrdinal("PaidFees")),
+                    reader.GetBoolean(reader.GetOrdinal("IsLocked"))
+
+                );
         }
     }
 

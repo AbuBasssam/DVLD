@@ -66,6 +66,7 @@
     <Compile Include="clsUserData.cs" />
     <Compile Include="Entities\ApplicationDTO.cs" />
     <Compile Include="Entities\ApplicationTypeDTO.cs" />
+    <Compile Include="Entities\AppointmentTestTypeDTO.cs" />
     <Compile Include="Entities\DriverDTO.cs" />
     <Compile Include="Entities\DriverLicensesDTO.cs" />
     <Compile Include="Entities\DriverViewDTO.cs" />

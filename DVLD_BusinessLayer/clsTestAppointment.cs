@@ -1,4 +1,7 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,10 +11,26 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsTestAppointment
+    public class clsTestAppointment :BLLTestAppointment
     {
-        public enum enMode { AddNew=0, Update=1};
-        public enMode Mode;
+        private IDALTestAppointment _DALTestAppointment { get; set; }
+        TestAppointmentDTO TADTO
+        {
+            get
+            {
+                return new TestAppointmentDTO
+                    (
+                    this.TestAppointmentID,
+                    Convert.ToByte( this.TestTypeID),
+                    this.LocalDrivingApplicationID,
+                    this.AppointmentDate,
+                    this.PaidFees,
+                    this.CreatedBy,
+                    this.IsLocked,
+                    this.RetakeTestApplicationID
+                    );
+            }
+        }
         public int TestAppointmentID { get; set; }
         public clsTestTypes.enTestType TestTypeID {  get; set; }
         public int LocalDrivingApplicationID {  get; set; }
@@ -19,153 +38,86 @@ namespace DVlD_BusinessLayer
         public float PaidFees {  get; set; }
         public int CreatedBy { get; set; }
         public bool IsLocked { get; set; }
-        public clsTestTypes TestTypes { get; set; }
-        public  clsUser UserInfo { get; set; }
-        public clsLocalDrivingLicenseApplication LocalDrivingLicenseApplicationInfo { get; set;}
-        public int RetakeTestApplicationID { set; get; }
-        public clsApplication RetakeTestAppInfo { set; get; }
-        /*public int TestID
+        public int? RetakeTestApplicationID { set; get; }
+        public int TestID
         {
-            get { return _GetTestID(); }
+            get { return _GetTestID().Result; }
 
-        }*/
-        public clsTestAppointment()
+        }
+        public clsTestAppointment(IDALTestAppointment DALTestAppointment) 
         {
-            TestAppointmentID = -1;
-            TestTypeID = clsTestTypes.enTestType.VisionTest;
-            LocalDrivingApplicationID = -1;
-            AppointmentDate = DateTime.Now;
-            PaidFees = 0;
-            CreatedBy = -1;
-            RetakeTestApplicationID = -1;
+            this._DALTestAppointment = DALTestAppointment;
 
-            Mode = enMode.AddNew;
         }
 
-        /*private clsTestAppointment(int TestAppointmentID, clsTestTypes.enTestType TestTypeID, int LocalDrivingApplicationID, DateTime AppointmentDate, float PaidFees, int CreatedBy, bool IsLocked, int RetakeTestApplicationID
-)
+        private clsTestAppointment(IDALTestAppointment DALTestAppointment, TestAppointmentDTO TTDTO)
         {
-            this.TestAppointmentID = TestAppointmentID;
-            this.TestTypeID = TestTypeID;
-            this.LocalDrivingApplicationID= LocalDrivingApplicationID;
-            this.AppointmentDate = AppointmentDate;
-            this.PaidFees = PaidFees;
-            this.CreatedBy = CreatedBy;
-            this.IsLocked = IsLocked;
-          //  this.UserInfo = clsUser.FindByUserID(this.CreatedBy).Result;
-            this.TestTypes = clsTestTypes.Find((clsTestTypes.enTestType) TestTypeID);
-            this.LocalDrivingLicenseApplicationInfo = clsLocalDrivingLicenseApplication.Find(LocalDrivingApplicationID);
-            this.RetakeTestApplicationID = RetakeTestApplicationID;
-            this.RetakeTestAppInfo=clsApplication.Find(RetakeTestApplicationID);
+            this._DALTestAppointment = DALTestAppointment;
+            this.TestAppointmentID =TTDTO.TestAppointmentID;
+            this.TestTypeID =(clsTestTypes.enTestType) TTDTO.TestTypeID;
+            this.LocalDrivingApplicationID= TTDTO.LocalDrivingLicenseApplicationID;
+            this.AppointmentDate = TTDTO.AppointmentDate;
+            this.PaidFees = TTDTO.PaidFees;
+            this.CreatedBy = TTDTO.CreatedByUserID;
+            this.IsLocked = TTDTO.IsLocked;
+            this.RetakeTestApplicationID = TTDTO. RetakeTestApplicationID;
 
-            Mode = enMode.Update;
-        }*/
-        
-        
-        /*public static DataTable GetAllAppointment()
-        {
-            return clsTestAppointmentData.GetAllAppointment();
-        }*/
-
-
-       /* public static DataTable GetApplicationTestAppointmentsPerTestType(int LicenseApplicationID, clsTestTypes.enTestType TestTypeID)
-        {
-            return clsTestAppointmentData.GetApplicationTestAppointmentsPerTestType(LicenseApplicationID, (int)TestTypeID);
-        }*/
-        /*public DataTable GetApplicationTestAppointmentsPerTestType(clsTestTypes.enTestType TestTypeID)
-        {
-            return clsTestAppointmentData.GetApplicationTestAppointmentsPerTestType(this.LocalDrivingApplicationID, (int)TestTypeID);
-
-        }*/
-
-        /*public static clsTestAppointment Find(int TestAppointmentID)
-        {
-            int TestTypeID = 1; int LocalDrivingLicenseApplicationID = -1;
-            DateTime AppointmentDate = DateTime.Now; float PaidFees = 0;
-            int CreatedByUserID = -1; bool IsLocked = false; int RetakeTestApplicationID = -1;
-
-            if (clsTestAppointmentData.FindByID(TestAppointmentID, ref TestTypeID, ref LocalDrivingLicenseApplicationID,
-            ref AppointmentDate, ref PaidFees, ref CreatedByUserID, ref IsLocked, ref RetakeTestApplicationID))
-
-                return new clsTestAppointment(TestAppointmentID, (clsTestTypes.enTestType)TestTypeID, LocalDrivingLicenseApplicationID,
-             AppointmentDate, PaidFees, CreatedByUserID, IsLocked, RetakeTestApplicationID);
-            else
-                return null;
-        }*/
-
-        /*private bool _AddNewAppointment()
-        {
-            this. TestAppointmentID= clsTestAppointmentData.AddNewAppointment((int)TestTypeID, LocalDrivingApplicationID, AppointmentDate, PaidFees, CreatedBy, IsLocked, RetakeTestApplicationID);
-            return (TestAppointmentID != -1);
-        }*/
-
-        /*private bool _UpdateAppointment()
-        {
-            return clsTestAppointmentData.UpdateAppointment(TestAppointmentID, (int)TestTypeID, LocalDrivingApplicationID, AppointmentDate, PaidFees, CreatedBy, IsLocked, RetakeTestApplicationID);
         }
-        */
-       /* public static bool ExistAppointment(int LicenseApplicationID, int TestTypeID)
+
+        public async Task<IEnumerable<TestAppointmentDTO>> GetAllAppointmentAsync()
         {
-            return clsTestAppointmentData.ExistAppointment(LicenseApplicationID, TestTypeID);
-        }*/
+            return await _DALTestAppointment.GetAllAppointmentAsync();
+        }
 
-       /* public static bool AlreadyPassed(int LicenseApplicationID, int TestTypeID)
+        public async Task<IEnumerable<AppointmentTestTypeDTO>> GetApplicationTestAppointmentsPerTestTypeAsync(int LicenseApplicationID, clsTestTypes.enTestType TestTypeID)
         {
-            return clsTestAppointmentData.AlreadyPassed(LicenseApplicationID, TestTypeID);
-        }*/
+            return await _DALTestAppointment.GetApplicationTestAppointmentsPerTestTypeAsync(LicenseApplicationID, (byte)TestTypeID);
+        }
 
-
-        /*public static int Trail(int TestTypeID,int LocalDrivingApplicationID)
+        public async Task<IEnumerable<AppointmentTestTypeDTO>> GetApplicationTestAppointmentsPerTestTypeAsync(clsTestTypes.enTestType TestTypeID)//out of the BLL Interface
         {
-            return clsTestAppointmentData.Trail(TestTypeID, LocalDrivingApplicationID);   
-        }*/
+            return await _DALTestAppointment.GetApplicationTestAppointmentsPerTestTypeAsync(this.LocalDrivingApplicationID, (byte)TestTypeID);
 
-        /*public bool Save()
+        }
+
+        public async Task<clsTestAppointment> FindAsync(int TestAppointmentID)
         {
-            switch (Mode)
-            {
-                case enMode.AddNew:
+            TestAppointmentDTO TADTO = await _DALTestAppointment.FindByIDAsync(TestAppointmentID);
 
-                    if (_AddNewAppointment())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else
-                        return false;
+            return (TADTO != null) ? new clsTestAppointment(_DALTestAppointment, TADTO):null;
+             
+        }
 
-
-                case enMode.Update:
-
-                    return _UpdateAppointment();
-
-
-                default:
-                    return false;
-
-            }
-        }*/
-        /*public static clsTestAppointment GetLastTestAppointment(int LocalDrivingLicenseApplicationID, clsTestTypes.enTestType TestTypeID)
+        public async Task<int?> AddNewAppointmentAsync(TestAppointmentDTO TADTO)
         {
-            int TestAppointmentID = -1;
-            DateTime AppointmentDate = DateTime.Now; float PaidFees = 0;
-            int CreatedByUserID = -1; bool IsLocked = false; int RetakeTestApplicationID = -1;
+            return await _DALTestAppointment.AddNewAppointmentAsync(TADTO);
+        }
 
-            if (clsTestAppointmentData.GetLastTestAppointment(LocalDrivingLicenseApplicationID, (int)TestTypeID,
-                ref TestAppointmentID, ref AppointmentDate, ref PaidFees, ref CreatedByUserID, ref IsLocked, ref RetakeTestApplicationID))
-
-                return new clsTestAppointment(TestAppointmentID, TestTypeID, LocalDrivingLicenseApplicationID,
-             AppointmentDate, PaidFees, CreatedByUserID, IsLocked, RetakeTestApplicationID);
-            else
-                return null;
-
-        }*/
-
-        
-       /* private int _GetTestID()
+        public async Task<bool> UpdateAppointmentAsync(TestAppointmentDTO TADTO)
         {
-            return clsTestAppointmentData.GetTestID(TestAppointmentID);
-        }*/
+            return await _DALTestAppointment.UpdateAppointmentAsync(TADTO);
+        }
+
+        public async Task<bool> ExistAppointmentAsync(int LicenseApplicationID, int TestTypeID)
+         {
+             return await _DALTestAppointment.ExistAppointmentAsync(LicenseApplicationID, TestTypeID);
+         }
+
+        public async Task< clsTestAppointment> GetLastTestAppointmentAsync(int LocalDrivingLicenseApplicationID, clsTestTypes.enTestType TestTypeID)
+        {
+
+
+            TestAppointmentDTO TADTO = await _DALTestAppointment.GetLastTestAppointmentAsync(LocalDrivingLicenseApplicationID, (byte)TestTypeID);
+
+                return(TADTO!=null)? new clsTestAppointment(_DALTestAppointment, TADTO) :null;
+            
+
+        }
+
+        private async Task< int> _GetTestIDAsync()
+         {
+             return await _DALTestAppointment.GetTestIDAsync(TestAppointmentID);
+         }
 
 
     }

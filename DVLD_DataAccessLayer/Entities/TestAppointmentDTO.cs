@@ -10,14 +10,14 @@ namespace DVLD_DataAccessLayer.Entities
     public class TestAppointmentDTO
     {
         public int TestAppointmentID { get; set; }
-        public int TestTypeID { get; set; }
+        public byte TestTypeID { get; set; }
         public int LocalDrivingLicenseApplicationID { get; set; }
         public DateTime AppointmentDate { get; set; }
         public float PaidFees { get; set; }
         public int CreatedByUserID { get; set; }
         public bool IsLocked { get; set; }
         public int? RetakeTestApplicationID { get; set; }
-        public TestAppointmentDTO(int testAppointmentID, int testTypeID, int localDrivingLicenseApplicationID, DateTime appointmentDate, float paidFees, int createdByUserID, bool isLocked, int? retakeTestApplicationID)
+        public TestAppointmentDTO(int testAppointmentID, byte testTypeID, int localDrivingLicenseApplicationID, DateTime appointmentDate, float paidFees, int createdByUserID, bool isLocked, int? retakeTestApplicationID)
         {
             TestAppointmentID = testAppointmentID;
             TestTypeID = testTypeID;
