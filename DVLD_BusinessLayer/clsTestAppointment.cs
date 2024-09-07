@@ -13,7 +13,7 @@ namespace DVlD_BusinessLayer
 {
     public class clsTestAppointment :BLLTestAppointment
     {
-        private IDALTestAppointment _DALTestAppointment { get; set; }
+        private readonly IDALTestAppointment _DALTestAppointment;
         TestAppointmentDTO TADTO
         {
             get
@@ -41,7 +41,7 @@ namespace DVlD_BusinessLayer
         public int? RetakeTestApplicationID { set; get; }
         public int TestID
         {
-            get { return _GetTestID().Result; }
+            get { return _GetTestIDAsync().Result; }
 
         }
         public clsTestAppointment(IDALTestAppointment DALTestAppointment) 
