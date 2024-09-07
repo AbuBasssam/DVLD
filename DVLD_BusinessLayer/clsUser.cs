@@ -15,7 +15,7 @@ namespace DVlD_BusinessLayer
 
     public class clsUser:IUser
     {
-        private IUserDataInterface _UserDataInterface { get; set; }
+        private readonly IUserDataInterface _UserDataInterface;
         public enum enUserValidationType { EmptyFileds = 1, InvalidPersonID = 2, UserNameDuplicate = 3, NullObject = 4, AlreadyUser = 5, Valid = 6 };
         public UserDTO UDTO
         {

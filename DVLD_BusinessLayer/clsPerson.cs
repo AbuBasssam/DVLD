@@ -217,7 +217,7 @@ namespace DVlD_BusinessLayer
         };
         public enum enPersonValidationType { EmptyFileds = 1, UnderAge = 2, NationalNoDuplicate = 3, NullObject = 4, WrongNationality = 5, Valid = 6 };
 
-        private IPeopleDataInterface _PeopleDataInterface { get; set; }
+        private readonly IPeopleDataInterface _PeopleDataInterface;
         private string GetFullName()
         {
             return  this.FirstName + " " + this.SecondName + " " + this.ThirdName + " " + this.LastName;

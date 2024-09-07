@@ -13,7 +13,7 @@ namespace DVlD_BusinessLayer
 {
     public  class clsTest
     {
-        private IDALTest _DALTest {  get; set; }
+        private readonly IDALTest _DALTest;
         public TestDTO TDTO
         {
            get
