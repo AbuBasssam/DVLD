@@ -1,4 +1,5 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
 using System;
@@ -10,13 +11,12 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsDetainedLicense
+    public class clsDetainedLicense: IBLLDetainLIcnese
     {
         private IDALDetainedLicense _DAL;
         public int DetainID { set; get; }
         public int LicenseID { set; get; }
         public DateTime DetainDate { set; get; }
-
         public float FineFees { set; get; }
         public int CreatedByUserID { set; get; }
         public bool IsReleased { set; get; }

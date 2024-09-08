@@ -68,10 +68,10 @@ namespace DVlD_BusinessLayer
        
         public int CreatedByUserID { get; set; }
 
-        public bool IsDetained
+        /*public bool IsDetained
         {
             get { return clsDetainedLicense.IsLicenseDetained(this.LicenseID);}
-        }
+        }*/
         public clsLicense(IDALLicense DAL)
         {
             this._DALLicense = DAL;

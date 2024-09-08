@@ -18,12 +18,6 @@ namespace DVlD_BusinessLayer
     {
         private readonly IDALApplication _DAL;
 
-        public enum enApplicationType
-        {
-            NewDrivingLicense = 1, RenewDrivingLicense = 2, ReplaceLostDrivingLicense = 3,
-            ReplaceDamagedDrivingLicense = 4, ReleaseDetainedDrivingLicsense = 5, NewInternationalLicense = 6, RetakeTest = 7
-        };
-
         public enum enApplicationStatus { New = 1, Cancelled = 2, Completed = 3 };
 
         public Nullable<int> ApplicationID { get; set; }
@@ -32,7 +26,7 @@ namespace DVlD_BusinessLayer
 
         public DateTime ApplicationDate { get; set; }
 
-        public enApplicationType ApplicationTypeID { get; set; }
+        public clsApplicationType.enApplicationTypes ApplicationTypeID { get; set; }
 
         public clsApplication.enApplicationStatus ApplicationStatus { get; set; }
 
@@ -70,7 +64,7 @@ namespace DVlD_BusinessLayer
             this.ApplicationID = ADTO.ApplicationID;
             this.ApplicationPersonID = ADTO.ApplicationPersonID;
             this.ApplicationDate = ADTO.ApplicationDate;
-            this.ApplicationTypeID = (enApplicationType) ADTO.ApplicationTypeID;
+            this.ApplicationTypeID = (clsApplicationType.enApplicationTypes) ADTO.ApplicationTypeID;
             this.ApplicationStatus = (enApplicationStatus)ADTO.Staute;
             this.LastStauteDate =ADTO. LastStauteDate;
             this.PaidFees =ADTO.PeadFees;
@@ -117,16 +111,16 @@ namespace DVlD_BusinessLayer
             => await DoesPersonHaveActiveApplication(this.ApplicationPersonID, ApplicationTypeID);
 
 
-        public async Task<int> GetActiveApplicationID(int PersonID, clsApplication.enApplicationType ApplicationTypeID)
+        public async Task<int> GetActiveApplicationID(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID)
             => await _DAL.GetActiveApplicationID(PersonID, (int)ApplicationTypeID);
         
 
-        public async Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplication.enApplicationType ApplicationTypeID, int LicenseClassID)
+        public async Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID, int LicenseClassID)
         
             =>await _DAL.GetActiveApplicationIDForLicenseClass(PersonID, (int)ApplicationTypeID, LicenseClassID);
         
 
-        public async Task<int> GetActiveApplicationID(clsApplication.enApplicationType ApplicationTypeID)
+        public async Task<int> GetActiveApplicationID(clsApplicationType.enApplicationTypes ApplicationTypeID)
             => await _DAL.GetActiveApplicationID(this.ApplicationPersonID, (int)ApplicationTypeID);
         
 

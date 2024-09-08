@@ -61,7 +61,7 @@ namespace DVLD_DataAccessLayer
             }
 
 
-            return dt;
+            return ApplicationList;
 
         }
 

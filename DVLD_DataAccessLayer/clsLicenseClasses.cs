@@ -59,12 +59,9 @@ namespace DVLD_DataAccessLayer
             {
                 clsEventLog.SetEventLog(ex.Message);
             }
-            finally
-            {
-                connection.Close();
-            }
+            
 
-            return dt;
+            return LicenseClassesList;
 
         }
         
@@ -188,10 +185,7 @@ namespace DVLD_DataAccessLayer
 
             }
 
-            finally
-            {
-                connection.Close();
-            }
+           
 
 
             return LicenseClassesID;

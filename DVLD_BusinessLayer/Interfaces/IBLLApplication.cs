@@ -16,7 +16,7 @@ namespace DVlD_BusinessLayer.Interfaces
 
         public DateTime ApplicationDate { get; set; }
 
-        public enApplicationType ApplicationTypeID { get; set; }
+        public clsApplicationType.enApplicationTypes ApplicationTypeID { get; set; }
 
         public clsApplication.enApplicationStatus ApplicationStatus { get; set; }
         public DateTime LastStauteDate { get; set; }
@@ -34,9 +34,9 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<bool> IsApplicationExist(int ApplicationID);
         Task<bool> DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID);
         Task<bool> DoesPersonHaveActiveApplication(int ApplicationTypeID);
-        Task<int> GetActiveApplicationID(int PersonID, clsApplication.enApplicationType ApplicationTypeID);
-        Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplication.enApplicationType ApplicationTypeID, int LicenseClassID);
-        Task<int> GetActiveApplicationID(clsApplication.enApplicationType ApplicationTypeID);
+        Task<int> GetActiveApplicationID(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID);
+        Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID, int LicenseClassID);
+        Task<int> GetActiveApplicationID(clsApplicationType.enApplicationTypes ApplicationTypeID);
 
 
 
