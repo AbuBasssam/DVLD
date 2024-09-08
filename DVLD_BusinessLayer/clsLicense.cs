@@ -1,4 +1,5 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
 using System;
@@ -12,7 +13,7 @@ using static DVlD_BusinessLayer.clsLicense;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsLicense
+    public class clsLicense : IBLLLicnese
     {
         private readonly IDALLicense _DALLicense;
         public enum enIssueReason { FirstTime = 1, Renew = 2, ReplacementForDamaged = 3, ReplacementForLost = 4 }
