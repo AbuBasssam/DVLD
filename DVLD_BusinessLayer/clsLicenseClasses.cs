@@ -12,7 +12,6 @@ using System.Net;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using DVLD_DataAccessLayer.Entities;
 namespace DVlD_BusinessLayer
 {
     public class clsLicenseClasses: IBLLLicenseClass

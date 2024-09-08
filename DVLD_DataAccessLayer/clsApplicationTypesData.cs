@@ -161,7 +161,7 @@ namespace DVLD_DataAccessLayer
                 (
                     reader.GetInt32(reader.GetOrdinal("ApplicationTypeID")),
                     reader.GetString(reader.GetOrdinal("ApplicationTypeTitle")),
-                    reader.GetFloat(reader.GetOrdinal("ApplicationFees"))
+                   (float)reader.GetDecimal(reader.GetOrdinal("ApplicationFees"))
                 );
         }
     }

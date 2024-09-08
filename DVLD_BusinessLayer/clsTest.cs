@@ -5,13 +5,14 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DVlD_BusinessLayer.Interfaces;
 using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
 
 namespace DVlD_BusinessLayer
 {
-    public  class clsTest
+    public class clsTest:IBLLTest
     {
         private readonly IDALTest _DALTest;
         public TestDTO TDTO
@@ -80,7 +81,7 @@ namespace DVlD_BusinessLayer
             return (TDTO != null) ? new clsTest(_DALTest, TDTO) : null;
 
         }
-
+        public async Task<IEnumerable<TestDTO>> GetAllTests() => await _DALTest.GetAllTests();
 
     }
 }

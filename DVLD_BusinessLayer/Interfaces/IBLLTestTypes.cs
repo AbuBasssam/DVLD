@@ -10,7 +10,7 @@ using static DVlD_BusinessLayer.clsTestTypes;
 
 namespace DVlD_BusinessLayer.Interfaces
 {
-    interface IBLLTestTypes
+     public interface IBLLTestTypes
     {
         /// <summary>
         /// enTestType datatype should  have three  {VisionTest = 1, WrittenTest = 2, StreetTest = 3 }

@@ -26,5 +26,6 @@ namespace DVlD_BusinessLayer.Interfaces
          Task<IEnumerable<ApplicationTypeDTO>> GetAllApplicatoinTypes();
          Task<clsApplicationType> Find(int ApplicationID);
         Task<bool> UpdateApplicationType(ApplicationTypeDTO ATDTO);
+        enApplicatoinTypeValidationType IsValid(ApplicationTypeDTO ATDTO);
     }
 }

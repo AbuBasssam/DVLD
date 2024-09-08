@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsTestAppointment :BLLTestAppointment
+    public class clsTestAppointment :IBLLTestAppointment
     {
         private readonly IDALTestAppointment _DALTestAppointment;
         TestAppointmentDTO TADTO

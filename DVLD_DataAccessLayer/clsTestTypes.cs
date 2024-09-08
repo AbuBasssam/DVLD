@@ -14,7 +14,7 @@ namespace DVLD_DataAccessLayer
     public  class clsTestTypesData :IDALTestTypes
     {
         private readonly string _ConnectoinString;
-        clsTestTypesData(string ConnectoinString)
+       public clsTestTypesData(string ConnectoinString)
         {
             this._ConnectoinString = ConnectoinString;
         }
@@ -37,7 +37,7 @@ namespace DVLD_DataAccessLayer
 
                         while (await reader.ReadAsync())
                         {
-                            _MapReaderToTestType(reader);
+                            TestTypeList.Add( _MapReaderToTestType(reader));
                         }
 
 
@@ -194,8 +194,8 @@ namespace DVLD_DataAccessLayer
                                 (
                                     reader.GetInt32(reader.GetOrdinal("TestTypeID")),
                                     reader.GetString(reader.GetOrdinal("TestTypeTitle")),
-                                    reader.GetString(reader.GetOrdinal("Description")),
-                                    reader.GetFloat(reader.GetOrdinal("TestFees"))
+                                    reader.GetString(reader.GetOrdinal("TestTypeDescription")),
+                                    (float)reader.GetDecimal(reader.GetOrdinal("TestTypeFees"))
 
                                 );
         }

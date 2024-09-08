@@ -32,7 +32,6 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<IEnumerable<LicenseClassDTO>> GetAllLicenseClasses();
         Task<clsLicenseClasses> Find(int LicenseClassesID);
         Task<clsLicenseClasses> Find(string ClassName);
-        Task<int?> AddNewLicenseClass(LicenseClassDTO LCDTO);
         Task<bool> UpdateLicenseClass(LicenseClassDTO LCDTO);
 
     }

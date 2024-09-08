@@ -3,6 +3,7 @@ using DVlD_BusinessLayer.Interfaces;
 using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.RegularExpressions;
 
 namespace DVLD_API
 {
@@ -10,10 +11,9 @@ namespace DVLD_API
     {
         //public enum enPersonBadRequestTypes {EmptyFileds=1,UnderAge=2,NationalNoDuplicate=3,NullObject=4,None=5 ,WrongNationality=6};
         //public enum enUserBadRequestTypes { EmptyFileds = 1, InvalidPersonID = 2,UserNameDuplicate = 3, NullObject = 4,AlreadyUser=5, None = 6};
-//        public enum enDriverBadRequestTypes { EmptyFileds = 1, InvalidPersonID = 2, NullObject = 3, AlreadyDriver = 4, None = 5 };
+        //        public enum enDriverBadRequestTypes { EmptyFileds = 1, InvalidPersonID = 2, NullObject = 3, AlreadyDriver = 4, None = 5 };
 
-       
-        public static Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
+
         
         /*public static enDriverBadRequestTypes DriverCheckConstraints(DriverDTO NewDriverDTO)
         {

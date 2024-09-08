@@ -197,6 +197,55 @@ namespace DVLD_DataAccessLayer
 
                          );
         }
+        public async Task<IEnumerable<TestDTO>> GetAllTests()
+        {
+
+            List<TestDTO>TestsList  = new List<TestDTO>();
+            try
+            {
+               using(var connection = new SqlConnection(_ConnectionString))
+               {
+                    string query = "SELECT * FROM Tests order by TestID";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (await reader.ReadAsync())
+
+                            {
+                                TestsList.Add(_MapReaderToTest(reader));
+                            }
+
+                        }
+
+                           
+
+                    }
+
+
+                       
+
+                   
+
+                }
+
+            
+
+
+            }
+
+            catch (Exception ex)
+            {
+                // Console.WriteLine("Error: " + ex.Message);
+            }
+            
+
+            return TestsList;
+
+        }
     }
     /*public static bool GetLastTestByPersonAndTestTypeAndLicenseClass
             (int PersonID, int LicenseClassID, int TestTypeID, ref int TestID,

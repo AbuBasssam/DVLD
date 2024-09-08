@@ -44,6 +44,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<PersonDTO> GetPersonByID(int PersonID)
         {
+            
 
             if (PersonID < 1)
             {
@@ -688,4 +689,267 @@ namespace DVLD_API.Controllers
         
 
     }
+
+
+    [Route("api/DVLD/ApplicationType")]
+    [ApiController]
+    public class ApplicationTypeController : ControllerBase
+    {
+        private readonly IBLLApplicationTypes _Applicatointype; 
+        public ApplicationTypeController(IBLLApplicationTypes applicatointype)
+        {
+            _Applicatointype = applicatointype;
+        }
+
+
+        //
+        [HttpGet("AllApplicationTypes", Name = "GetAllApplicationTypes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ApplicationTypeDTO>> GetAllAppsTypes()
+        {
+            var _ApplicatointypeList = _Applicatointype.GetAllApplicatoinTypes(); 
+            if (_ApplicatointypeList.Result == null || !_ApplicatointypeList.Result.Any())
+            {
+                return NotFound("No Types found!");
+            }
+            return Ok(_ApplicatointypeList.Result);
+
+        }
+
+        [HttpGet("FindByID/{AppTypeID}", Name = "GetApplicationTypeByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ApplicationTypeDTO> GetAppTypeByID(int AppTypeID)
+        {
+
+
+            if (AppTypeID < 1)
+            {
+                return BadRequest($"Not accepted ID {AppTypeID}");
+            }
+
+            var Type = _Applicatointype.Find(AppTypeID);
+
+            if (Type == null)
+            {
+                return NotFound($"Applicatoin type  with ID {AppTypeID} not found.");
+            }
+
+            //here we get only the DTO object to send it back.
+            ApplicationTypeDTO ATDTO = Type.Result.ATDTO;
+
+            //we return the DTO not the student object.
+            return Ok(ATDTO);
+
+        }
+
+        [HttpPut("UpdateApplicationType/{AppTypeID}", Name = "UpdateApplicationType")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ApplicationTypeDTO> UpdateAppType(int AppTypeID, ApplicationTypeDTO UpdatedAppType)
+        {
+            var AppType = _Applicatointype.Find(AppTypeID);
+
+            if (AppType == null)
+            {
+                return NotFound($" Application type with ID {AppType} not found.");
+            }
+
+            switch (AppType.Result.IsValid(UpdatedAppType))
+            {
+                case clsApplicationType.enApplicatoinTypeValidationType.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsApplicationType.enApplicatoinTypeValidationType.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsApplicationType.enApplicatoinTypeValidationType.WrongType:
+                    return BadRequest($"Wrong application type!! the types is from 1 to 7");
+
+                
+            }
+
+            AppType.Result.ApplicationID =(clsApplicationType.enApplicationTypes) UpdatedAppType.ApplicationID;
+            AppType.Result.Title = UpdatedAppType.Title;
+            AppType.Result.Fees = UpdatedAppType.Fees;
+           
+
+            var result = _Applicatointype.UpdateApplicationType(AppType.Result.ATDTO);
+
+            return Ok(AppType.Result.ATDTO);
+
+        }
+
+    }
+
+    [Route("api/DVLD/LicenseClasses")]
+    [ApiController]
+    public class LicenseClassesController : ControllerBase
+    {
+        private readonly IBLLLicenseClass _LicenseClass;
+        public LicenseClassesController(IBLLLicenseClass bLLLicenseClass)
+        {
+            this._LicenseClass = bLLLicenseClass;
+        }
+        
+        //
+        [HttpGet("LicenseClasses", Name = "GetAllLicenseClasses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<LicenseClassDTO>> GetAllClasses()
+        {
+            var _LicenseClassesList = _LicenseClass.GetAllLicenseClasses();
+            if (_LicenseClassesList.Result == null || !_LicenseClassesList.Result.Any())
+            {
+                return NotFound("No classes found!");
+            }
+            return Ok(_LicenseClassesList.Result);
+
+        }
+
+
+    }
+
+    [Route("api/DVLD/TestTypes")]
+    [ApiController]
+    public class TestTypesController :ControllerBase
+    {
+        private readonly IBLLTestTypes _TestTypes;
+        public TestTypesController(IBLLTestTypes bLLTestTypes)
+        {
+            this._TestTypes = bLLTestTypes;
+        }
+
+        [HttpGet("TestTypes", Name = "GetAllTestTypes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<TestTypeDTO>> GetAllTestTypes()
+        {
+            var _TestTypesList = _TestTypes.GetAllTestTypes();
+            if (_TestTypesList.Result == null || !_TestTypesList.Result.Any())
+            {
+                return NotFound("No types found!");
+            }
+            return Ok(_TestTypesList.Result);
+
+        }
+
+    }
+
+    
+    [Route("api/DVLD/Test")]
+    [ApiController]
+    public class TestController : ControllerBase
+    {
+       private readonly IBLLTest _Test;
+        public TestController(IBLLTest bLLTest)
+        {
+            this._Test = bLLTest;
+        }
+        
+        //
+        [HttpGet("Tests", Name = "GetAllTests")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<TestDTO>> GetAllTests()
+        {
+            var _TestsList = _Test.GetAllTests();
+            if (_TestsList.Result == null || !_TestsList.Result.Any())
+            {
+                return NotFound("No types found!");
+            }
+            return Ok(_TestsList.Result);
+
+
+        }
+
+
+
+
+
+    }
+
+    [Route("api/DVLD/License")]
+    [ApiController]
+    public class LicenseController : ControllerBase
+    {
+        private readonly IBLLLicnese _Licnese;
+        public LicenseController(IBLLLicnese bLLLicnese)
+        {
+            _Licnese = bLLLicnese;
+        }
+        
+    }
+    
+    [Route("api/DVLD/InternationalLicense")]
+    [ApiController]
+    public class InternationalLicenseController : ControllerBase
+    {
+        private readonly IBLLInternationalLicnense _bLLInternationalLicnense;
+        public InternationalLicenseController(IBLLInternationalLicnense bLLInternationalLicnense)
+        {
+            this._bLLInternationalLicnense = bLLInternationalLicnense;
+        }
+
+
+
+    }
+    
+    [Route("api/DVLD/TestAppointment")]
+    [ApiController]
+    public class TestAppointmentController : ControllerBase
+    {
+        private readonly IBLLTestAppointment _bLLTestAppointment;
+        public TestAppointmentController(IBLLTestAppointment bLLTestAppointment)
+        {
+            this._bLLTestAppointment = bLLTestAppointment;
+        }
+
+
+    }
+    
+
+
+
+
+
+
+
+
+   /* [Route("api/DVLD/People")]
+    [ApiController]
+    public class ApplicationTypeController : ControllerBase
+    {
+
+
+
+    }*/
+    
+   
+    
+   /* 
+    [Route("api/DVLD/People")]
+    [ApiController]
+    public class ApplicationTypeController : ControllerBase
+    {
+
+
+
+    }*/
+    
+    /*[Route("api/DVLD/People")]
+    [ApiController]
+    public class ApplicationTypeController : ControllerBase
+    {
+
+
+
+    }
+*/
+
+
+
 }

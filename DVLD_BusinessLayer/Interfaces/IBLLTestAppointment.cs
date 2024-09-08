@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DVlD_BusinessLayer.Interfaces
 {
-    public interface BLLTestAppointment
+    public interface IBLLTestAppointment
     {
         public int TestAppointmentID { get; set; }
         public clsTestTypes.enTestType TestTypeID { get; set; }

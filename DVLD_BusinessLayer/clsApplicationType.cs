@@ -24,13 +24,34 @@ namespace DVlD_BusinessLayer
             NewInternationalLicense=6,
             RetakeTest= 7
         }
-        
+        public enum enApplicatoinTypeValidationType { EmptyFileds = 1, NullObject = 2,WrongType=3,Valid = 4 };
+
+
         private readonly IApplicationTypesDAL _DALApplicationType;
         public ApplicationTypeDTO ATDTO { get { return new ApplicationTypeDTO((int)this.ApplicationID, this.Title, this.Fees); } }
         public enApplicationTypes ApplicationID { set; get;}
         public string Title {  set; get; }  
         public float Fees { set; get; }
 
+        private Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
+        private bool HasTypeHaveEmptyFileds(ApplicationTypeDTO ATDTO) =>(IsFieldEmpty(ATDTO.Title) || ATDTO.Fees==0 );
+        
+        public enApplicatoinTypeValidationType IsValid(ApplicationTypeDTO ATDTO)
+        {
+           
+             if(HasTypeHaveEmptyFileds(ATDTO))
+                    return enApplicatoinTypeValidationType.EmptyFileds;
+            if (ATDTO == null)
+            {
+                return enApplicatoinTypeValidationType.NullObject;
+            }
+            if ((ATDTO.ApplicationID < 0 || ATDTO.ApplicationID > 7))
+                return enApplicatoinTypeValidationType.WrongType;
+
+
+
+            return enApplicatoinTypeValidationType.Valid;
+        }
         public clsApplicationType(IApplicationTypesDAL applicationTypesDAL)
         {
             this._DALApplicationType = applicationTypesDAL;

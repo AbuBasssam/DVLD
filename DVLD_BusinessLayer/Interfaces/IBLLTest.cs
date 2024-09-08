@@ -24,6 +24,6 @@ namespace DVlD_BusinessLayer.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<clsTest> FindLastTestPerPersonAndLicenseClass(int PersonID, int LicenseClassID, clsTestTypes.enTestType TestTypeID);
-
+        Task<IEnumerable<TestDTO>> GetAllTests();
     }
 }
