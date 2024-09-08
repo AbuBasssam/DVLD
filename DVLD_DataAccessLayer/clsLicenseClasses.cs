@@ -201,19 +201,19 @@ namespace DVLD_DataAccessLayer
                     string query = @"Update LicenseClasses set ClassName=@ClassName,
                                     ClassDescription=@ClassDescription,
                                     MinimumAllowedAge=@MinimumAllowedAge,
-                                    DefalutValidityLength=@DefalutValidityLength,
+                                    DefaultValidityLength=@DefaultValidityLength,
                                     ClassFees=@ClassFees
-                                    where LicenseClassesID=@LicenseClassesID";
+                                    where LicenseClassID=@LicenseClassID";
 
 
 
                     using (var command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@LicenseClassesID", LCDTO.LicenseClassesID);
+                        command.Parameters.AddWithValue("@LicenseClassID", LCDTO.LicenseClassesID);
                         command.Parameters.AddWithValue("@ClassName", LCDTO.ClassName);
                         command.Parameters.AddWithValue("@ClassDescription", LCDTO.ClassDescription);
                         command.Parameters.AddWithValue("@MinimumAllowedAge", LCDTO.MinimumAllowedAge);
-                        command.Parameters.AddWithValue("@DefalutValidityLength", LCDTO.DefalutValidityLength);
+                        command.Parameters.AddWithValue("@DefaultValidityLength", LCDTO.DefalutValidityLength);
                         command.Parameters.AddWithValue("@ClassFees", LCDTO.ClassFees);
                         connection.Open();
                         rowsAffected = await command.ExecuteNonQueryAsync();

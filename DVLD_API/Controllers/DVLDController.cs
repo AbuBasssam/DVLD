@@ -11,7 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace DVLD_API.Controllers
 {
-
+    //Done
     [Route("api/DVLD/People")]
     [ApiController]
     public class PeopleController : ControllerBase
@@ -262,7 +262,7 @@ namespace DVLD_API.Controllers
 
     }
 
-    
+    //Done
     [Route("api/DVLD/Users")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -490,7 +490,7 @@ namespace DVLD_API.Controllers
 
     }
 
-    
+    //Done
     [Route("api/DVLD/Drivers")]
     [ApiController]
     public class DriversController : ControllerBase
@@ -691,6 +691,7 @@ namespace DVLD_API.Controllers
     }
 
 
+    //Done
     [Route("api/DVLD/ApplicationType")]
     [ApiController]
     public class ApplicationTypeController : ControllerBase
@@ -702,7 +703,7 @@ namespace DVLD_API.Controllers
         }
 
 
-        //
+       
         [HttpGet("AllApplicationTypes", Name = "GetAllApplicationTypes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -795,7 +796,6 @@ namespace DVLD_API.Controllers
             this._LicenseClass = bLLLicenseClass;
         }
         
-        //
         [HttpGet("LicenseClasses", Name = "GetAllLicenseClasses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -809,6 +809,93 @@ namespace DVLD_API.Controllers
             return Ok(_LicenseClassesList.Result);
 
         }
+
+
+        [HttpGet("FindByID/{LicenseClassID}", Name = "GetLicenseClassByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<LicenseClassDTO> GetLicenseClassByID(int LicenseClassID)
+        {
+
+
+            if (LicenseClassID < 1)
+            {
+                return BadRequest($"Not accepted ID {LicenseClassID}");
+            }
+
+            var Class = _LicenseClass.Find(LicenseClassID);
+
+            if (Class == null)
+            {
+                return NotFound($"License Class with ID {LicenseClassID} not found.");
+            }
+
+            LicenseClassDTO LCDTO = Class.Result.LCDTO;
+
+            return Ok(LCDTO);
+
+        }
+
+        [HttpGet("FindByName/{ClassName}", Name = "GetLicenseClassByName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<LicenseClassDTO> GetLicenseClassByName(string ClassName)
+        {
+
+            var Class = _LicenseClass.Find(ClassName);
+
+            if (Class == null)
+            {
+                return NotFound($"License Class with name {ClassName} not found.");
+            }
+
+            LicenseClassDTO LCDTO = Class.Result.LCDTO;
+
+            return Ok(LCDTO);
+
+        }
+
+         [HttpPut("UpdateLicenseClass/{LicenseClassID}", Name = "UpdateLicenseClass")]
+         [ProducesResponseType(StatusCodes.Status200OK)]
+         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+         [ProducesResponseType(StatusCodes.Status404NotFound)]
+         public ActionResult<ApplicationTypeDTO> UpdateLicenseClass(int LicenseClassID, LicenseClassDTO UpdatedLicenseClassDTO)
+         {
+             var Class = _LicenseClass.Find(LicenseClassID);
+
+             if (Class == null)
+             {
+                 return NotFound($" Class with ID {Class} not found.");
+             }
+
+            switch (Class.Result.IsValid(UpdatedLicenseClassDTO))
+            {
+                case clsLicenseClasses.enLicenseClassessValidationType.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsLicenseClasses.enLicenseClassessValidationType.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsLicenseClasses.enLicenseClassessValidationType.WrongClass:
+                    return BadRequest($"Wrong Class type!! the types is from 1 to 7");
+
+
+            }
+
+             Class.Result.LicenseClassesID = (clsLicenseClasses.enLicenseClasses)UpdatedLicenseClassDTO.LicenseClassesID;
+             Class.Result.ClassName = UpdatedLicenseClassDTO.ClassName;
+             Class.Result.ClassDescription = UpdatedLicenseClassDTO.ClassDescription;
+             Class.Result.MinimumAllowedAge = UpdatedLicenseClassDTO.MinimumAllowedAge;
+             Class.Result.DefalutValidityLength = UpdatedLicenseClassDTO.DefalutValidityLength;
+             Class.Result.ClassFees = UpdatedLicenseClassDTO.ClassFees;
+
+            var result = _LicenseClass.UpdateLicenseClass(Class.Result.LCDTO);
+
+             return (result.Result)? Ok(Class.Result.LCDTO):BadRequest("Something wrong the data not updated");
+
+         }
 
 
     }

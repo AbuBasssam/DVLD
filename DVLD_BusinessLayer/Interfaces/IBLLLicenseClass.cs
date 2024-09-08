@@ -33,6 +33,6 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<clsLicenseClasses> Find(int LicenseClassesID);
         Task<clsLicenseClasses> Find(string ClassName);
         Task<bool> UpdateLicenseClass(LicenseClassDTO LCDTO);
-
+        enLicenseClassessValidationType IsValid(LicenseClassDTO LCDTO);
     }
 }

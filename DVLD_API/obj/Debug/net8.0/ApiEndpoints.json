@@ -76,7 +76,7 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.ApplicationTypeController",
-    "Method": "UpdatePerson",
+    "Method": "UpdateAppType",
     "RelativePath": "api/DVLD/ApplicationType/UpdateApplicationType/{AppTypeID}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -387,6 +387,96 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.LicenseClassesController",
+    "Method": "GetLicenseClassByID",
+    "RelativePath": "api/DVLD/LicenseClasses/FindByID/{LicenseClassID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseClassID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseClassDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseClassByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseClassesController",
+    "Method": "GetLicenseClassByName",
+    "RelativePath": "api/DVLD/LicenseClasses/FindByName/{ClassName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ClassName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseClassDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseClassByName"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseClassesController",
     "Method": "GetAllClasses",
     "RelativePath": "api/DVLD/LicenseClasses/LicenseClasses",
     "HttpMethod": "GET",
@@ -414,6 +504,56 @@
       }
     ],
     "EndpointName": "GetAllLicenseClasses"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseClassesController",
+    "Method": "UpdateLicenseClass",
+    "RelativePath": "api/DVLD/LicenseClasses/UpdateLicenseClass/{LicenseClassID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseClassID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedLicenseClassDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseClassDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.ApplicationTypeDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateLicenseClass"
   },
   {
     "ContainingType": "DVLD_API.Controllers.PeopleController",

@@ -12,6 +12,7 @@ using System.Net;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static DVlD_BusinessLayer.clsApplicationType;
 namespace DVlD_BusinessLayer
 {
     public class clsLicenseClasses: IBLLLicenseClass
@@ -30,7 +31,10 @@ namespace DVlD_BusinessLayer
         }
        
         private readonly IDALLicenseClasses _DALLicenseClasses;
-        LicenseClassDTO LCDTO
+
+        public enum enLicenseClassessValidationType { EmptyFileds = 1, NullObject = 2, WrongClass = 3, Valid = 4 };
+
+        public LicenseClassDTO LCDTO
         {
             get
             {
@@ -70,6 +74,26 @@ namespace DVlD_BusinessLayer
 
         }
 
+        private Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
+
+        private bool HasClassHaveEmptyFileds(LicenseClassDTO LCDTO) => (IsFieldEmpty(LCDTO.ClassName) || IsFieldEmpty(LCDTO.ClassDescription)|| LCDTO.DefalutValidityLength==0 || LCDTO.ClassFees == 0);
+
+        public enLicenseClassessValidationType IsValid(LicenseClassDTO LCDTO)
+        {
+
+           if (HasClassHaveEmptyFileds(LCDTO))
+              return enLicenseClassessValidationType.EmptyFileds;
+           
+           if (LCDTO == null)
+            return enLicenseClassessValidationType.NullObject;
+           
+           if ((LCDTO.LicenseClassesID < 0 || LCDTO.LicenseClassesID > 7))
+               return enLicenseClassessValidationType.WrongClass;
+
+
+
+            return enLicenseClassessValidationType.Valid;
+        }
         public async Task< IEnumerable<LicenseClassDTO>> GetAllLicenseClasses()
             =>await _DALLicenseClasses.GetAllLicenseClasses();
         
@@ -94,5 +118,6 @@ namespace DVlD_BusinessLayer
         public async Task<bool> UpdateLicenseClass(LicenseClassDTO LCDTO)
             => await _DALLicenseClasses.UpdateLicenseClass(LCDTO);
         
+
     }
 }
