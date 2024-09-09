@@ -62,7 +62,7 @@
     <Compile Include="clsPeopleData.cs" />
     <Compile Include="clsTest.cs" />
     <Compile Include="clsTestAppointmentData.cs" />
-    <Compile Include="clsTestTypes.cs" />
+    <Compile Include="clsTestTypesData.cs" />
     <Compile Include="clsUserData.cs" />
     <Compile Include="Entities\ApplicationDTO.cs" />
     <Compile Include="Entities\ApplicationTypeDTO.cs" />

@@ -526,7 +526,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "DVLD_DataAccessLayer.Entities.ApplicationTypeDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseClassDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -930,8 +930,53 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.TestTypesController",
+    "Method": "GetTestType",
+    "RelativePath": "api/DVLD/TestTypes/FindByID/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.TestTypeDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetTestTypeByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestTypesController",
     "Method": "GetAllTestTypes",
-    "RelativePath": "api/DVLD/TestTypes/TestTypes",
+    "RelativePath": "api/DVLD/TestTypes/TestTypesList",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -957,6 +1002,56 @@
       }
     ],
     "EndpointName": "GetAllTestTypes"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestTypesController",
+    "Method": "UpdateTestType",
+    "RelativePath": "api/DVLD/TestTypes/UpdateTestType/{TestTypeID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedTestType",
+        "Type": "DVLD_DataAccessLayer.Entities.TestTypeDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.TestTypeDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateTestType"
   },
   {
     "ContainingType": "DVLD_API.Controllers.UsersController",

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DVlD_BusinessLayer;
 using DVLD_DataAccessLayer.Entities;
-using DVLD_DataAccessLayer.Interfaces;
 using static DVlD_BusinessLayer.clsTestTypes;
 
 namespace DVlD_BusinessLayer.Interfaces
@@ -15,14 +14,14 @@ namespace DVlD_BusinessLayer.Interfaces
         /// <summary>
         /// enTestType datatype should  have three  {VisionTest = 1, WrittenTest = 2, StreetTest = 3 }
         /// </summary>
-        enTestType TestTypeID { get; set; }
+        enTestType TestTypeID { set; get; }
         string Title { set; get; }
         string Description { set; get; }
         float Fees { set; get; }
         Task<IEnumerable<TestTypeDTO>> GetAllTestTypes();
         Task<clsTestTypes> Find(enTestType TestTypeID);
-        Task<bool> UpdateTestType();
-
+        Task<bool> UpdateTestType(TestTypeDTO TTDOT);
+        enTestTypeValidationType IsValid(TestTypeDTO TTDTO);
 
 
     }

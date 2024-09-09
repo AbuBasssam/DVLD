@@ -15,12 +15,14 @@ namespace DVlD_BusinessLayer
     {
 
         private readonly IDALTestTypes _DALTestypes ;
+        public enum enTestTypeValidationType { EmptyFileds = 1, NullObject = 2, WrongType = 3, Valid = 4 };
+
         public enum enTestType {VisionTest = 1, WrittenTest = 2, StreetTest = 3 };
         public TestTypeDTO TestTypeDTO
         {
             get
             {
-                return  new TestTypeDTO(Convert.ToInt32(this.TestTypeDTO), this.Title, this.Description, this.Fees);
+                return  new TestTypeDTO((int)this.TestTypeID, this.Title, this.Description, this.Fees);
             }
         } 
         public enTestType TestTypeID { set; get; }
@@ -35,6 +37,7 @@ namespace DVlD_BusinessLayer
         
         private clsTestTypes(IDALTestTypes dALTestTypes,TestTypeDTO TTDOT)
         {
+            this._DALTestypes = dALTestTypes;
             this.TestTypeID = (enTestType) TTDOT.TestTypeID;
             this.Title = TTDOT.Title;
             this.Description = TTDOT.Description; 
@@ -42,6 +45,25 @@ namespace DVlD_BusinessLayer
             
 
         }
+        private Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
+        private bool HasTypeHaveEmptyFileds(TestTypeDTO TTDTO)
+        {
+           return (IsFieldEmpty(TTDTO.Title) || IsFieldEmpty(TTDTO.Description)|| TTDTO.TestFees == 0);
+        }
+         public enTestTypeValidationType IsValid(TestTypeDTO TTDTO)
+         {
+            if (HasTypeHaveEmptyFileds(TTDTO))
+                return enTestTypeValidationType.EmptyFileds;
+            
+            if (TTDTO.TestTypeID < 0 || TTDTO.TestTypeID > 3)
+                return enTestTypeValidationType.WrongType;
+
+            if (TTDTO == null)
+                return enTestTypeValidationType.NullObject;
+
+            return enTestTypeValidationType.Valid;
+         } 
+
 
         public async Task<IEnumerable<TestTypeDTO>> GetAllTestTypes()
         {
@@ -57,7 +79,7 @@ namespace DVlD_BusinessLayer
             
         }
         
-        private async Task<int?>  AddNewTestType()
+        private async Task<int?>  AddNewTestType(TestTypeDTO TTDOT)
         {
             //call DataAccess Layer 
 
@@ -65,9 +87,9 @@ namespace DVlD_BusinessLayer
 
         }
 
-        public async Task< bool> UpdateTestType()
+        public async Task< bool> UpdateTestType(TestTypeDTO TTDOT)
         {
-            return await _DALTestypes.UpdateTestAsync(TestTypeDTO);
+            return await _DALTestypes.UpdateTestAsync(TTDOT);
         }
 
         

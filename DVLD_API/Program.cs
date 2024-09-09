@@ -79,7 +79,7 @@ builder.Services.AddScoped<IBLLLicenseClass, clsLicenseClasses>();
 //-----------------------------------------------
 
 
-//License Classes configuratoin
+//Test configuratoin
 builder.Services.AddScoped<IDALTest, clsTestData>(provider =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
