@@ -17,7 +17,7 @@ namespace DVLD_DataAccessLayer.Interfaces
         Task<InternationalLicenseDTO> FindByApplicationID(int ApplicationID);
         Task<int?> AddNewInternationalInternationalLicense(InternationalLicenseDTO ILDTO);
         Task<bool> UpdateInternationalLicense(InternationalLicenseDTO ILDTO);
-        Task<bool> DeleteInternationalLicense(int InternationalLicenseID);
+        //Task<bool> DeleteInternationalLicense(int InternationalLicenseID);
         Task<bool> AlreadyHaveInternationalLicense(int DriverID);
         Task<bool> IsLicneseExist(int InternationalLicenseID);
 

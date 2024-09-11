@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ComponentModel.DataAnnotations;
 using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
+using System.ComponentModel;
 
 namespace DVLD_API.Controllers
 {
@@ -2026,17 +2027,138 @@ namespace DVLD_API.Controllers
     [ApiController]
     public class InternationalLicenseController : ControllerBase
     {
-        private readonly IBLLInternationalLicnense _bLLInternationalLicnense;
+        private readonly IBLLInternationalLicnense _InternationalLicnense;
         public InternationalLicenseController(IBLLInternationalLicnense bLLInternationalLicnense)
         {
-            this._bLLInternationalLicnense = bLLInternationalLicnense;
+            this._InternationalLicnense = bLLInternationalLicnense;
         }
 
+        [HttpGet("FindByID/{LicnenseID}", Name = "GetInternationalLicenseByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<LicenseDTO> Find(int LicnenseID)
+        {
+
+            if (LicnenseID < 1)
+            {
+                return BadRequest($"Not accepted ID {LicnenseID}");
+            }
+
+            var License = _InternationalLicnense.FindByLicenseID(LicnenseID);
+
+            if (License.Result == null)
+            {
+                return NotFound($"License with ID {LicnenseID} not found.");
+            }
 
 
+            InternationalLicenseDTO ILDTO = License.Result.ILDTO;
+
+            return Ok(ILDTO);
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPost("AddNewInternationalLicense", Name = "AddInternationalLicense")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<InternationalLicenseDTO> AddLicense(InternationalLicenseDTO NewLicenseDTO)
+        {
+
+
+            InternationalLicenseDTO License = new InternationalLicenseDTO(NewLicenseDTO.InternationalLicenseID, NewLicenseDTO.ApplicationID, NewLicenseDTO.DriverID,
+                NewLicenseDTO.IssuedUsingLocalLicenseID, DateTime.Now, DateTime.Now.AddYears(1),
+                1, NewLicenseDTO.CreatedByUserID);
+
+            var LicneseTask = _InternationalLicnense.AddNewLLicense(License);
+            NewLicenseDTO.InternationalLicenseID = LicneseTask.Result != null ? LicneseTask.Result.Value : 0;
+
+
+
+            return (NewLicenseDTO.InternationalLicenseID != 0) ? CreatedAtRoute("GetLicenseByID", new { LicnenseID = NewLicenseDTO.InternationalLicenseID }, NewLicenseDTO)
+                : BadRequest("Something wrong the data not added");
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPut("UpdateInternationalLicense/{LicenseID}", Name = "UpdateInternationalLicense")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<InternationalLicenseDTO> UpdateLicense(int LicenseID, InternationalLicenseDTO UpdatedLicense)
+        {
+            var License = _InternationalLicnense.FindByLicenseID(LicenseID);
+
+            if (License.Result == null)
+            {
+                return NotFound($"Person with ID {LicenseID} not found.");
+            }
+
+
+
+            License.Result.ApplicationID = UpdatedLicense.ApplicationID;
+            License.Result.DriverID = UpdatedLicense.DriverID;
+            License.Result.IssuedUsingLocalLicenseID = UpdatedLicense.IssuedUsingLocalLicenseID;
+            License.Result.IssueDate = UpdatedLicense.IssueDate;
+            License.Result.ExpirationDate = UpdatedLicense.ExpirationDate;
+
+
+            var result = _InternationalLicnense.UpdateLLicense(License.Result.ILDTO);
+
+            return (result.Result) ? Ok(License.Result.ILDTO) : BadRequest("Something is wrong the data not updated");
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("IsInternationalLicenseExist/{LicenseID}", Name = "IsInternationalLicenseExist")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> IsLicenseExist(int LicenseID)
+        {
+            if (LicenseID < 1)
+            {
+                return BadRequest($"Not accepted ID {LicenseID}");
+            }
+            var LDLApp = _InternationalLicnense.IsLicenseExist(LicenseID);
+
+            return LDLApp.Result ? Ok("it's exists") : NotFound(" Is not exists");
+
+        }
+
+        //---------------------------------------------------------------------------------
+       
+        [HttpGet("AllDriverInternationalLicenses", Name = "GetAllDriverInternationalLicenses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<InternationalLicenseDTO>> GetAllDriverInternationalLicenses(int DriverID)
+        {
+            var DriverInternationalLicensesList = _InternationalLicnense.GetAllDriverInternationalLicenses(DriverID); // Assuming `GetAllPersons` is implemented in `IPersonService`
+            if (DriverInternationalLicensesList.Result == null || !DriverInternationalLicensesList.Result.Any())
+            {
+                return NotFound("No License found!");
+            }
+            return Ok(DriverInternationalLicensesList.Result);
+        }
+        
+        [HttpGet("AllInternationalLicenses", Name = "GetAllInternationalLicenses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<InternationalLicenseDTO>> GetAllDriverInternationalLicenses()
+        {
+            var InternationalLicensesList = _InternationalLicnense.GetAllInternationalLicenses(); 
+            if (InternationalLicensesList.Result == null || !InternationalLicensesList.Result.Any())
+            {
+                return NotFound("No License found!");
+            }
+            return Ok(InternationalLicensesList.Result);
+        }
     }
 
-    
+
 
 
 

@@ -386,6 +386,275 @@
     "EndpointName": "UpdateDriver"
   },
   {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "AddLicense",
+    "RelativePath": "api/DVLD/InternationalLicense/AddNewInternationalLicense",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NewLicenseDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.InternationalLicenseDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.InternationalLicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "EndpointName": "AddInternationalLicense"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "GetAllDriverInternationalLicenses",
+    "RelativePath": "api/DVLD/InternationalLicense/AllDriverInternationalLicenses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.Entities.InternationalLicenseDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetAllDriverInternationalLicenses"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "GetAllDriverInternationalLicenses",
+    "RelativePath": "api/DVLD/InternationalLicense/AllInternationalLicenses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.Entities.InternationalLicenseDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetAllInternationalLicenses"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "Find",
+    "RelativePath": "api/DVLD/InternationalLicense/FindByID/{LicnenseID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicnenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetInternationalLicenseByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "IsLicenseExist",
+    "RelativePath": "api/DVLD/InternationalLicense/IsInternationalLicenseExist/{LicenseID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "IsInternationalLicenseExist"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.InternationalLicenseController",
+    "Method": "UpdateLicense",
+    "RelativePath": "api/DVLD/InternationalLicense/UpdateInternationalLicense/{LicenseID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedLicense",
+        "Type": "DVLD_DataAccessLayer.Entities.InternationalLicenseDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.InternationalLicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateInternationalLicense"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "AddLicense",
+    "RelativePath": "api/DVLD/License/AddNewLicense",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NewLicenseDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "EndpointName": "AddLicense"
+  },
+  {
     "ContainingType": "DVLD_API.Controllers.LicenseController",
     "Method": "GetAllDriverLicneses",
     "RelativePath": "api/DVLD/License/AllDriverLicneses/{DriverID}",
@@ -723,6 +992,56 @@
       }
     ],
     "EndpointName": "IsLicenseExistByPersonID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "UpdateLicense",
+    "RelativePath": "api/DVLD/License/UpdateLicense/{LicenseID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedLicense",
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateLicense"
   },
   {
     "ContainingType": "DVLD_API.Controllers.LicenseClassesController",

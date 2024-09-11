@@ -17,6 +17,18 @@ namespace DVlD_BusinessLayer
     {
         private readonly IDALInternationalLicense _DALInternationalLicense;
         
+        public InternationalLicenseDTO ILDTO
+        {
+            get
+            {
+                return new InternationalLicenseDTO
+                    (
+                        InternationalLicenseID,ApplicationID,DriverID,
+                        IssuedUsingLocalLicenseID,IssueDate,ExpirationDate,
+                        IsActive,CreatedByUserID
+                    );
+            }
+        }
         public int InternationalLicenseID { get; set; }
         public int ApplicationID { get; set; }
         public int DriverID { get; set; }
@@ -101,10 +113,10 @@ namespace DVlD_BusinessLayer
 
         }
 
-        public async Task<bool> DeleteLicense(int LicenseID)
+/*        public async Task<bool> DeleteLicense(int LicenseID)
         {
             return await _DALInternationalLicense.DeleteInternationalLicense(LicenseID);
-        }
+        }*/
 
         /*public static bool AlreadyHaveLicense(int DriverID)
         {

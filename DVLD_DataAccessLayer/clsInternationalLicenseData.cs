@@ -383,7 +383,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public async Task<bool> DeleteInternationalLicense(int InternationalLicenseID)
+/*        public async Task<bool> DeleteInternationalLicense(int InternationalLicenseID)
         {
 
             int rowsAffected = 0;
@@ -419,7 +419,7 @@ namespace DVLD_DataAccessLayer
             return (rowsAffected==1);
 
         }
-
+*/
         public async Task<bool> AlreadyHaveInternationalLicense(int DriverID)
         {
             bool isFound = false;

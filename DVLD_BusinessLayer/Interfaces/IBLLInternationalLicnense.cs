@@ -24,7 +24,6 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<clsInternationalLicense> FindByApplicationID(int ApplicationID);
         Task<int?> AddNewLLicense(InternationalLicenseDTO ILDTO);
         Task<bool> UpdateLLicense(InternationalLicenseDTO ILDTO);
-        Task<bool> DeleteLicense(int LicenseID);
         Task<bool> IsLicenseExist(int InternationalLicenseID);
         Task<IEnumerable<InternationalLicenseDTO>> GetAllInternationalLicenses();
     }
