@@ -9,6 +9,7 @@ using DVLD_DataAccessLayer.Entities;
 using DVLD_DataAccessLayer.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using System.ComponentModel.DataAnnotations;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DVLD_API.Controllers
 {
@@ -54,7 +55,7 @@ namespace DVLD_API.Controllers
 
             var Person = _Person.GetPerson(PersonID);
 
-            if (Person == null)
+            if (Person.Result == null)
             {
                 return NotFound($"Person with ID {PersonID} not found.");
             }
@@ -78,7 +79,7 @@ namespace DVLD_API.Controllers
 
             var Person = _Person.GetPerson(NationalNo);
 
-            if (Person == null)
+            if (Person.Result == null)
             {
                 return NotFound($"Person with NationalNo {NationalNo} not found.");
             }
@@ -123,7 +124,8 @@ namespace DVLD_API.Controllers
             //we return the DTO only not the full Person object
             //we dont return Ok here,we return createdAtRoute: this will be status code 201 created.
 
-            return CreatedAtRoute("GetPersonByID", new { PersonID = NewPersonDTO.PersonID }, NewPersonDTO);
+            return(NewPersonDTO.PersonID!=null)? CreatedAtRoute("GetPersonByID", new { PersonID = NewPersonDTO.PersonID }, NewPersonDTO)
+                :BadRequest("Something wrong the data not added");
 
         }
 
@@ -179,7 +181,7 @@ namespace DVLD_API.Controllers
 
             var result = _Person.UpdatePerson(Person.Result.PersonInfo);
 
-            return Ok(Person.Result.PersonInfo);
+            return (result.Result)? Ok(Person.Result.PersonInfo):BadRequest("Something is wrong the data not updated");
 
         }
 
@@ -199,7 +201,7 @@ namespace DVLD_API.Controllers
 
                 return Ok($"Person with ID {PersonID} has been deleted.");
             else
-                return NotFound($"Person with ID {PersonID} not found. no rows deleted!");
+                return NotFound($"Person with ID {PersonID} Have data connected to him can not deleted!");
         }
 
 
@@ -218,7 +220,7 @@ namespace DVLD_API.Controllers
 
                 return Ok($"Person with No {NationalNo} has been deleted.");
             else
-                return NotFound($"Person with No {NationalNo} not found. no rows deleted!");
+                return NotFound($"Person with NationalNo  {NationalNo} Have data connected to him can not deleted!");
         }
 
 
@@ -307,14 +309,11 @@ namespace DVLD_API.Controllers
 
             var User = _User.FindByUserID(UserID);
 
-            if (User == null)
+            if (User.Result == null)
             {
                 return NotFound($"User with ID {UserID} not found.");
             }
 
-            //here we get only the DTO object to send it back.
-
-            //we return the DTO not the User object.
             return Ok(User.Result.UDTO);
 
         }
@@ -331,13 +330,11 @@ namespace DVLD_API.Controllers
 
             var User = _User.FindByPersonID(PersonID);
 
-            if (User == null)
+            if (User.Result == null)
             {
                 return NotFound($"User with PersonID {PersonID} not found.");
             }
 
-            //here we get only the DTO object to send it back.
-            //we return the DTO not the User object.
             return Ok(User.Result.UDTO);
 
         }
@@ -354,7 +351,7 @@ namespace DVLD_API.Controllers
 
             var User = _User.Find(UserName, Password);
 
-            if (User == null)
+            if (User.Result == null)
             {
                 return NotFound($"User with these information not found.");
             }
@@ -448,7 +445,7 @@ namespace DVLD_API.Controllers
 
             var Result = _User.UpdateUser(User.Result.UDTO);
 
-            return Ok(User.Result.UDTO);
+            return (Result.Result)? Ok(User.Result.UDTO):BadRequest("Something is wrong the data not Updated");
 
         }
 
@@ -502,6 +499,8 @@ namespace DVLD_API.Controllers
         {
             _Driver = Driver;
         }
+        
+        
         [HttpGet("AllDrivers", Name = "GetAllDrivers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -535,7 +534,7 @@ namespace DVLD_API.Controllers
 
             var Driver = _Driver.FindByDriverID(DriverID);
 
-            if (Driver == null)
+            if (Driver.Result == null)
             {
                 return NotFound($"Driver with ID {DriverID} not found.");
             }
@@ -564,7 +563,7 @@ namespace DVLD_API.Controllers
 
             var Driver = _Driver.FindByPersonID(PersonID);
 
-            if (Driver == null)
+            if (Driver.Result == null)
             {
                 return NotFound($"Driver with PersonID {PersonID} not found.");
             }
@@ -649,7 +648,7 @@ namespace DVLD_API.Controllers
 
             var Result = _Driver.UpdateDriver(Driver.Result.DDTO);
 
-            return Ok(Driver.Result.DDTO);
+            return (Result.Result) ? Ok(Driver.Result.DDTO) : BadRequest("Something is wrong data not updated") ;
 
         }
 
@@ -735,7 +734,7 @@ namespace DVLD_API.Controllers
 
             var Type = _Applicatointype.Find(AppTypeID);
 
-            if (Type == null)
+            if (Type.Result == null)
             {
                 return NotFound($"Applicatoin type  with ID {AppTypeID} not found.");
             }
@@ -782,7 +781,7 @@ namespace DVLD_API.Controllers
 
             var result = _Applicatointype.UpdateApplicationType(AppType.Result.ATDTO);
 
-            return Ok(AppType.Result.ATDTO);
+            return (result.Result)? Ok(AppType.Result.ATDTO) :BadRequest("Something is woring data is not updated");
 
         }
 
@@ -829,7 +828,7 @@ namespace DVLD_API.Controllers
 
             var Class = _LicenseClass.Find(LicenseClassID);
 
-            if (Class == null)
+            if (Class.Result == null)
             {
                 return NotFound($"License Class with ID {LicenseClassID} not found.");
             }
@@ -849,7 +848,7 @@ namespace DVLD_API.Controllers
 
             var Class = _LicenseClass.Find(ClassName);
 
-            if (Class == null)
+            if (Class.Result == null)
             {
                 return NotFound($"License Class with name {ClassName} not found.");
             }
@@ -902,7 +901,8 @@ namespace DVLD_API.Controllers
 
 
     }
-
+    
+    //Done
     [Route("api/DVLD/TestTypes")]
     [ApiController]
     public class TestTypesController : ControllerBase
@@ -942,7 +942,7 @@ namespace DVLD_API.Controllers
             var TestType = _TestTypes.Find((clsTestTypes.enTestType) TestTypeID);
 
             // Check if the TestType is found
-            if (TestType == null)
+            if (TestType.Result == null)
             {
                 return NotFound($"TestType with ID {TestTypeID} not found.");
             }
@@ -967,7 +967,7 @@ namespace DVLD_API.Controllers
             
             var TestType = _TestTypes.Find((clsTestTypes.enTestType) TestTypeID);
 
-            if (TestType == null)
+            if (TestType.Result == null)
             {
                 return NotFound($"Type with ID {TestTypeID} not found.");
             }
@@ -1001,6 +1001,9 @@ namespace DVLD_API.Controllers
 
 
     }
+
+
+    //Done
     [Route("api/DVLD/Test")]
     [ApiController]
     public class TestController : ControllerBase
@@ -1011,7 +1014,6 @@ namespace DVLD_API.Controllers
             this._Test = bLLTest;
         }
 
-        //
         [HttpGet("Tests", Name = "GetAllTests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1027,9 +1029,299 @@ namespace DVLD_API.Controllers
 
         }
 
+        [HttpGet("FindByID/{TestID}", Name = "GetTestByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestDTO> GetTest(int TestID)
+        {
+
+            if (TestID < 1)
+            {
+                return BadRequest($"Not accepted ID {TestID}");
+            }
+
+            var Test = _Test.Find(TestID);
+
+            if (Test.Result == null)
+            {
+                return NotFound($"Driver with ID {TestID} not found.");
+            }
+
+
+            TestDTO TDTO = Test.Result.TDTO;
+
+            return Ok(TDTO);
+
+        }
+
+        // without verfying
+        [HttpPost("AddNewTest", Name = "AddTest")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<TestDTO> AddTest(TestDTO NewTestDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            /*switch (_Person.IsValid(NewPersonDTO))
+            {
+                case clsPerson.enPersonValidationType.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsPerson.enPersonValidationType.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsPerson.enPersonValidationType.UnderAge:
+                    return BadRequest($"Invalid Date of birth  the age is under 18");
+
+                case clsPerson.enPersonValidationType.NationalNoDuplicate:
+                    return BadRequest($"The National number '{NewPersonDTO.NationalNo}' already exists.");
+
+                case clsPerson.enPersonValidationType.WrongNationality:
+                    return BadRequest($"The NationalityID '{NewPersonDTO.Nationality}' is out of range the NationalityID show between 1 and 193 .");
+            }*/
+
+
+            TestDTO Test = new TestDTO(NewTestDTO.TestID, NewTestDTO.TestAppointmentID, NewTestDTO.TestResult, NewTestDTO.Notes, NewTestDTO.CreatedBy);
+            var AddtionResult = _Test.AddNewTest(Test);
+
+                NewTestDTO.TestID = (AddtionResult.Result==null)? 0: AddtionResult.Result.Value;
+
+            
+            return (NewTestDTO.TestID != 0) ? CreatedAtRoute("GetTestByID", new { TestID = NewTestDTO.TestID }, NewTestDTO)
+                : BadRequest("Something wrong the data not added");
+
+        }
+        
+        // without verfying
+        [HttpPut("UpdateTest/{TestID}", Name = "UpdateTeste")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestDTO> UpdateTest(int TestID, TestDTO UpdatedTest)
+        {
+            if (TestID < 1)
+            {
+                return BadRequest("Invalid ID .");
+            }
+
+            var Test = _Test.Find(TestID);
+
+            if (Test.Result == null)
+            {
+                return NotFound($"Test with ID {TestID} not found.");
+            }
+
+            /*switch (_Test.IsValid(UpdatedTest))
+            {
+                case clsTestTypes.enTestTypeValidationType.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsTestTypes.enTestTypeValidationType.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsTestTypes.enTestTypeValidationType.WrongType:
+                    return BadRequest($"Invalid Type");
+
+            }*/
+            Test.Result.TestAppointmentID = UpdatedTest.TestAppointmentID;
+            Test.Result.TestResult = UpdatedTest.TestResult;
+            Test.Result.Notes = UpdatedTest.Notes;
+            Test.Result.CreatedBy = UpdatedTest.CreatedBy;
 
 
 
+            var result = _Test.UpdateTest(Test.Result.TDTO);
+
+            return (result.Result) ? Ok(Test.Result.TDTO) : BadRequest("Something wrong!! data not updated");
+
+        }
+
+
+        [HttpGet("GetLastTestPerPersonAndLicenseClass/{PersonID},{LicenseClass},{TestType}", Name = "GetLastTestPerPersonAndLicenseClass")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestDTO> GetLastTestPerPersonAndLicenseClass(int PersonID,int LicenseClass,int TestType)
+        {
+
+            if (PersonID < 1)
+            {
+                return BadRequest($"Not accepted ID {PersonID}");
+            }
+            if (LicenseClass < 1 ||LicenseClass>7)
+            {
+                return BadRequest($"Not accepted License class ID {LicenseClass} it's should between 1 and 7");
+            }
+            if (TestType < 1 || TestType > 7)
+            {
+                return BadRequest($"Not accepted test type ID {TestType} it's should between 1 and 3");
+            }
+
+            var Test = _Test.FindLastTestPerPersonAndLicenseClass(PersonID,LicenseClass,(clsTestTypes.enTestType)TestType);
+
+            if (Test.Result == null)
+            {
+                return NotFound($"Driver with ID {PersonID} not found.");
+            }
+
+
+            TestDTO TDTO = Test.Result.TDTO;
+
+            return Ok(TDTO);
+
+        }
+
+        [HttpGet("GetPassedTestCount/{LocalDrivingLicenseID}", Name = "GetPassedTestCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> GetPassedTestCount(int LocalDrivingLicenseID)
+        {
+            if(LocalDrivingLicenseID < 1)
+            {
+                return BadRequest($"Not accepted ID {LocalDrivingLicenseID}");
+
+            }
+            var PassedTestCount=_Test.GetPassedTestCount(LocalDrivingLicenseID);
+            return (!(PassedTestCount.Result>=0)) ? NotFound($"No Application with ID {LocalDrivingLicenseID}"):Ok(PassedTestCount.Result);
+
+        }
+
+        [HttpGet("IsPassedAllTests/{LocalDrivingLicenseID}", Name = "IsPassedAllTests")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<byte> IsPassedAllTests(int LocalDrivingLicenseID)
+        {
+            if (LocalDrivingLicenseID < 1)
+            {
+                return BadRequest($"Not accepted ID {LocalDrivingLicenseID}");
+
+            }
+            var PassedTestCount = _Test.PassedAllTests(LocalDrivingLicenseID);
+            return (PassedTestCount.Result ) ? Ok($"All tests passed for ID { LocalDrivingLicenseID}"):NotFound($"Tests are not fully passed for ID {LocalDrivingLicenseID}"); ;
+
+        }
+
+
+    }
+
+
+
+    [Route("api/DVLD/LocalDrivingLicenseApplication")]
+    [ApiController]
+    public class LocalDrivingLicenseApplicationController : ControllerBase
+    {
+        private readonly IBLLLocalDrivingLicenseApp _localDrivingLicenseApp;
+        public LocalDrivingLicenseApplicationController(IBLLLocalDrivingLicenseApp _localDrivingLicenseApp)
+        {
+            this._localDrivingLicenseApp = _localDrivingLicenseApp;
+
+        }
+
+
+        [HttpGet("AllLocalDrivingLicenseApplication", Name = "GetAllDrivingLicenseApplication")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<LDLApplicatoinViewDTO>> GetAllLocalDrivingLicenseApplication()
+        {
+            var DrivingLicenseApplicationList = _localDrivingLicenseApp.GetAllApplicatoins();
+            if (DrivingLicenseApplicationList.Result == null || !DrivingLicenseApplicationList.Result.Any())
+            {
+                return NotFound("No people found!");
+            }
+            return Ok(DrivingLicenseApplicationList.Result);
+
+        }
+
+        [HttpGet("FindByID/{LDLApplicationID}", Name = "GetLDLApplicationByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<LDLApplicatoinDTO> GetLocalDrivingLicenseAppByID(int LDLApplicationID)
+        {
+
+
+            if (LDLApplicationID < 1)
+            {
+                return BadRequest($"Not accepted ID {LDLApplicationID}");
+            }
+
+            var LDLApp = _localDrivingLicenseApp.Find(LDLApplicationID);
+
+            if (LDLApp.Result == null)
+            {
+                return NotFound($"Applicaton with ID {LDLApplicationID} not found.");
+            }
+
+            LDLApplicatoinDTO LDLADTO = LDLApp.Result._LDLApplicatoinDTO;
+
+            return Ok(LDLADTO);
+
+        }
+
+        [HttpGet("FindByApplicationID/{ApplicationID}", Name = "GetLDLApplicationByApplicationID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<LDLApplicatoinDTO> GetLocalDrivingLicenseAppByApplicatoinID(int ApplicationID)
+        {
+
+
+            if (ApplicationID < 1)
+            {
+                return BadRequest($"Not accepted ID {ApplicationID}");
+            }
+
+            var LDLApp = _localDrivingLicenseApp.FindByApplicationID(ApplicationID);
+
+            if (LDLApp.Result == null)
+            {
+                return NotFound($"Application with ID {ApplicationID} not found.");
+            }
+
+            LDLApplicatoinDTO LDLADTO = LDLApp.Result._LDLApplicatoinDTO;
+
+            return Ok(LDLADTO);
+
+        }
+
+        // Without verfying
+        [HttpPost("AddNewLocalDrivingLicenseApplicatoin", Name = "AddLocalDrivingLicenseApplicatoin")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<LDLApplicatoinDTO> AddLocalDrivingLicenseApplicatoin(LDLApplicatoinDTO NewLDLApplicationDTO)
+        {
+
+            /*switch (_localDrivingLicenseApp.IsValid(NewDriverDTO))
+            {
+                case clsDriver.enDriverValidationTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsDriver.enDriverValidationTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsDriver.enDriverValidationTypes.InvalidPersonID:
+                    return BadRequest($"The personID {NewDriverDTO.PersonID} is not exists");
+
+                case clsDriver.enDriverValidationTypes.AlreadyDriver:
+                    return BadRequest($"This person is already a Driver");
+            }*/
+
+            var LDLApplication = _localDrivingLicenseApp.AddNewApplication(new LDLApplicatoinDTO(NewLDLApplicationDTO.LocalDrivingLicenseApplicationID, NewLDLApplicationDTO.ApplicationID, NewLDLApplicationDTO.LicenseClassID));
+
+
+            NewLDLApplicationDTO.LocalDrivingLicenseApplicationID = (LDLApplication.Result == null) ? 0 : LDLApplication.Result.Value;
+
+            if (NewLDLApplicationDTO.LocalDrivingLicenseApplicationID != 0)
+                return CreatedAtRoute("GetLDLApplicationByApplicationID", new { LDLApplicationID = NewLDLApplicationDTO.LocalDrivingLicenseApplicationID }, NewLDLApplicationDTO);
+            else
+                return BadRequest("Adding Failed");
+
+
+
+        }
 
     }
 
@@ -1063,19 +1355,216 @@ namespace DVLD_API.Controllers
     [ApiController]
     public class TestAppointmentController : ControllerBase
     {
-        private readonly IBLLTestAppointment _bLLTestAppointment;
+        private readonly IBLLTestAppointment _TestAppointment;
         public TestAppointmentController(IBLLTestAppointment bLLTestAppointment)
         {
-            this._bLLTestAppointment = bLLTestAppointment;
+            this._TestAppointment = bLLTestAppointment;
+        }
+
+        [HttpGet("AllTestAppointment", Name = "GetAllTestAppointment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<TestAppointmentDTO>> GetAllTestAppointment()
+        {
+            var TestAppointmentList = _TestAppointment.GetAllAppointmentAsync();
+            if (TestAppointmentList.Result == null || !TestAppointmentList.Result.Any())
+            {
+                return NotFound("No Test appointments found!");
+            }
+            return Ok(TestAppointmentList.Result);
+
+        }
+
+        [HttpGet("FindByID/{TestAppointmentID}", Name = "GetTestAppointmentByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestAppointmentDTO> GetTestAppointmentByID(int TestAppointmentID)
+        {
+
+
+            if (TestAppointmentID < 1)
+            {
+                return BadRequest($"Not accepted ID {TestAppointmentID}");
+            }
+
+            var TestAppointment = _TestAppointment.FindAsync(TestAppointmentID);
+
+            if (TestAppointment.Result == null)
+            {
+                return NotFound($"Test Appointment with ID {TestAppointmentID} not found.");
+            }
+
+            TestAppointmentDTO TADTO = TestAppointment.Result.TADTO;
+
+            return Ok(TADTO);
+
         }
 
 
+
+
+        [HttpGet("IsTestAppointmentByID/{TestAppointmentID}/{TestTypeID}", Name = "IsTestAppointmentExistByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<bool> IsTestApointmentExist(int TestAppoitmentID, byte TestTypeID)
+        {
+
+            if (_TestAppointment.ExistAppointmentAsync(TestAppoitmentID, TestTypeID).Result)
+            {
+                return Ok("The Appointment exists.");
+
+            }
+            else
+            {
+                return NoContent();
+
+            }
+        }
+
+
+        [HttpGet("GetLastTestAppointment/{TestAppointmentID},{TestTypeID}", Name = "GetLastTestAppointmentByLDLAppAndTestType")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestAppointmentDTO> GetLastTestAppointmentAsync(int LocalDrivingLicenseApplicationID, byte TestTypeID)
+        {
+            if (TestTypeID < 1 || TestTypeID > 3)
+            {
+                return BadRequest($"Not accepted TypeID {LocalDrivingLicenseApplicationID}  types id between 1 and 3");
+
+            }
+
+            if (LocalDrivingLicenseApplicationID < 1)
+            {
+                return BadRequest($"Not accepted ID {LocalDrivingLicenseApplicationID}");
+            }
+
+            var TestAppointment = _TestAppointment.GetLastTestAppointmentAsync(LocalDrivingLicenseApplicationID, (clsTestTypes.enTestType)TestTypeID);
+
+            if (TestAppointment.Result == null)
+            {
+                return NotFound($"Test Appointment for this  ID {LocalDrivingLicenseApplicationID} not found.");
+            }
+
+            TestAppointmentDTO TADTO = TestAppointment.Result.TADTO;
+
+            return Ok(TADTO);
+
+        }
+
+        [HttpGet("GetTestIDForAppointment/{TestAppointmentID},{TestTypeID}", Name = "GetTestIDForAppointment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<int> GetTestIDOfTestAppointment(int TestAppointmentID)
+        {
+
+
+            if (TestAppointmentID < 1)
+            {
+                return BadRequest($"Not accepted ID {TestAppointmentID}");
+            }
+
+            var TestAppointment = _TestAppointment._GetTestIDAsync(TestAppointmentID);
+
+            if (TestAppointment.Result == -1)
+            {
+                return NotFound($" No Test Found for this  ID {TestAppointmentID}");
+            }
+
+            int TestID = TestAppointment.Result;
+
+            return Ok(TestID);
+
+        }
+
+        //without verfying
+        [HttpPost("AddNewTestAppointment", Name = "AddNewTestAppointment")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<TestAppointmentDTO> AddAppointment(TestAppointmentDTO NewTestAppointmentDTO)
+        {
+
+            /*switch (_localDrivingLicenseApp.IsValid(NewDriverDTO))
+            {
+                case clsDriver.enDriverValidationTypes.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsDriver.enDriverValidationTypes.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsDriver.enDriverValidationTypes.InvalidPersonID:
+                    return BadRequest($"The personID {NewDriverDTO.PersonID} is not exists");
+
+                case clsDriver.enDriverValidationTypes.AlreadyDriver:
+                    return BadRequest($"This person is already a Driver");
+            }*/
+
+            var TestAppointment = _TestAppointment.AddNewAppointmentAsync(new TestAppointmentDTO(NewTestAppointmentDTO.TestAppointmentID, NewTestAppointmentDTO.TestTypeID, NewTestAppointmentDTO.LocalDrivingLicenseApplicationID, DateTime.Now, NewTestAppointmentDTO.PaidFees, NewTestAppointmentDTO.CreatedByUserID, NewTestAppointmentDTO.IsLocked, NewTestAppointmentDTO.RetakeTestApplicationID));
+
+
+            NewTestAppointmentDTO.TestAppointmentID = (TestAppointment.Result == null) ? 0 : TestAppointment.Result.Value;
+
+            if (NewTestAppointmentDTO.LocalDrivingLicenseApplicationID != 0)
+                return CreatedAtRoute("GetTestAppointmentByID", new { TestAppointmentID = NewTestAppointmentDTO.TestAppointmentID }, NewTestAppointmentDTO);
+            else
+                return BadRequest("Adding Failed");
+
+
+
+        }
+
+        //without verfying
+        [HttpPut("UpdateTestAppointment/{TestAppointmentID}", Name = "UpdateTestAppointment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TestAppointmentDTO> UpdateAppointment(int TestAppointmentID, TestAppointmentDTO UpdatedTestAppointment)
+        {
+           
+
+            var TestAppointment = _TestAppointment.FindAsync(TestAppointmentID);
+
+            if (TestAppointment.Result == null)
+            {
+                return NotFound($"TestAppointment with ID {TestAppointmentID} not found.");
+            }
+
+            /*switch (_TestTypes.IsValid(UpdatedTestAppointment))
+            {
+                case clsTestTypes.enTestTypeValidationType.NullObject:
+                    return BadRequest($"The Object is Null fill it ");
+
+                case clsTestTypes.enTestTypeValidationType.EmptyFileds:
+                    return BadRequest($"Some fileds is empty,please fill it");
+
+                case clsTestTypes.enTestTypeValidationType.WrongType:
+                    return BadRequest($"Invalid Type");
+
+            }*/
+
+            TestAppointment.Result.TestAppointmentID = UpdatedTestAppointment.TestTypeID;
+            TestAppointment.Result.TestTypeID = (clsTestTypes.enTestType)UpdatedTestAppointment.TestTypeID;
+            TestAppointment.Result.LocalDrivingApplicationID = UpdatedTestAppointment.LocalDrivingLicenseApplicationID;
+            TestAppointment.Result.AppointmentDate = UpdatedTestAppointment.AppointmentDate;
+            TestAppointment.Result.PaidFees = UpdatedTestAppointment.PaidFees;
+            TestAppointment.Result.CreatedBy = UpdatedTestAppointment.CreatedByUserID;
+            TestAppointment.Result.IsLocked = UpdatedTestAppointment.IsLocked;
+            TestAppointment.Result.RetakeTestApplicationID = UpdatedTestAppointment.RetakeTestApplicationID;
+
+
+
+
+            var result = _TestAppointment.UpdateAppointmentAsync(TestAppointment.Result.TADTO);
+
+            return (result.Result) ? Ok(TestAppointment.Result.TADTO) : BadRequest("Something wrong!! data not updated");
+
+        }
+
+
+
     }
-
-
-
-
-
 
 
 
@@ -1112,3 +1601,4 @@ namespace DVLD_API.Controllers
 */
 
 }
+

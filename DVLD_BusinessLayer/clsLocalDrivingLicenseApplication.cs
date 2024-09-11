@@ -17,6 +17,13 @@ namespace DVlD_BusinessLayer
     {
 
         private readonly IDALLocalDrivingLicenseApplication _dALLocalDrivingLicenseApplication;
+        public LDLApplicatoinDTO _LDLApplicatoinDTO
+        {
+            get
+            {
+                return new LDLApplicatoinDTO(this.LocalDrivingLicenseApplicationID, this.ApplicationID, this.LicenseClassID);
+            }
+        }
         public int LocalDrivingLicenseApplicationID {  get; set; }
        
         public int ApplicationID { get; set; }

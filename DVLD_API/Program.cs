@@ -122,7 +122,14 @@ builder.Services.AddScoped<IDALInternationalLicense, clsInternationalInternation
 builder.Services.AddScoped<IBLLInternationalLicnense, clsInternationalLicense>();
 
 //-----------------------------------------------
+//Local Driving License configuratoin
+builder.Services.AddScoped<IDALLocalDrivingLicenseApplication, clsLocalDrivingLicenseApplicationData>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new clsLocalDrivingLicenseApplicationData(connectionString);
+});
 
+builder.Services.AddScoped<IBLLLocalDrivingLicenseApp, clsLocalDrivingLicenseApplication>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

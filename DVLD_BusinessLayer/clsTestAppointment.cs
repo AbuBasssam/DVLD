@@ -14,7 +14,7 @@ namespace DVlD_BusinessLayer
     public class clsTestAppointment :IBLLTestAppointment
     {
         private readonly IDALTestAppointment _DALTestAppointment;
-        TestAppointmentDTO TADTO
+       public  TestAppointmentDTO TADTO
         {
             get
             {
@@ -114,10 +114,11 @@ namespace DVlD_BusinessLayer
 
         }
 
-        private async Task< int> _GetTestIDAsync()
+        public async Task< int> _GetTestIDAsync(int TestAppointmentID)
          {
              return await _DALTestAppointment.GetTestIDAsync(TestAppointmentID);
          }
+
 
 
     }
