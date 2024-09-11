@@ -422,7 +422,7 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public async Task<bool> DeleteLicense(int LicenseID)
+/*        public async Task<bool> DeleteLicense(int LicenseID)
         {
 
             int rowsAffected = 0;
@@ -458,7 +458,7 @@ namespace DVLD_DataAccessLayer
             return (rowsAffected==1);
 
         }
-
+*/
         public async Task<bool> AlreadyHaveLicense(int DriverID, int LicenseClass)
         {
             bool isFound = false;

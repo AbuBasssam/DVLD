@@ -386,6 +386,345 @@
     "EndpointName": "UpdateDriver"
   },
   {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "GetAllDriverLicneses",
+    "RelativePath": "api/DVLD/License/AllDriverLicneses/{DriverID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.Entities.DriverLicensesDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetAllDriverLicneses"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "FindByApplicationID",
+    "RelativePath": "api/DVLD/License/FindByApplicationID/{ApplicationID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseByApplicationID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "FindByDriverID",
+    "RelativePath": "api/DVLD/License/FindByDriverID/{DriverID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DriverID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseByDriverID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "Find",
+    "RelativePath": "api/DVLD/License/FindByID/{LicnenseID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicnenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "Find",
+    "RelativePath": "api/DVLD/License/FindByID/{LicnenseID},{LicnenseClass}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicnenseID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "LicnenseClass",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LicenseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetLicenseByID\u0026Class"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "GetActiveLicenseIDByPersonID",
+    "RelativePath": "api/DVLD/License/GetActiveLicenseIDByPersonID/{PersonID},{LicenseClass}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PersonID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "LicenseClass",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetActiveLicenseIDByPersonID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "IsLicenseExist",
+    "RelativePath": "api/DVLD/License/IsLicenseExist/{ApplicationID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "IsLicenseExist"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LicenseController",
+    "Method": "IsLicenseExistByPersonID",
+    "RelativePath": "api/DVLD/License/IsLicenseExistByPersonID/{PersonID},{LicenseClass}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PersonID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "LicenseClass",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "IsLicenseExistByPersonID"
+  },
+  {
     "ContainingType": "DVLD_API.Controllers.LicenseClassesController",
     "Method": "GetLicenseClassByID",
     "RelativePath": "api/DVLD/LicenseClasses/FindByID/{LicenseClassID}",
@@ -623,6 +962,181 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "AttendedTest",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/AttendedTest/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "AttendedTest"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "DeleteLocalLicenseApp",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/DeleteLocalLicenseApp/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "DeleteLocalLicenseApp"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "DoesAttendTestType",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/DoesAttendTestType/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "DoesAttendTestType"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "DoesPassPreviousTest",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/DoesPassPreviousTest/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "DoesPassPreviousTest"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "DoesPassTestType",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/DoesPassTestType/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApp",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "DoesPassTestType"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
     "Method": "GetLocalDrivingLicenseAppByApplicatoinID",
     "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/FindByApplicationID/{ApplicationID}",
     "HttpMethod": "GET",
@@ -710,6 +1224,211 @@
       }
     ],
     "EndpointName": "GetLDLApplicationByID"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "IsAlreadyExist",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/IsAlreadyExist/{NatoinalNO},{ClassName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NatoinalNO",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "ClassName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "IsAlreadyExist"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "IsThereAnActiveScheduledTest",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/IsThereAnActiveScheduledTest/{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      }
+    ],
+    "EndpointName": "IsThereAnActiveScheduledTest"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "PassedTest",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/PassedTest/{LocalDrivingLicenseApplicationID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "PassedTest"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "TotalTrialsPerTest",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/TotalTrialsPerTest/{LocalDrivingLicenseApplicationID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LocalDrivingLicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Byte",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "TotalTrialsPerTest"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.LocalDrivingLicenseApplicationController",
+    "Method": "UpdateAppointment",
+    "RelativePath": "api/DVLD/LocalDrivingLicenseApplication/UpdateLocalDrivingLicenseApp/{LDLAppID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LDLAppID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedLDLApplicationDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.LDLApplicatoinDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.LDLApplicatoinDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateLocalDrivingLicenseApp"
   },
   {
     "ContainingType": "DVLD_API.Controllers.PeopleController",
@@ -1344,6 +2063,42 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
+    "Method": "AddAppointment",
+    "RelativePath": "api/DVLD/TestAppointment/AddNewTestAppointment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "NewTestAppointmentDTO",
+        "Type": "DVLD_DataAccessLayer.Entities.TestAppointmentDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.TestAppointmentDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "EndpointName": "AddNewTestAppointment"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "GetAllTestAppointment",
     "RelativePath": "api/DVLD/TestAppointment/AllTestAppointment",
     "HttpMethod": "GET",
@@ -1371,6 +2126,47 @@
       }
     ],
     "EndpointName": "GetAllTestAppointment"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
+    "Method": "GetApplicationTestAppointmentsPerTestTypeAsync",
+    "RelativePath": "api/DVLD/TestAppointment/AllTestAppointmentsPerTestType",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "LicenseApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DVLD_DataAccessLayer.Entities.TestAppointmentDTO, DVLD_DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetAllTestAppointmentsPerTestType"
   },
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
@@ -1420,7 +2216,7 @@
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "GetLastTestAppointmentAsync",
-    "RelativePath": "api/DVLD/TestAppointment/GetLastTestAppointment/{TestAppointmentID}/{TestTypeID}",
+    "RelativePath": "api/DVLD/TestAppointment/GetLastTestAppointment/{TestAppointmentID},{TestTypeID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1474,8 +2270,58 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
+    "Method": "GetTestIDOfTestAppointment",
+    "RelativePath": "api/DVLD/TestAppointment/GetTestIDForAppointment/{TestAppointmentID},{TestTypeID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestAppointmentID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "TestTypeID",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Int32",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "GetTestIDForAppointment"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "IsTestApointmentExist",
-    "RelativePath": "api/DVLD/TestAppointment/IsTestAppointmentByID/{TestAppointmentID}/{TestTypeID}",
+    "RelativePath": "api/DVLD/TestAppointment/IsTestAppointmentExistByIDPerTestType/{TestAppointmentID}/{TestTypeID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1512,7 +2358,57 @@
         "StatusCode": 204
       }
     ],
-    "EndpointName": "IsTestAppointmentExistByID"
+    "EndpointName": "IsTestAppointmentExistByIDPerTestType"
+  },
+  {
+    "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
+    "Method": "UpdateAppointment",
+    "RelativePath": "api/DVLD/TestAppointment/UpdateTestAppointment/{TestAppointmentID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TestAppointmentID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "UpdatedTestAppointment",
+        "Type": "DVLD_DataAccessLayer.Entities.TestAppointmentDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DVLD_DataAccessLayer.Entities.TestAppointmentDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "EndpointName": "UpdateTestAppointment"
   },
   {
     "ContainingType": "DVLD_API.Controllers.TestTypesController",

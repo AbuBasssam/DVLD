@@ -17,7 +17,7 @@ namespace DVlD_BusinessLayer
     {
         private readonly IDALLicense _DALLicense;
         public enum enIssueReason { FirstTime = 1, Renew = 2, ReplacementForDamaged = 3, ReplacementForLost = 4 }
-        LicenseDTO LDTO
+        public LicenseDTO LDTO
         {
             get
             {
@@ -144,10 +144,10 @@ namespace DVlD_BusinessLayer
 
         }
 
-        public async Task<bool> DeleteLicense(int LicenseID)
+       /* public async Task<bool> DeleteLicense(int LicenseID)
         {
             return await _DALLicense.DeleteLicense(LicenseID);
-        }
+        }*/
         
         public async Task< bool> IsLicenseExist(int ApplicationID)
         {
@@ -191,10 +191,10 @@ namespace DVlD_BusinessLayer
 
         }
 
-        public async Task<bool> DeactivateCurrentLicense()
+       /* public async Task<bool> DeactivateCurrentLicense()
         {
             return (await _DALLicense.DeactivateLicense(this.LicenseID));
-        }
+        }*/
 
         public async Task<int?> Detain(float FineFees, int CreatedByUserID)
         {

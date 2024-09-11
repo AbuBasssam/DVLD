@@ -114,10 +114,15 @@ namespace DVlD_BusinessLayer
 
         }
 
-        public async Task< int> _GetTestIDAsync(int TestAppointmentID)
+        public async Task< int> GetTestIDAsync(int TestAppointmentID)
          {
              return await _DALTestAppointment.GetTestIDAsync(TestAppointmentID);
          }
+        private async Task<int> _GetTestIDAsync()
+        {
+            return await _DALTestAppointment.GetTestIDAsync(TestAppointmentID);
+        }
+
 
 
 

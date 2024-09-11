@@ -25,7 +25,7 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<bool> ExistAppointmentAsync(int LicenseApplicationID, int TestTypeID);
         Task<clsTestAppointment> GetLastTestAppointmentAsync(int LocalDrivingLicenseApplicationID, clsTestTypes.enTestType TestTypeID);
 
-        Task<int> _GetTestIDAsync(int TestAppointmentID);
+        Task<int> GetTestIDAsync(int TestAppointmentID);
 
     }
 }

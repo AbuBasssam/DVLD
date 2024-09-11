@@ -38,11 +38,10 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<clsLicense> FindByApplicationID(int ApplicationID);
         Task<int?> AddNewLLicense(LicenseDTO LDTO);
         Task<bool> UpdateLLicense(LicenseDTO LDTO);
-        Task<bool> DeleteLicense(int LicenseID);
         Task<bool> IsLicenseExist(int ApplicationID);
         Task<bool> IsLicenseExistByPersonID(int PersonID, int LicenseClassID);
         Task<int?> GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID);
-        Task<bool> DeactivateCurrentLicense();
+        //Task<bool> DeactivateCurrentLicense();
         
 
 

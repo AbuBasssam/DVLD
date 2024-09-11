@@ -17,7 +17,6 @@ namespace DVLD_DataAccessLayer.Interfaces
         Task<LicenseDTO> FindByApplicationID(int ApplicationID);
         Task<int?> AddNewLicense(LicenseDTO LDTO);
         Task<bool> UpdateLicense(LicenseDTO LDTO);
-        Task<bool> DeleteLicense(int LicenseID);
         Task<bool> AlreadyHaveLicense(int DriverID, int LicenseClass);
         Task<bool> IsLicneseExist(int ApplicationID);
         Task<int?> GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID);
