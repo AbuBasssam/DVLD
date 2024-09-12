@@ -1,123 +1,123 @@
-﻿using DVLD_DataAccessLayer;
+﻿using DVlD_BusinessLayer.Interfaces;
+using DVLD_DataAccessLayer;
+using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-
+using static DVlD_BusinessLayer.clsApplicationType;
 namespace DVlD_BusinessLayer
 {
-    public class clsLicenseClasses
+    public class clsLicenseClasses: IBLLLicenseClass
     {
-        public  enum enMode { AddNew, Update };
-        public enMode Mode { get; set; }
-        public int LicenseClassesID {  get; set; }
+       
+        public enum enLicenseClasses
+        {
+            SmallMotorcycle=1,
+            HeavyMotorcycleLicense,
+            OrdinaryDrivingLicense,
+            Commercial,
+            Agricultural,
+            SmallAndMediumBus,
+            TruckAndHeavyVehicle
+
+        }
+       
+        private readonly IDALLicenseClasses _DALLicenseClasses;
+
+        public enum enLicenseClassessValidationType { EmptyFileds = 1, NullObject = 2, WrongClass = 3, Valid = 4 };
+
+        public LicenseClassDTO LCDTO
+        {
+            get
+            {
+                return new LicenseClassDTO
+                    (
+                    (int)this.LicenseClassesID,
+                    this.ClassName,
+                    this.ClassDescription,
+                    this.MinimumAllowedAge,
+                    this.DefalutValidityLength,
+                    this.ClassFees
+                    );
+
+            }
+        }
+        public enLicenseClasses LicenseClassesID {  get; set; }
         public string ClassName { get; set; }
         public string ClassDescription { get; set; }
         public byte MinimumAllowedAge { get; set; }
         public byte DefalutValidityLength { get; set; }
-        public int ClassFees { get; set; }
+        public float ClassFees { get; set; }
 
-        public clsLicenseClasses()
+        public clsLicenseClasses(IDALLicenseClasses dALLicenseClasses)
         {
-            this.LicenseClassesID = 0;
-            this.ClassName = "";
-            this.ClassDescription = "";
-            this.MinimumAllowedAge = 0;
-            this.DefalutValidityLength = 0;
-            this.ClassFees = 0;
-            Mode = enMode.AddNew;
+            this._DALLicenseClasses = dALLicenseClasses;
 
         }
         
-        public clsLicenseClasses(int LicenseClassesID, string ClassName, string ClassDescription, byte MinimumAllowedAge, byte DefalutValidityLength, int ClassFees)
+        private clsLicenseClasses(IDALLicenseClasses dALLicenseClasses ,LicenseClassDTO licenseClassDTO)
         {
-            this.LicenseClassesID = LicenseClassesID;
-            this.ClassName = ClassName;
-            this.ClassDescription = ClassDescription;
-            this.MinimumAllowedAge = MinimumAllowedAge;
-            this.DefalutValidityLength = DefalutValidityLength;
-            this.ClassFees = ClassFees;
-            Mode = enMode.Update;
+            this.LicenseClassesID =(enLicenseClasses) licenseClassDTO.LicenseClassesID;
+            this.ClassName = licenseClassDTO. ClassName;
+            this.ClassDescription = licenseClassDTO.ClassDescription;
+            this.MinimumAllowedAge = licenseClassDTO.MinimumAllowedAge;
+            this.DefalutValidityLength = licenseClassDTO.DefalutValidityLength;
+            this.ClassFees =licenseClassDTO.ClassFees;
 
         }
 
-        public static DataTable GetAllLicenseClasses()
-        {
-            return clsLicenseClassesData.GetAllLicenseClasses();
-        }
+        private Func<string, bool> IsFieldEmpty = str => string.IsNullOrEmpty(str);
 
-        public static clsLicenseClasses Find(int LicenseClassesID)
+        private bool HasClassHaveEmptyFileds(LicenseClassDTO LCDTO) => (IsFieldEmpty(LCDTO.ClassName) || IsFieldEmpty(LCDTO.ClassDescription)|| LCDTO.DefalutValidityLength==0 || LCDTO.ClassFees == 0);
+
+        public enLicenseClassessValidationType IsValid(LicenseClassDTO LCDTO)
         {
-            string ClassName = "";
-            string ClassDescription = "";
-            int ClassFees = 0;
-            byte MinimumAllowedAge = 0;
-            byte DefalutValidityLength = 0;
-            if (clsLicenseClassesData.Find( LicenseClassesID, ref ClassName, ref ClassDescription,ref MinimumAllowedAge, ref DefalutValidityLength, ref ClassFees))
-            {
-                return new clsLicenseClasses(LicenseClassesID, ClassName, ClassDescription, MinimumAllowedAge, DefalutValidityLength, ClassFees);
-            }
-            else
-                return null;
+
+           if (HasClassHaveEmptyFileds(LCDTO))
+              return enLicenseClassessValidationType.EmptyFileds;
+           
+           if (LCDTO == null)
+            return enLicenseClassessValidationType.NullObject;
+           
+           if ((LCDTO.LicenseClassesID < 0 || LCDTO.LicenseClassesID > 7))
+               return enLicenseClassessValidationType.WrongClass;
+
+
+
+            return enLicenseClassessValidationType.Valid;
+        }
+        public async Task< IEnumerable<LicenseClassDTO>> GetAllLicenseClasses()
+            =>await _DALLicenseClasses.GetAllLicenseClasses();
+        
+        public async Task< clsLicenseClasses> Find(int LicenseClassesID)
+        {
+
+            LicenseClassDTO licenseClassDTO = await _DALLicenseClasses.Find(LicenseClassesID);
+           
+                return (licenseClassDTO != null)? new clsLicenseClasses(_DALLicenseClasses, licenseClassDTO):null;
         }
        
-        public static clsLicenseClasses Find(string ClassName)
+        public async Task<clsLicenseClasses> Find(string ClassName)
         {
-            int LicenseClassesID = -1;
-            string ClassDescription = "";
-            int ClassFees = 0;
-            byte MinimumAllowedAge = 0;
-            byte DefalutValidityLength = 0;
-           
-            if (clsLicenseClassesData.FindByName(ref LicenseClassesID,  ClassName, ref ClassDescription, ref MinimumAllowedAge, ref DefalutValidityLength, ref ClassFees))
-            {
-                return new clsLicenseClasses(LicenseClassesID, ClassName, ClassDescription, MinimumAllowedAge, DefalutValidityLength, ClassFees);
-            }
-            else
-                return null;
+            LicenseClassDTO licenseClassDTO = await _DALLicenseClasses.Find(ClassName);
+
+            return (licenseClassDTO != null) ? new clsLicenseClasses(_DALLicenseClasses, licenseClassDTO) : null;
         }
 
-        private bool _AddNewLicenseClass()
-        {
-            this.LicenseClassesID = clsLicenseClassesData.AddNewLicenseClass( ClassName, ClassDescription, MinimumAllowedAge, DefalutValidityLength, ClassFees);
-            return (LicenseClassesID != -1);
-        }
+        public  async Task<int?> AddNewLicenseClass(LicenseClassDTO LCDTO)
+            => await _DALLicenseClasses.AddNewLicenseClass(LCDTO);
 
-        private bool _UpdateLicenseClass()
-        {
-            return clsLicenseClassesData.UpdateLicenseClass(LicenseClassesID, ClassName, ClassDescription, MinimumAllowedAge, DefalutValidityLength, ClassFees);
-        }
+        public async Task<bool> UpdateLicenseClass(LicenseClassDTO LCDTO)
+            => await _DALLicenseClasses.UpdateLicenseClass(LCDTO);
         
-        public bool Save()
-        {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-
-                    if (_AddNewLicenseClass())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else return false;
-
-
-                case enMode.Update:
-
-                    return _UpdateLicenseClass();
-
-
-                default:
-                    return false;
-
-            }
-        }
-
-
 
     }
 }

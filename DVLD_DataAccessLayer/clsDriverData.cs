@@ -10,19 +10,26 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using DVLD_DataAccessLayer.Entities;
+using DVLD_DataAccessLayer.Interfaces;
 
 namespace DVLD_DataAccessLayer
 {
 
-    public static class clsDriverData
+    public  class clsDriverData : IDriverData
     {
-        public static async Task<IEnumerable<DriverView>> GetAllDriversAsync()
+        private readonly string _ConnectionString;
+        public clsDriverData(string ConnectionString)
+        {
+            this._ConnectionString = ConnectionString;
+        }
+
+        public async Task<IEnumerable<DriverViewDTO>> GetAllDriversAsync()
         {
 
-            List<DriverView> DriversList = new List<DriverView>();
+            List<DriverViewDTO> DriversList = new List<DriverViewDTO>();
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_GetDriversList", connection))
                     {
@@ -69,11 +76,11 @@ namespace DVLD_DataAccessLayer
             return DriversList;
         }
     
-        public static async Task<Driver> FindByDriverIDAsync(int DriverID)
+        public  async Task<DriverDTO> FindByDriverIDAsync(int DriverID)
         {
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_FindDriverByID", connection))
                     {
@@ -84,7 +91,7 @@ namespace DVLD_DataAccessLayer
                         {
                             if (await reader.ReadAsync())
                             {
-                                MapReaderToDriver(reader);
+                                return MapReaderToDriver(reader);
 
                             }
                         }
@@ -113,12 +120,12 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static async Task<Driver> FindByPersonIDAsync(int PersonID)
+        public  async Task<DriverDTO> FindByPersonIDAsync(int PersonID)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_FindDriverByPersonID", connection))
                     {
@@ -131,7 +138,7 @@ namespace DVLD_DataAccessLayer
                             if (await reader.ReadAsync())
                             {
 
-                                MapReaderToDriver(reader);
+                                return MapReaderToDriver(reader);
 
                             }
                         }
@@ -166,12 +173,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<int?> AddNewDriverAsync(Driver DriverDTO)
+        public  async Task<int?> AddNewDriverAsync(DriverDTO DriverDTO)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                    
                     using (var command = new SqlCommand("SP_AddNewDriver", connection))
@@ -210,12 +217,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> UpdateDriverAsync(Driver DriverDTO)
+        public  async Task<bool> UpdateDriverAsync(DriverDTO DriverDTO)
         {
             int rowsAffected = 0;
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     using (var command = new SqlCommand("SP_UpdateDriver", connection))
                     {
@@ -253,13 +260,13 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> DeleteDriverAsync(int DriverID)
+        public  async Task<bool> DeleteDriverAsync(int DriverID)
         {
 
             int rowsAffected = 0;
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     
                     using (var command = new SqlCommand("SP_DeleteDriver", connection))
@@ -290,12 +297,12 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        public static async Task<bool> IsDriverExistByPersonIDAsync(int PersonID)
+        public  async Task<bool> IsDriverExistByPersonIDAsync(int PersonID)
         {
     
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckDriverExistsByPersonID", connection))
@@ -326,12 +333,12 @@ namespace DVLD_DataAccessLayer
 
         }
         
-        public static async Task<bool> IsDriverExistsAsync(int DriverID)
+        public  async Task<bool> IsDriverExistsAsync(int DriverID)
         {
 
             try
             {
-                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     using (var command = new SqlCommand("SP_CheckDriverExists", connection))
@@ -362,9 +369,9 @@ namespace DVLD_DataAccessLayer
 
         }
 
-        private static DriverView MapReaderToDriverView(IDataReader reader)
+        private static DriverViewDTO MapReaderToDriverView(IDataReader reader)
         {
-            return new DriverView
+            return new DriverViewDTO
                                  (
                                           reader.GetInt32(reader.GetOrdinal("DriverID")),
                                           reader.GetInt32(reader.GetOrdinal("PersonID")),
@@ -375,9 +382,9 @@ namespace DVLD_DataAccessLayer
                                  );
         }
 
-        private static Driver MapReaderToDriver(IDataReader reader)
+        private static DriverDTO MapReaderToDriver(IDataReader reader)
         {
-            return new Driver
+            return new DriverDTO
                                   (
 
                                       reader.GetInt32(reader.GetOrdinal("DriverID")),
@@ -386,6 +393,9 @@ namespace DVLD_DataAccessLayer
                                       reader.GetDateTime(reader.GetOrdinal("CreatedDate"))
                                   );
         }
-
+        public async Task<IEnumerable<DriverLicensesDTO>> AllDriverLicenses(int DriverID)
+        {
+            return await  new clsLicensesData(_ConnectionString).GetAllDriverLicenses(DriverID);
+        }
     }
 }

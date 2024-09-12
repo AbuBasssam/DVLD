@@ -8,21 +8,26 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
 using System.Security.Policy;
+using DVLD_DataAccessLayer.Interfaces;
+using DVLD_DataAccessLayer.Entities;
+using DVlD_BusinessLayer.Interfaces;
 
 namespace DVlD_BusinessLayer
 {
-    public class clsApplication
+    public class clsApplication: IBLLApplication
     {
-        public enum enMode { AddNew, Update };
-
-        public enMode Mode;
-        public enum enApplicationType
-        {
-            NewDrivingLicense = 1, RenewDrivingLicense = 2, ReplaceLostDrivingLicense = 3,
-            ReplaceDamagedDrivingLicense = 4, ReleaseDetainedDrivingLicsense = 5, NewInternationalLicense = 6, RetakeTest = 7
-        };
+        private readonly IDALApplication _DAL;
 
         public enum enApplicationStatus { New = 1, Cancelled = 2, Completed = 3 };
+
+        public ApplicationDTO ADTO
+        {
+            get
+            {
+                return new ApplicationDTO(ApplicationID, ApplicationPersonID, ApplicationDate,
+                    (int)ApplicationTypeID, (byte)ApplicationStatus, LastStauteDate, PaidFees, CreatedBy);
+            }
+        }
 
         public Nullable<int> ApplicationID { get; set; }
 
@@ -30,7 +35,7 @@ namespace DVlD_BusinessLayer
 
         public DateTime ApplicationDate { get; set; }
 
-        public int ApplicationTypeID { get; set; }
+        public clsApplicationType.enApplicationTypes ApplicationTypeID { get; set; }
 
         public clsApplication.enApplicationStatus ApplicationStatus { get; set; }
 
@@ -56,159 +61,77 @@ namespace DVlD_BusinessLayer
 
         public DateTime LastStauteDate { get; set; }
 
-        public int PaidFees { get; set; }
+        public float PaidFees { get; set; }
 
         public int CreatedBy { get; set; }
 
-        public clsUser User { get; set; }
-        public clsApplicationType ApplicationType { get; set; }
 
-        public clsPerson Person { get; set; }
-        public clsApplication()
+        public clsApplication( IDALApplication DAL)=>this._DAL = DAL;
+
+        private clsApplication(IDALApplication DAL,ApplicationDTO ADTO)
         {
-            this.ApplicationID = null;
-            this.ApplicationPersonID = -1;
-            this.ApplicationDate = DateTime.Today;
-            this.ApplicationTypeID = -1;
-            this.ApplicationStatus = enApplicationStatus.New;
-            this.LastStauteDate = DateTime.Today;
-            this.PaidFees = PaidFees;
-            this.CreatedBy = -1;
-            this.ApplicationType = new clsApplicationType();
-            Mode = enMode.AddNew;
+            this.ApplicationID = ADTO.ApplicationID;
+            this.ApplicationPersonID = ADTO.ApplicationPersonID;
+            this.ApplicationDate = ADTO.ApplicationDate;
+            this.ApplicationTypeID = (clsApplicationType.enApplicationTypes) ADTO.ApplicationTypeID;
+            this.ApplicationStatus = (enApplicationStatus)ADTO.Staute;
+            this.LastStauteDate =ADTO. LastStauteDate;
+            this.PaidFees =ADTO.PeadFees;
+            this.CreatedBy = ADTO.CreatedBy;
+           
 
 
         }
 
-        private clsApplication(int applicationID, int applicationPersonID, DateTime ApplicationDate, int ApplicationTypeID, byte ApplicationStaute, DateTime LastStauteDate, int PaidFees, int CreatedBy)
-        {
-            this.ApplicationID = applicationID;
-            this.ApplicationPersonID = applicationPersonID;
-            this.ApplicationDate = ApplicationDate;
-            this.ApplicationTypeID = ApplicationTypeID;
-            this.ApplicationStatus = (enApplicationStatus)ApplicationStaute;
-            this.LastStauteDate = LastStauteDate;
-            this.PaidFees = PaidFees;
-            this.CreatedBy = CreatedBy;
-            this.User = clsUser.FindByUserID(CreatedBy).Result;
-            //this.Person = clsPerson.Find(applicationPersonID);
-            this.ApplicationType = clsApplicationType.Find(ApplicationTypeID);
-            Mode = enMode.Update;
-
-
-        }
-
-        public static  clsApplication Find(int ApplicationID)
-        {
-            int applicationPersonID = -1, ApplicationTypeID = -1, PaidFees=0, CreatedBy=-1;
-            DateTime ApplicationDate = DateTime.Now, LastStauteDate=DateTime.Now;
-            byte ApplicationStaute = 0;
-            if (clsApplicationData.Find(ApplicationID, ref applicationPersonID, ref ApplicationDate, ref ApplicationTypeID
-              , ref ApplicationStaute, ref LastStauteDate, ref PaidFees, ref CreatedBy))
-            {
-                return new clsApplication(ApplicationID,  applicationPersonID,  ApplicationDate,  ApplicationTypeID
-              ,  ApplicationStaute,  LastStauteDate,  PaidFees,  CreatedBy);
-
-
-
-            }
-            else
-            {
-                return null;
-            }
+        
+        public async Task<clsApplication> Find(int ApplicationID)
+        {   
+            ApplicationDTO ADTO= await _DAL.Find(ApplicationID);
+            return (ADTO == null ? null :new clsApplication(_DAL,ADTO));
 
         }
         
-        private bool _AddNewApplication()
-        {
-            this.ApplicationID = clsApplicationData.AddNewApplication(ApplicationPersonID, ApplicationDate, ApplicationTypeID, Convert.ToByte(ApplicationStatus), LastStauteDate, PaidFees, CreatedBy);
-            return (ApplicationID != null);
-            
-        }
+        public async Task< int?> AddNewApplication(ApplicationDTO ADTO)=> await _DAL.AddNewApplication(ADTO);
+        
+        public async Task< bool> UpdateApplication(ApplicationDTO ADTO)=> await _DAL.UpdateApplication(ADTO);
+        
 
-        private bool _UpdateApplication()
-        {
-            return clsApplicationData.UpdateApplication((int)ApplicationID, ApplicationPersonID, ApplicationDate, ApplicationTypeID, Convert.ToByte(ApplicationStatus), LastStauteDate, PaidFees, CreatedBy);
-        }
+        public async Task<bool> DeleteApplication(int ApplicationID)=>await _DAL.DeleteApplication(ApplicationID);
+        
 
-        public static bool DeleteApplication(int ApplicationID)
-        {
-           return clsApplicationData.DeleteApplication(ApplicationID);
-        }
+        public async Task<bool> Cancel() => await _DAL.UpdateStatus((int)ApplicationID, 2);
+        
 
-        public bool Cancel()
+        public async Task<bool> SetComplete()=> await _DAL.UpdateStatus((int)ApplicationID, 3);
+    
 
-        {
-            return clsApplicationData.UpdateStatus((int)ApplicationID, 2);
-        }
+       
+        public async Task<bool> Delete()=> await _DAL.DeleteApplication((int)this.ApplicationID);
+        
 
-        public bool SetComplete()
+        public async Task<bool> IsApplicationExist(int ApplicationID)=> await _DAL.IsApplicationExist(ApplicationID);
+        
 
-        {
-            return clsApplicationData.UpdateStatus((int)ApplicationID, 3);
-        }
+        public async Task<bool> DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
+            => await _DAL.DoesPersonHaveActiveApplication(PersonID, ApplicationTypeID);
+        
 
-        public bool Save()
-        {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-
-                    if (_AddNewApplication())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else
-                        return false;
+        public async Task<bool> DoesPersonHaveActiveApplication(int ApplicationTypeID)
+            => await DoesPersonHaveActiveApplication(this.ApplicationPersonID, ApplicationTypeID);
 
 
-                case enMode.Update:
+        public async Task<int> GetActiveApplicationID(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID)
+            => await _DAL.GetActiveApplicationID(PersonID, (int)ApplicationTypeID);
+        
 
-                    return _UpdateApplication();
+        public async Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID, int LicenseClassID)
+        
+            =>await _DAL.GetActiveApplicationIDForLicenseClass(PersonID, (int)ApplicationTypeID, LicenseClassID);
+        
 
-
-                default:
-                    return false;
-
-            }
-
-        }
-
-        public bool Delete()
-        {
-            return clsApplicationData.DeleteApplication((int)this.ApplicationID);
-        }
-
-        public static bool IsApplicationExist(int ApplicationID)
-        {
-            return clsApplicationData.IsApplicationExist(ApplicationID);
-        }
-
-        public static bool DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
-        {
-            return clsApplicationData.DoesPersonHaveActiveApplication(PersonID, ApplicationTypeID);
-        }
-
-        public bool DoesPersonHaveActiveApplication(int ApplicationTypeID)
-        {
-            return DoesPersonHaveActiveApplication(this.ApplicationPersonID, ApplicationTypeID);
-        }
-
-        public static int GetActiveApplicationID(int PersonID, clsApplication.enApplicationType ApplicationTypeID)
-        {
-            return clsApplicationData.GetActiveApplicationID(PersonID, (int)ApplicationTypeID);
-        }
-
-        public static int GetActiveApplicationIDForLicenseClass(int PersonID, clsApplication.enApplicationType ApplicationTypeID, int LicenseClassID)
-        {
-            return clsApplicationData.GetActiveApplicationIDForLicenseClass(PersonID, (int)ApplicationTypeID, LicenseClassID);
-        }
-
-        public int GetActiveApplicationID(clsApplication.enApplicationType ApplicationTypeID)
-        {
-            return GetActiveApplicationID(this.ApplicationPersonID, ApplicationTypeID);
-        }
+        public async Task<int> GetActiveApplicationID(clsApplicationType.enApplicationTypes ApplicationTypeID)
+            => await _DAL.GetActiveApplicationID(this.ApplicationPersonID, (int)ApplicationTypeID);
+        
 
 
     }   

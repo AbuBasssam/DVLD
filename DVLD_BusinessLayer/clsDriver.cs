@@ -4,18 +4,20 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DVlD_BusinessLayer.Interfaces;
 using DVLD_DataAccessLayer;
 using DVLD_DataAccessLayer.Entities;
-using DVlD_BusinessLayer.DTOs;
+using DVLD_DataAccessLayer.Interfaces;
+using static DVlD_BusinessLayer.clsUser;
 
 namespace DVlD_BusinessLayer
 {
 
-    public class clsDriver
+    public class clsDriver:IBLLDriver
     {
-        public enum enMode { AddNew, Update };
-        
-        public enMode Mode = enMode.AddNew; 
+        public enum enDriverValidationTypes { EmptyFileds = 1, InvalidPersonID = 2, NullObject = 3, AlreadyDriver = 4, Valid = 5 };
+
+        private IDriverData _DriverDAL {  get; set; }
         public DriverDTO DDTO
         {
             get
@@ -26,158 +28,126 @@ namespace DVlD_BusinessLayer
         public Nullable<int> DriverID {  get; set; }
         public int PersonID { get; set; }
         public int CreatedByUserID {  get; set; }
-        public DateTime CreatedDate { get; set; }   
-        public clsPerson PersonInfo { get; set; }
-       
-        public clsDriver(DriverDTO DriverDTO ,enMode cMode=enMode.AddNew)
+        public DateTime CreatedDate { get; set; }
+
+        public clsDriver(IDriverData DriverDAL)
         {
+            this._DriverDAL = DriverDAL;
+        }
+        
+        private clsDriver(IDriverData DriverDAL,DriverDTO DriverDTO )
+        {
+            _DriverDAL = DriverDAL;
             this.DriverID = DriverDTO.DriverID;
             this.PersonID = DriverDTO.PersonID;
             this.CreatedByUserID = DriverDTO.CreatedByUserID;
             this.CreatedDate = DriverDTO.CreatedDate;
-            this.PersonInfo=clsPerson.Find(PersonID).Result;
-            this.Mode = cMode;
+        }
+        private  bool HasDriverHaveEmptyFileds(DriverDTO NewDriverDTO)
+        {
+            return (NewDriverDTO.PersonID == 0 || NewDriverDTO.CreatedByUserID == 0);
         }
 
-        public static async Task<clsDriver> FindByDriverID(int DriverID)
+        public enDriverValidationTypes IsValid(DriverDTO NewDriverDTO)
+        {
+            string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=sa123456;Encrypt=False;TrustServerCertificate=True;Connection Timeout=30;";
+            clsPeopleData Person = new clsPeopleData(ConnectionString);
+            if (NewDriverDTO == null)
+            {
+                return enDriverValidationTypes.NullObject;
+            }
+            if (HasDriverHaveEmptyFileds(NewDriverDTO))
+            {
+                return enDriverValidationTypes.EmptyFileds;
+            }
+
+            if (!Person.IsPersonExistAsync(NewDriverDTO.PersonID).Result)
+            {
+
+                return enDriverValidationTypes.InvalidPersonID;
+            }
+
+
+            if (_DriverDAL.FindByPersonIDAsync(NewDriverDTO.PersonID) != null)
+            {
+
+                return enDriverValidationTypes.AlreadyDriver;
+            }
+
+            return enDriverValidationTypes.Valid;
+        }
+        public  async Task<clsDriver> FindByDriverID(int DriverID)
         {
             
-            DriverDTO Driver= MapToDTO(await clsDriverData.FindByDriverIDAsync(DriverID));
+            DriverDTO Driver= await _DriverDAL.FindByDriverIDAsync(DriverID);
            
-            return (Driver!=null)? new clsDriver(Driver,enMode.Update):null;
+            return (Driver!=null)? new clsDriver(_DriverDAL,Driver):null;
            
         }
 
-        public static async Task<clsDriver> FindByPersonID(int PersonID)
+        public  async Task<clsDriver> FindByPersonID(int PersonID)
         {
 
-            DriverDTO Driver = MapToDTO(await clsDriverData.FindByPersonIDAsync(PersonID));
+            DriverDTO Driver = await _DriverDAL.FindByPersonIDAsync(PersonID);
 
-            return (Driver != null) ? new clsDriver(Driver, enMode.Update) : null;
+            return (Driver != null) ? new clsDriver(_DriverDAL, Driver) : null;
 
         }
        
-        public static async Task<IEnumerable<ListDriverDTO>> GetAllDriver()
+        public  async Task<IEnumerable<DriverViewDTO>> GetAllDriver()
         {
-            var Drivers = await clsDriverData.GetAllDriversAsync();
-            return MapToLDTOs(Drivers);
+            var Drivers = await _DriverDAL.GetAllDriversAsync();
+            return Drivers;
         }
 
-        private async Task<bool> _AddNewDriver()
+        public async Task<int?> AddNewDriver(DriverDTO DDTO)
         {
-            this.DriverID= await clsDriverData.AddNewDriverAsync(MapToEntity(DDTO));
-            return (this.DriverID != null);
+          return await _DriverDAL.AddNewDriverAsync(DDTO);
+            
         }
        
-        private async Task<bool> _UpdateDriver()
+        public async Task<bool>UpdateDriver(DriverDTO DDTO)
         {
 
-            return await clsDriverData.UpdateDriverAsync(MapToEntity(DDTO));
+            return await _DriverDAL.UpdateDriverAsync(DDTO);
         }
 
-        public static async Task<bool> IsDriverExistByPersonID( int PersonID)
+        public  async Task<bool> IsDriverExistByPersonID( int PersonID)
         {
-            return await clsDriverData.IsDriverExistByPersonIDAsync(PersonID);
+            return await _DriverDAL.IsDriverExistByPersonIDAsync(PersonID);
         }
 
-        public static async Task<bool> IsDriverExists(int DriverID)
+        public  async Task<bool> IsDriverExists(int DriverID)
         {
-            return await clsDriverData.IsDriverExistsAsync(DriverID);
+            return await _DriverDAL.IsDriverExistsAsync(DriverID);
         }
 
-        public async Task<bool> SaveAsync()
+        public async Task<IEnumerable<DriverLicensesDTO>> GetDriverLicenses(int DriverID)
         {
-            switch (Mode)
-            {
-                case enMode.AddNew:
-
-                    if ( await _AddNewDriver())
-                    {
-                        Mode = enMode.Update;
-                        return true;
-                    }
-                    else return false;
-
-
-                case enMode.Update:
-
-                    return await _UpdateDriver();
-
-
-                default:
-                    return false;
-            }
+            return await _DriverDAL.AllDriverLicenses(DriverID);
         }
 
-        public static DataTable GetLicenses(int DriverID)
-        {
-            return clsLicense.GetAllDriverLicenses(DriverID);
-        }
-
-        public static DataTable GetInternationalLicenses(int DriverID)
+        /*public static DataTable GetInternationalLicenses(int DriverID)
         {
             return clsInternationalLicense.GetAllDriverInternationalLicenses(DriverID);
-        }
+        }*/
 
-        public  DataTable GetLicenses()
+        public async Task<IEnumerable<DriverLicensesDTO>> GetLicenses()
         {
-            return clsLicense.GetAllDriverLicenses((int)DriverID);
+            return await GetDriverLicenses((int)DriverID);
         }
 
-        public  DataTable GetInternationalLicenses()
+        /*public  DataTable GetInternationalLicenses()
         {
             return clsInternationalLicense.GetAllDriverInternationalLicenses((int)DriverID);
-        }
+        }*/
 
-        private static DriverDTO MapToDTO(Driver Driver)
-        {
-            return new DriverDTO(
+        
 
-               Driver.DriverID,
-               Driver.PersonID,
-               Driver.CreatedByUserID,
-               Driver.CreatedDate
-               
+       
 
-            );
-        }
-
-        private static ListDriverDTO MapToLDTO(DriverView DriverView)
-        {
-            return new ListDriverDTO
-            (
-               DriverView.DriverID,
-               DriverView.PersonID,
-               DriverView.NationalNo,
-               DriverView.FullName,
-               DriverView.CreatedDate,
-               DriverView.NumberOfActiveLicenses
-            );
-
-
-        }
-
-        private static IEnumerable<ListDriverDTO> MapToLDTOs(IEnumerable<DriverView> Drivers)
-        {
-            var DriverDTOs = new List<ListDriverDTO>();
-            foreach (var Driver in Drivers)
-            {
-                DriverDTOs.Add(MapToLDTO(Driver));
-            }
-            return DriverDTOs;
-        }
-
-        private Driver MapToEntity(DriverDTO Driver)
-        {
-            return new Driver
-            (
-
-                Driver.DriverID,
-                Driver.PersonID,
-                Driver.CreatedByUserID,
-                Driver.CreatedDate
-            );
-        }
+        
+        
 
 
     }
