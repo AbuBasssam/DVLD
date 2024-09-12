@@ -8,40 +8,46 @@ using System.Data;
 using System.Net;
 using System.Security.Policy;
 using System.Diagnostics;
+using DVLD_DataAccessLayer.Entities;
+using System.Runtime.Remoting.Messaging;
+using DVLD_DataAccessLayer.Interfaces;
 
 
 namespace DVLD_DataAccessLayer
 {
-    public static class clsApplicationData
+    public class clsApplicationData:IDALApplication
     {
-
-        public static  DataTable GetAllApplications()
+        private readonly string _ConnectionString;
+        public clsApplicationData(string connectionString)
         {
-            DataTable dt = new DataTable();
-           
+            _ConnectionString = connectionString;
+        }
+        public async Task<IEnumerable<ApplicationDTO>> GetAllApplications()
+        {
+            List<ApplicationDTO> ApplicationList = new List<ApplicationDTO>();
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
-                    string query = "select * from ApplicationsList_View order by ApplicationDate desc";
+                    string query = "select * from Applications order by ApplicationDate desc";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         connection.Open();
 
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (reader.HasRows)
-
-                            {
-                                dt.Load(reader);
-                            }
+                           while(await reader.ReadAsync())
+                           {
+                                ApplicationList.Add(_MapReaderToDTO(reader));
+                           }
                         }
 
-                            
+
                     }
 
-                        
+
 
                 }
 
@@ -55,36 +61,35 @@ namespace DVLD_DataAccessLayer
             }
 
 
-            return dt;
+            return ApplicationList;
 
         }
 
-        public static Nullable<int> AddNewApplication( int ApplicationPersonID, DateTime ApplicationDate, int ApplicationTypeID,
-            byte Staute, DateTime LastStauteDate, int PeadFees, int CreatedBy)
+        public async Task<int?> AddNewApplication(ApplicationDTO ADTO)
         {
-           Nullable< int> ApplicationID = null;
-            
+            Nullable<int> ApplicationID = null;
+
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = @"INSERT INTO Applications (ApplicantPersonID,ApplicationDate,ApplicationTypeID,ApplicationStatus, LastStatusDate,PaidFees,CreatedByUserID)
                              VALUES (@ApplicantPersonID,@ApplicationDate,@ApplicationTypeID,@ApplicationStatus,@LastStatusDate,@PaidFees,@CreatedByUserID);
                              SELECT SCOPE_IDENTITY();";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@ApplicantPersonID", ApplicationPersonID);
-                        command.Parameters.AddWithValue("@ApplicationDate", ApplicationDate);
-                        command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
-                        command.Parameters.AddWithValue("@ApplicationStatus", Staute);
-                        command.Parameters.AddWithValue("@LastStatusDate", LastStauteDate);
-                        command.Parameters.AddWithValue("@CreatedByUserID", CreatedBy);
-                        command.Parameters.AddWithValue("@PaidFees", PeadFees);
+                        command.Parameters.AddWithValue("@ApplicantPersonID", ADTO.ApplicationPersonID);
+                        command.Parameters.AddWithValue("@ApplicationDate", ADTO.ApplicationDate);
+                        command.Parameters.AddWithValue("@ApplicationTypeID", ADTO.ApplicationTypeID);
+                        command.Parameters.AddWithValue("@ApplicationStatus", ADTO.Staute);
+                        command.Parameters.AddWithValue("@LastStatusDate", ADTO.LastStauteDate);
+                        command.Parameters.AddWithValue("@CreatedByUserID",ADTO.CreatedBy);
+                        command.Parameters.AddWithValue("@PaidFees", ADTO.PeadFees);
                         connection.Open();
 
-                        object result = command.ExecuteScalar();
+                        object result =await command.ExecuteScalarAsync();
 
                         if (result != null && int.TryParse(result.ToString(), out int insertedID))
                         {
@@ -95,7 +100,7 @@ namespace DVLD_DataAccessLayer
                     }
 
                 }
-                    
+
             }
 
             catch (Exception ex)
@@ -105,17 +110,16 @@ namespace DVLD_DataAccessLayer
             }
 
             return ApplicationID;
-           
+
         }
 
-        public static bool UpdateApplication(int ApplicationID, int ApplicationPersonID, DateTime ApplicationDate,
-            int ApplicationTypeID,byte Staute, DateTime LastStauteDate, int PeadFees,int CreatedBy)
+        public async Task< bool> UpdateApplication(ApplicationDTO ADTO)
         {
             int rowsAffected = 0;
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = @"Update Applications set ApplicantPersonID=@ApplicantPersonID,
                                     ApplicationDate=@ApplicationDate,
@@ -126,19 +130,19 @@ namespace DVLD_DataAccessLayer
                                     CreatedByUserID=@CreatedByUserID
                                     where ApplicationID=@ApplicationID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-                        command.Parameters.AddWithValue("@ApplicantPersonID", ApplicationPersonID);
-                        command.Parameters.AddWithValue("@ApplicationDate", ApplicationDate);
-                        command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
-                        command.Parameters.AddWithValue("@ApplicationStatus", Staute);
-                        command.Parameters.AddWithValue("@LastStatusDate", LastStauteDate);
-                        command.Parameters.AddWithValue("@PaidFees", PeadFees);
-                        command.Parameters.AddWithValue("@CreatedByUserID", CreatedBy);
+                        command.Parameters.AddWithValue("@ApplicationID",ADTO.ApplicationID);
+                        command.Parameters.AddWithValue("@ApplicantPersonID", ADTO.ApplicationPersonID);
+                        command.Parameters.AddWithValue("@ApplicationDate", ADTO .ApplicationDate);
+                        command.Parameters.AddWithValue("@ApplicationTypeID", ADTO .ApplicationTypeID);
+                        command.Parameters.AddWithValue("@ApplicationStatus", ADTO .Staute);
+                        command.Parameters.AddWithValue("@LastStatusDate", ADTO .LastStauteDate);
+                        command.Parameters.AddWithValue("@PaidFees", ADTO.PeadFees);
+                        command.Parameters.AddWithValue("@CreatedByUserID", ADTO.CreatedBy);
 
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -148,55 +152,38 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return false;
             }
 
-           
-            return (rowsAffected > 0);
+
+            return (rowsAffected ==1);
         }
 
-        public static bool Find(int ApplicationID, ref int ApplicationPersonID,
-          ref DateTime ApplicationDate, ref int ApplicationTypeID, ref byte Staute, ref DateTime LastStauteDate
-          , ref int PeadFees, ref int CreatedBy)
+        public  async Task<ApplicationDTO> Find(int ApplicationID)
         {
-            bool isFound = false;
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = "SELECT * FROM Applications WHERE ApplicationID = @ApplicationID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
 
                         connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
-                                // The record was found
-                                isFound = true;
-
-                                ApplicationPersonID = (int)reader["ApplicantPersonID"];
-                                ApplicationDate = (DateTime)reader["ApplicationDate"];
-                                ApplicationTypeID = (int)reader["ApplicationTypeID"];
-                                Staute = Convert.ToByte(reader["ApplicationStatus"]);
-                                LastStauteDate = (DateTime)reader["LastStatusDate"];
-                                PeadFees = Convert.ToInt32(reader["PaidFees"]);
-                                CreatedBy = (int)reader["CreatedByUserID"];
+                               return _MapReaderToDTO(reader);
 
                             }
-                            else
-                            {
-                                // The record was not found
-                                isFound = false;
-                            }
+                            
                         }
 
-                            
+
                     }
-                        
+
 
                 }
 
@@ -206,29 +193,28 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
             }
-           
-            return isFound;
+
+            return null;
         }
 
-        public static bool DeleteApplication(int ApplicationID)
+        public async Task< bool> DeleteApplication(int ApplicationID)
         {
             int rowsAffected = 0;
-            
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
                     string query = @"Delete Applications
                                     where ApplicationID=@ApplicationID";
 
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -238,30 +224,29 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return false;
             }
 
-            
-            return (rowsAffected > 0);
+
+            return (rowsAffected ==1);
         }
 
-        public static bool IsApplicationExist(int ApplicationID)
+        public async Task<bool> IsApplicationExist(int ApplicationID)
         {
             bool isFound = false;
 
-            
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = "SELECT Found=1 FROM Applications WHERE ApplicationID = @ApplicationID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
 
                         connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (var reader =await command.ExecuteReaderAsync())
                         {
                             isFound = reader.HasRows;
 
@@ -272,42 +257,39 @@ namespace DVLD_DataAccessLayer
 
                 }
 
-                    
+
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                isFound = false;
             }
-            
+
             return isFound;
         }
 
-        public static bool DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
+        public async Task<bool> DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
         {
-
-            //incase the ActiveApplication ID !=-1 return true.
-            return (GetActiveApplicationID(PersonID, ApplicationTypeID) != -1);
+            return (await GetActiveApplicationID(PersonID, ApplicationTypeID) != -1);
         }
 
-        public static int GetActiveApplicationID(int PersonID, int ApplicationTypeID)
+        public async Task<int> GetActiveApplicationID(int PersonID, int ApplicationTypeID)
         {
             int ActiveApplicationID = -1;
 
-           
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = "SELECT ActiveApplicationID=ApplicationID FROM Applications WHERE ApplicantPersonID = @ApplicantPersonID and ApplicationTypeID=@ApplicationTypeID and ApplicationStatus=1";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicantPersonID", PersonID);
                         command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
 
                         connection.Open();
-                        object result = command.ExecuteScalar();
+                        object result =await command.ExecuteScalarAsync();
 
 
                         if (result != null && int.TryParse(result.ToString(), out int AppID))
@@ -316,27 +298,26 @@ namespace DVLD_DataAccessLayer
                         }
                     }
 
-                    
+
                 }
 
-                    
+
             }
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return ActiveApplicationID;
             }
-           
+
             return ActiveApplicationID;
         }
 
-        public static int GetActiveApplicationIDForLicenseClass(int PersonID, int ApplicationTypeID, int LicenseClassID)
+        public async Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, int ApplicationTypeID, int LicenseClassID)
         {
             int ActiveApplicationID = -1;
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
 
                     string query = @"SELECT ActiveApplicationID=Applications.ApplicationID  
@@ -348,13 +329,13 @@ namespace DVLD_DataAccessLayer
 							and LocalDrivingLicenseApplications.LicenseClassID = @LicenseClassID
                             and ApplicationStatus=1";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicantPersonID", PersonID);
                         command.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
                         command.Parameters.AddWithValue("@LicenseClassID", LicenseClassID);
                         connection.Open();
-                        object result = command.ExecuteScalar();
+                        object result =await command.ExecuteScalarAsync();
 
 
                         if (result != null && int.TryParse(result.ToString(), out int AppID))
@@ -371,21 +352,20 @@ namespace DVLD_DataAccessLayer
             catch (Exception ex)
             {
                 clsEventLog.SetEventLog(ex.Message, EventLogEntryType.Error);
-                return ActiveApplicationID;
             }
-            
+
             return ActiveApplicationID;
         }
 
-        public static bool UpdateStatus(int ApplicationID, short NewStatus)
+        public async Task<bool> UpdateStatus(int ApplicationID, short NewStatus)
         {
 
             int rowsAffected = 0;
-            
+
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                using (var connection = new SqlConnection(_ConnectionString))
                 {
                     string query = @"Update  Applications  
                             set 
@@ -393,14 +373,14 @@ namespace DVLD_DataAccessLayer
                                 LastStatusDate = @LastStatusDate
                             where ApplicationID=@ApplicationID;";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
                         command.Parameters.AddWithValue("@NewStatus", NewStatus);
                         command.Parameters.AddWithValue("LastStatusDate", DateTime.Now);
 
                         connection.Open();
-                        rowsAffected = command.ExecuteNonQuery();
+                        rowsAffected =await command.ExecuteNonQueryAsync();
 
                     }
 
@@ -416,8 +396,37 @@ namespace DVLD_DataAccessLayer
                 return false;
             }
 
-            
-            return (rowsAffected > 0);
+
+            return (rowsAffected ==1);
         }
+        
+        private ApplicationDTO _MapReaderToDTO(IDataReader reader)
+        {
+            return new ApplicationDTO
+            (
+                (int)reader["ApplicationID"],
+                (int)reader["ApplicantPersonID"],
+                (DateTime)reader["ApplicationDate"],
+                (int)reader["ApplicationTypeID"],
+                Convert.ToByte(reader["ApplicationStatus"]),
+                (DateTime)reader["LastStatusDate"],
+                Convert.ToSingle(reader["PaidFees"]),
+                (int)reader["CreatedByUserID"]
+            );
+
+
+
+        }
+       
+
+    
+                                     
+                                     
+                                      
+        
+    
+    
+    
     }
 }
+    
