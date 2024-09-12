@@ -28,17 +28,16 @@ namespace DVlD_BusinessLayer.Interfaces
         Task<int?> AddNewApplication(ApplicationDTO ADTO);
         Task<bool> UpdateApplication(ApplicationDTO ADTO);
         Task<bool> DeleteApplication(int ApplicationID);
-        Task<bool> Cancel();
-        Task<bool> SetComplete();
-        Task<bool> Delete();
         Task<bool> IsApplicationExist(int ApplicationID);
         Task<bool> DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID);
-        Task<bool> DoesPersonHaveActiveApplication(int ApplicationTypeID);
         Task<int> GetActiveApplicationID(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID);
         Task<int> GetActiveApplicationIDForLicenseClass(int PersonID, clsApplicationType.enApplicationTypes ApplicationTypeID, int LicenseClassID);
         Task<int> GetActiveApplicationID(clsApplicationType.enApplicationTypes ApplicationTypeID);
-
-
+          
+          //Task<bool> Cancel();
+         //Task<bool> SetComplete();
+        //Task<bool> Delete();
+       //Task<bool> DoesPersonHaveActiveApplication(int ApplicationTypeID);
 
     }
 }

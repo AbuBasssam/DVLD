@@ -14,6 +14,18 @@ namespace DVlD_BusinessLayer
     public class clsDetainedLicense: IBLLDetainLIcnese
     {
         private IDALDetainedLicense _DAL;
+        public DetainedLicenseDTO DLDTO
+        {
+            get
+            {
+                return new DetainedLicenseDTO
+                    (
+                        DetainID,LicenseID,DetainDate,
+                        FineFees,CreatedByUserID,IsReleased,
+                        ReleaseDate,ReleasedByUserID,ReleaseApplicationID
+                    );
+            }
+        }
         public int DetainID { set; get; }
         public int LicenseID { set; get; }
         public DateTime DetainDate { set; get; }

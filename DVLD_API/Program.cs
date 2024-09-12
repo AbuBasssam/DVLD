@@ -9,20 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
-//ApplicationTypes configuratoin
-//-----------------------------------------------
-
-builder.Services.AddScoped<IBLLApplicationTypes, clsApplicationType>();
-
-builder.Services.AddScoped<IApplicationTypesDAL, clsApplicationTypesData>(provider =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new clsApplicationTypesData(connectionString);
-});
-
-//-----------------------------------------------
-
 //People configuratoin
 builder.Services.AddScoped<IPeopleDataInterface, clsPeopleData>(provider =>
 {
@@ -45,7 +31,6 @@ builder.Services.AddScoped<IUser, clsUser>();
 //-----------------------------------------------
 
 //Driver configuratoin
-
 builder.Services.AddScoped<IDriverData,clsDriverData>(provider =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -56,14 +41,18 @@ builder.Services.AddScoped<IBLLDriver, clsDriver>();
 
 //-----------------------------------------------
 
-//Test Types configuratoin
-builder.Services.AddScoped<IDALTestTypes, clsTestTypesData>(provider =>
+//-----------------------------------------------
+//Application Types configuratoin
+
+builder.Services.AddScoped<IBLLApplicationTypes, clsApplicationType>();
+
+builder.Services.AddScoped<IApplicationTypesDAL, clsApplicationTypesData>(provider =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new clsTestTypesData(connectionString);
+    return new clsApplicationTypesData(connectionString);
 });
 
-builder.Services.AddScoped<IBLLTestTypes, clsTestTypes>();
+//-----------------------------------------------
 
 //-----------------------------------------------
 
@@ -78,6 +67,18 @@ builder.Services.AddScoped<IBLLLicenseClass, clsLicenseClasses>();
 
 //-----------------------------------------------
 
+//Test Types configuratoin
+builder.Services.AddScoped<IDALTestTypes, clsTestTypesData>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new clsTestTypesData(connectionString);
+});
+
+builder.Services.AddScoped<IBLLTestTypes, clsTestTypes>();
+
+//-----------------------------------------------
+
+//-----------------------------------------------
 
 //Test configuratoin
 builder.Services.AddScoped<IDALTest, clsTestData>(provider =>
@@ -112,6 +113,39 @@ builder.Services.AddScoped<IBLLTestAppointment, clsTestAppointment>();
 
 //-----------------------------------------------
 
+//Detain License configuratoin
+builder.Services.AddScoped<IDALDetainedLicense, clsDetainedLicenseData>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new clsDetainedLicenseData(connectionString);
+});
+
+builder.Services.AddScoped<IBLLDetainLIcnese, clsDetainedLicense>();
+
+//-----------------------------------------------
+
+//Local Driving License configuratoin
+builder.Services.AddScoped<IDALLocalDrivingLicenseApplication, clsLocalDrivingLicenseApplicationData>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new clsLocalDrivingLicenseApplicationData(connectionString);
+});
+
+builder.Services.AddScoped<IBLLLocalDrivingLicenseApp, clsLocalDrivingLicenseApplication>();
+//-----------------------------------------------
+
+//Applications configuratoin
+builder.Services.AddScoped<IDALApplication, clsApplicationData>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+return new clsApplicationData(connectionString);
+});
+
+builder.Services.AddScoped<IBLLApplication, clsApplication>();
+
+//-----------------------------------------------
+
+
 //International License configuratoin
 builder.Services.AddScoped<IDALInternationalLicense, clsInternationalInternationalLicenseData>(provider =>
 {
@@ -122,14 +156,7 @@ builder.Services.AddScoped<IDALInternationalLicense, clsInternationalInternation
 builder.Services.AddScoped<IBLLInternationalLicnense, clsInternationalLicense>();
 
 //-----------------------------------------------
-//Local Driving License configuratoin
-builder.Services.AddScoped<IDALLocalDrivingLicenseApplication, clsLocalDrivingLicenseApplicationData>(provider =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new clsLocalDrivingLicenseApplicationData(connectionString);
-});
 
-builder.Services.AddScoped<IBLLLocalDrivingLicenseApp, clsLocalDrivingLicenseApplication>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

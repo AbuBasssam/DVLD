@@ -40,7 +40,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindByID/{PersonID}", Name = "GetPersonByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -70,8 +70,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindByNationalNo/{NationalNo}", Name = "GetPersontByNationalNo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -94,6 +93,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpPost("AddNewPerson", Name = "AddPerson")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -131,8 +131,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpPut("UpdatePerson/{PersonID}", Name = "UpdatePerson")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -187,6 +186,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpDelete("DeletePersonByID/{PersonID}", Name = "DeletePersonByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -206,9 +206,7 @@ namespace DVLD_API.Controllers
                 return NotFound($"Person with ID {PersonID} Have data connected to him can not deleted!");
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpDelete("DeletePersonBy/NationalNo{NationalNo}", Name = "DeletePersonByNationalNo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -225,8 +223,7 @@ namespace DVLD_API.Controllers
                 return NotFound($"Person with NationalNo  {NationalNo} Have data connected to him can not deleted!");
         }
 
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("IsPersonExistByID/{PersonID}", Name = "IsPersonExistByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -246,7 +243,7 @@ namespace DVLD_API.Controllers
             }
         }
 
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("IsPersonExistByNationalNo/{NationalNo}", Name = "IsPersonExistByNationalNo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -293,9 +290,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindByID/{UserID}", Name = "GetUserByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -320,9 +315,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindUserByPersonID/{PersonID}", Name = "GetUserByPersonID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -341,9 +334,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindUserByUserName&Password/{UserName}/{Password}", Name = "GetUserByUserName&Password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -363,6 +354,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpPost("AddNewUser", Name = "AddUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -403,6 +395,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpPut("UpdateUser/{UserID}", Name = "UpdateUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -451,6 +444,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpDelete("DeleteUser/{UserID}", Name = "DeleteUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -470,6 +464,7 @@ namespace DVLD_API.Controllers
                 return NotFound($"User with ID {UserID} not found. no rows deleted!");
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpGet("IsUserExist/{UserID}", Name = "IsUserExist")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -518,9 +513,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindByID/{DriverID}", Name = "GetDriverByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -548,9 +541,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("FindDriverByPersonID/{PersonID}", Name = "GetDriverByPersonID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -577,10 +568,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
-
-
-
+        //---------------------------------------------------------------------------------
 
         [HttpPost("AddNewDriver", Name = "AddDriver")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -618,6 +606,7 @@ namespace DVLD_API.Controllers
 
         }
 
+        //---------------------------------------------------------------------------------
 
         [HttpPut("UpdateDriver/{DriverID}", Name = "UpdateDriver")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -654,7 +643,7 @@ namespace DVLD_API.Controllers
 
         }
 
-
+        //---------------------------------------------------------------------------------
 
         [HttpGet("IsDriverExists/{DriverID}", Name = "IsDriverExist")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -672,6 +661,8 @@ namespace DVLD_API.Controllers
 
             }
         }
+        
+        //---------------------------------------------------------------------------------
 
         [HttpGet("IsDriverExistsByPersonID/{PersonID}", Name = "IsDriverExistsByPersonID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -1779,10 +1770,9 @@ namespace DVLD_API.Controllers
         //---------------------------------------------------------------------------------
     }
 
+    //Done without verfying & Testing
     [Route("api/DVLD/License")]
     [ApiController]
-
-    //Done without verfying & Testing
     public class LicenseController : ControllerBase
     {
         private readonly IBLLLicnese _Licnese;
@@ -2023,6 +2013,7 @@ namespace DVLD_API.Controllers
         }
     }
 
+    //Done without verfying & Testing
     [Route("api/DVLD/InternationalLicense")]
     [ApiController]
     public class InternationalLicenseController : ControllerBase
@@ -2143,6 +2134,8 @@ namespace DVLD_API.Controllers
             }
             return Ok(DriverInternationalLicensesList.Result);
         }
+       
+        //---------------------------------------------------------------------------------
         
         [HttpGet("AllInternationalLicenses", Name = "GetAllInternationalLicenses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -2159,40 +2152,350 @@ namespace DVLD_API.Controllers
     }
 
 
+    //Done without verfying & Testing
 
-
-
-
-    /* [Route("api/DVLD/People")]
-     [ApiController]
-     public class ApplicationTypeController : ControllerBase
-     {
-
-
-
-     }*/
-
-
-
-    /* 
-     [Route("api/DVLD/People")]
-     [ApiController]
-     public class ApplicationTypeController : ControllerBase
-     {
-
-
-
-     }*/
-
-    /*[Route("api/DVLD/People")]
+    [Route("api/DVLD/DetainedLicense")]
     [ApiController]
-    public class ApplicationTypeController : ControllerBase
+    public class DetainedLicenseController : ControllerBase
     {
+        private readonly IBLLDetainLIcnese _DetainLicense;
+        
+        public DetainedLicenseController(IBLLDetainLIcnese DetainLicense)
+        {
+            this._DetainLicense = DetainLicense;
+        }
 
 
 
+        [HttpGet("FindDetainLicenseByDetainID/{DetainID}", Name = "GetDetainLicenseByDetainID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DetainedLicenseDTO> Find(int DeteainID)
+        {
+
+            if (DeteainID < 1)
+            {
+                return BadRequest($"Not accepted ID {DeteainID}");
+            }
+
+            var License = _DetainLicense.Find(DeteainID);
+
+            if (License.Result == null)
+            {
+                return NotFound($"License with ID {DeteainID} not found.");
+            }
+
+
+            DetainedLicenseDTO DLDTO = License.Result.DLDTO;
+
+            return Ok(DLDTO);
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("FindDetainLicenseByLicenseID/{LicnenseID}", Name = "GetDetainLicenseByLicenseID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DetainedLicenseDTO> FindByLicenseID(int LicenseID)
+        {
+
+            if (LicenseID < 1)
+            {
+                return BadRequest($"Not accepted ID {LicenseID}");
+            }
+
+            var License = _DetainLicense.FindByLicenseID(LicenseID);
+
+            if (License.Result == null)
+            {
+                return NotFound($"License with ID {LicenseID} not found.");
+            }
+
+
+            DetainedLicenseDTO DLDTO = License.Result.DLDTO;
+
+            return Ok(DLDTO);
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPost("AddNewDetainLicense", Name = "AddNewDetainLicense")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<DetainedLicenseDTO> AddLicense(DetainedLicenseDTO NewLicenseDTO)
+        {
+            DetainedLicenseDTO License = new DetainedLicenseDTO
+                (NewLicenseDTO.DetainID, NewLicenseDTO.LicenseID, NewLicenseDTO.DetainDate,NewLicenseDTO.FineFees,
+                 NewLicenseDTO.CreatedByUserID, NewLicenseDTO.IsReleased, NewLicenseDTO.ReleaseDate,
+                 NewLicenseDTO.ReleasedByUserID,NewLicenseDTO.ReleaseApplicationID);
+
+            var LicneseTask = _DetainLicense.AddNewDetainedLicense(License);
+            NewLicenseDTO.DetainID = LicneseTask.Result != null ? LicneseTask.Result.Value : 0;
+
+
+
+            return (NewLicenseDTO.DetainID != 0) ? CreatedAtRoute("GetDetainLicenseByLicenseID", new { LicnenseID = NewLicenseDTO.LicenseID }, NewLicenseDTO)
+                : BadRequest("Something wrong the data not added");
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPut("UpdateDetainLicense/{LicenseID}", Name = "UpdateDetainLicense")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DetainedLicenseDTO> UpdateLicense(int LicenseID, DetainedLicenseDTO UpdatedLicense)
+        {
+            var License = _DetainLicense.FindByLicenseID(LicenseID);
+
+            if (License.Result == null)
+            {
+                return NotFound($"License with ID {LicenseID} not found.");
+            }
+
+
+            License.Result.LicenseID = UpdatedLicense.LicenseID;
+            License.Result.DetainDate = UpdatedLicense.DetainDate;
+            License.Result.FineFees = UpdatedLicense.FineFees;
+            License.Result.CreatedByUserID = UpdatedLicense.CreatedByUserID;
+            License.Result.IsReleased = UpdatedLicense.IsReleased;
+
+            License.Result.ReleaseDate = UpdatedLicense.ReleaseDate;
+            License.Result.ReleasedByUserID = UpdatedLicense.ReleasedByUserID;
+            License.Result.ReleaseApplicationID = UpdatedLicense.ReleaseApplicationID;
+           
+
+            var result = _DetainLicense.UpdateDetainedLicense(License.Result.DLDTO);
+
+            return (result.Result) ? Ok(License.Result.DLDTO) : BadRequest("Something is wrong the data not updated");
+
+        }
+
+        //---------------------------------------------------------------------------------
+        [HttpGet("AllDetainLicense", Name = "GetAllDetainLicense")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<DetainedLicenseDTO>> GetAllDetainedLicenses()
+        {
+            var DetainLicenseList = _DetainLicense.GetAllDetainedLicenses(); 
+            if (DetainLicenseList.Result == null || !DetainLicenseList.Result.Any())
+            {
+                return NotFound("No License found!");
+            }
+            return Ok(DetainLicenseList.Result);
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("IsLicenseDetain/{LicenseID}", Name = "IsLicenseDetain")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<bool> IsLicenseDetained(int LicenseID)
+            => _DetainLicense.IsLicenseDetained(LicenseID).Result?Ok("The License detain."): NoContent();
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("ReleaseDetainedLicense/{ReleasedByUserID},{ReleaseApplicationID}", Name = "ReleaseDetainedLicense")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<bool> ReleaseDetainedLicense(int ReleasedByUserID,int ReleaseApplicationID)
+            => _DetainLicense.ReleaseDetainedLicense(ReleasedByUserID,ReleaseApplicationID).Result ? Ok("The License is released.") : NoContent();
     }
-*/
+
+
+
+    //Done without verfying & Testing
+    [Route("api/DVLD/Application")]
+    [ApiController]
+    public class ApplicationController : ControllerBase
+    {
+        private readonly IBLLApplication _app;
+        public ApplicationController(IBLLApplication app) { _app = app; }
+
+        [HttpGet("FindaApplicationByID/{ApplicationID}", Name = "GetApplicationByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ApplicationDTO> FindByApplicationID(int ApplicationID)
+        {
+
+            if (ApplicationID < 1)
+            {
+                return BadRequest($"Not accepted ID {ApplicationID}");
+            }
+
+            var App = _app.Find(ApplicationID);
+
+            if (App.Result == null)
+            {
+                return NotFound($"Application with ID {ApplicationID} not found.");
+            }
+
+
+            ApplicationDTO ADTO = App.Result.ADTO;
+
+            return Ok(ADTO);
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPost("AddNewApplication", Name = "AddNewApplication")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ApplicationDTO> AddApplication(ApplicationDTO NewApplicatoinDTO)
+        {
+            ApplicationDTO Applicatoin = new ApplicationDTO
+                (NewApplicatoinDTO.ApplicationID, NewApplicatoinDTO.ApplicationPersonID, NewApplicatoinDTO.ApplicationDate,
+                NewApplicatoinDTO.ApplicationTypeID, NewApplicatoinDTO.Staute, NewApplicatoinDTO.LastStauteDate, NewApplicatoinDTO.PeadFees,
+                 NewApplicatoinDTO.CreatedBy);
+
+            var App = _app.AddNewApplication(Applicatoin);
+            NewApplicatoinDTO.ApplicationID = App.Result != null ? App.Result.Value : 0;
+
+
+
+            return (NewApplicatoinDTO.ApplicationID != 0) ? CreatedAtRoute("GetApplicationByID", new { ApplicationID = NewApplicatoinDTO.ApplicationID }, NewApplicatoinDTO)
+                : BadRequest("Something wrong the data not added");
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpPut("UpdateApplication/{ApplicationID}", Name = "UpdateApplication")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ApplicationDTO> UpdateLicense(int ApplicationID, ApplicationDTO UpdatedApplication)
+        {
+            var App = _app.Find(ApplicationID);
+
+            if (App.Result == null)
+            {
+                return NotFound($"License with ID {ApplicationID} not found.");
+            }
+
+
+            App.Result.ApplicationID = UpdatedApplication.ApplicationID;
+            App.Result.ApplicationTypeID = (clsApplicationType.enApplicationTypes)UpdatedApplication.ApplicationTypeID;
+            App.Result.ApplicationStatus = (clsApplication.enApplicationStatus)UpdatedApplication.Staute;
+            App.Result.LastStauteDate = UpdatedApplication.LastStauteDate;
+            App.Result.PaidFees = UpdatedApplication.PeadFees;
+            App.Result.CreatedBy = UpdatedApplication.CreatedBy;
+
+
+            var result = _app.UpdateApplication(App.Result.ADTO);
+
+            return (result.Result) ? Ok(App.Result.ADTO) : BadRequest("Something is wrong the data not updated");
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpDelete("DeleteApplication/{ApplicationID}", Name = "DeleteApplication")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> DeleteApplication(int ApplicationID)
+        {
+            if (ApplicationID < 1)
+            {
+                return BadRequest($"Not accepted ID {ApplicationID}");
+            }
+            var Deleting = _app.DeleteApplication(ApplicationID);
+            if (Deleting.Result)
+
+                return Ok($"Application with ID {ApplicationID} has been deleted.");
+            else
+                return NotFound($"Application with ID {ApplicationID} Have data connected to him can not deleted!");
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("IsApplicationExist/{ApplicationID}", Name = "IsApplicationExist")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<bool> IsApplicationExist(int ApplicationID)
+        {
+
+            if (_app.IsApplicationExist(ApplicationID).Result)
+            {
+                return Ok("The person exists.");
+
+            }
+            else
+            {
+                return NoContent();
+
+            }
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("DoesPersonHaveActiveApplication/{PersonID},{ApplicationTypeID}", Name = "DoesPersonHaveActiveApplication")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<bool> DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
+        {
+
+            if (_app.DoesPersonHaveActiveApplication(PersonID, ApplicationTypeID).Result)
+            {
+                return Ok("Yes is have .");
+
+            }
+            else
+            {
+                return NoContent();
+
+            }
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("GetActiveApplicationIDPerApplicationType/{PersonID},{ApplicationTypeID}", Name = "GetActiveApplicationIDPerApplicationType")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<int> GetActiveApplicationID(int PersonID, int ApplicationTypeID)
+        {
+            var ApplicationID = _app.GetActiveApplicationID(PersonID, (clsApplicationType.enApplicationTypes)ApplicationTypeID);
+            return ApplicationID.Result != -1 ? Ok(ApplicationID.Result) : NoContent();
+
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("GetActiveApplicationIDForLicenseClass/{PersonID},{ApplicationTypeID},{LicnenseClass}", Name = "GetActiveApplicationIDForLicenseClass")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<int> GetActiveApplicationID(int PersonID, int ApplicationTypeID, int LicnenseClass)
+        {
+            var ApplicationID = _app.GetActiveApplicationIDForLicenseClass(PersonID, (clsApplicationType.enApplicationTypes)ApplicationTypeID, LicnenseClass);
+            return ApplicationID.Result != -1 ? Ok(ApplicationID.Result) : NoContent();
+
+
+        }
+
+        //---------------------------------------------------------------------------------
+
+        [HttpGet("GetActiveApplicationID/{ApplicationTypeID}", Name = "GetActiveApplicationID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<int> GetActiveApplicationID(int ApplicationTypeID)
+        {
+            var ApplicationID = _app.GetActiveApplicationID((clsApplicationType.enApplicationTypes)ApplicationTypeID);
+            return ApplicationID.Result != -1 ? Ok(ApplicationID.Result) : NoContent();
+
+
+        }
+    }
+
+
 
 }
 

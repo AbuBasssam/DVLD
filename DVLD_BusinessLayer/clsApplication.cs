@@ -20,6 +20,15 @@ namespace DVlD_BusinessLayer
 
         public enum enApplicationStatus { New = 1, Cancelled = 2, Completed = 3 };
 
+        public ApplicationDTO ADTO
+        {
+            get
+            {
+                return new ApplicationDTO(ApplicationID, ApplicationPersonID, ApplicationDate,
+                    (int)ApplicationTypeID, (byte)ApplicationStatus, LastStauteDate, PaidFees, CreatedBy);
+            }
+        }
+
         public Nullable<int> ApplicationID { get; set; }
 
         public int ApplicationPersonID { get; set; }
