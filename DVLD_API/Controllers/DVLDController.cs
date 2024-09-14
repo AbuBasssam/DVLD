@@ -2353,7 +2353,7 @@ namespace DVLD_API.Controllers
             ApplicationDTO Applicatoin = new ApplicationDTO
                 (NewApplicatoinDTO.ApplicationID, NewApplicatoinDTO.ApplicationPersonID, NewApplicatoinDTO.ApplicationDate,
                 NewApplicatoinDTO.ApplicationTypeID, NewApplicatoinDTO.Staute, NewApplicatoinDTO.LastStauteDate, NewApplicatoinDTO.PeadFees,
-                 NewApplicatoinDTO.CreatedBy);
+                NewApplicatoinDTO.CreatedBy);
 
             var App = _app.AddNewApplication(Applicatoin);
             NewApplicatoinDTO.ApplicationID = App.Result != null ? App.Result.Value : 0;
