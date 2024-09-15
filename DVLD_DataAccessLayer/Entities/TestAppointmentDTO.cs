@@ -26,7 +26,7 @@ namespace DVLD_DataAccessLayer.Entities
             PaidFees = paidFees;
             CreatedByUserID = createdByUserID;
             IsLocked = isLocked;
-            RetakeTestApplicationID = retakeTestApplicationID;
+            RetakeTestApplicationID = retakeTestApplicationID==0? -1:retakeTestApplicationID;
         }
     }
 }

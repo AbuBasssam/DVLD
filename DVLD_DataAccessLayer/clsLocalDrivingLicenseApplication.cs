@@ -161,23 +161,23 @@ namespace DVLD_DataAccessLayer
                              VALUES (@ApplicationID,@LicenseClassID);
                              SELECT SCOPE_IDENTITY();";
 
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@ApplicationID", lDLApplicatoinDTO.ApplicationID);
-                    command.Parameters.AddWithValue("@LicenseClassID", lDLApplicatoinDTO. LicenseClassID);
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ApplicationID", lDLApplicatoinDTO.ApplicationID);
+                        command.Parameters.AddWithValue("@LicenseClassID", lDLApplicatoinDTO. LicenseClassID);
 
-                    connection.Open();
+                        connection.Open();
 
-                    object result =await command.ExecuteScalarAsync();
+                        object result =await command.ExecuteScalarAsync();
 
-                        if (result != null && int.TryParse(result.ToString(), out int insertedID))
-                        {
-                            LocalDrivingLicenseApplicationID = insertedID;
-                        }
-                    }
+                            if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                            {
+                                LocalDrivingLicenseApplicationID = insertedID;
+                            }
+                    }   
                
 
-            }
+                }
                 
 
 

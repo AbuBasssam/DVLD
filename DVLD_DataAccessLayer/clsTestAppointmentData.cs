@@ -300,7 +300,7 @@ namespace DVLD_DataAccessLayer
              Convert.ToByte(reader.GetInt32(reader.GetOrdinal("TestTypeID"))),
              reader.GetInt32(reader.GetOrdinal("LocalDrivingLicenseApplicationID")),
              reader.GetDateTime(reader.GetOrdinal("AppointmentDate")),
-             reader.GetFloat(reader.GetOrdinal("PaidFees")),
+            Convert.ToSingle( reader.GetDecimal(reader.GetOrdinal("PaidFees"))),
              reader.GetInt32(reader.GetOrdinal("CreatedByUserID")),
              reader.GetBoolean(reader.GetOrdinal("IsLocked")),
              reader.IsDBNull(reader.GetOrdinal("RetakeTestApplicationID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("RetakeTestApplicationID"))
@@ -312,7 +312,7 @@ namespace DVLD_DataAccessLayer
                 (
                     reader.GetInt32(reader.GetOrdinal("TestAppointmentID")),
                     reader.GetDateTime(reader.GetOrdinal("AppointmentDate")),
-                    reader.GetFloat(reader.GetOrdinal("PaidFees")),
+                    Convert.ToSingle(reader.GetDecimal(reader.GetOrdinal("PaidFees"))),
                     reader.GetBoolean(reader.GetOrdinal("IsLocked"))
 
                 );

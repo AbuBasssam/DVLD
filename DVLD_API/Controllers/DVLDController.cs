@@ -1201,7 +1201,7 @@ namespace DVLD_API.Controllers
     }
 
 
-    //Done without verfying & Testing
+    //Done without verfying 
     [Route("api/DVLD/TestAppointment")]
     [ApiController]
     public class TestAppointmentController : ControllerBase
@@ -1211,6 +1211,7 @@ namespace DVLD_API.Controllers
         {
             this._TestAppointment = bLLTestAppointment;
         }
+        //Tested
 
         [HttpGet("AllTestAppointment", Name = "GetAllTestAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -1227,6 +1228,7 @@ namespace DVLD_API.Controllers
         }
 
         //---------------------------------------------------------------------------------
+        //Tested
 
         [HttpGet("AllTestAppointmentsPerTestType", Name = "GetAllTestAppointmentsPerTestType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -1243,7 +1245,7 @@ namespace DVLD_API.Controllers
 
         }
         //---------------------------------------------------------------------------------
-
+        //Tested
         [HttpGet("FindByID/{TestAppointmentID}", Name = "GetTestAppointmentByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -1271,14 +1273,14 @@ namespace DVLD_API.Controllers
         }
 
         //---------------------------------------------------------------------------------
-
-        [HttpGet("IsTestAppointmentExistByIDPerTestType/{TestAppointmentID}/{TestTypeID}", Name = "IsTestAppointmentExistByIDPerTestType")]
+        //Tested
+        [HttpGet("IsTestAppointmentExistByIDPerTestType/{LocalDrivingLicenseApplicationID}/{TestTypeID}", Name = "IsTestAppointmentExistByIDPerTestType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<bool> IsTestApointmentExist(int TestAppoitmentID, byte TestTypeID)
+        public ActionResult<bool> IsTestApointmentExist(int LocalDrivingLicenseApplicationID, byte TestTypeID)
         {
 
-            if (_TestAppointment.ExistAppointmentAsync(TestAppoitmentID, TestTypeID).Result)
+            if (_TestAppointment.ExistAppointmentAsync(LocalDrivingLicenseApplicationID, TestTypeID).Result)
             {
                 return Ok("The Appointment exists.");
 
@@ -1291,8 +1293,8 @@ namespace DVLD_API.Controllers
         }
 
         //---------------------------------------------------------------------------------
-
-        [HttpGet("GetLastTestAppointment/{TestAppointmentID},{TestTypeID}", Name = "GetLastTestAppointmentByLDLAppAndTestType")]
+        //Tested
+        [HttpGet("GetLastTestAppointment/{LocalDrivingLicenseApplicationID},{TestTypeID}", Name = "GetLastTestAppointmentByLDLAppAndTestType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1323,8 +1325,8 @@ namespace DVLD_API.Controllers
         }
 
         //---------------------------------------------------------------------------------
-
-        [HttpGet("GetTestIDForAppointment/{TestAppointmentID},{TestTypeID}", Name = "GetTestIDForAppointment")]
+        //Tested
+        [HttpGet("GetTestIDForAppointment/{TestAppointmentID}", Name = "GetTestIDForAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1352,7 +1354,7 @@ namespace DVLD_API.Controllers
 
         //---------------------------------------------------------------------------------
 
-        //without verfying
+        //Tested without verfying
         [HttpPost("AddNewTestAppointment", Name = "AddNewTestAppointment")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -1390,7 +1392,7 @@ namespace DVLD_API.Controllers
 
         //---------------------------------------------------------------------------------
 
-        //without verfying
+        //Tested without verfying
         [HttpPut("UpdateTestAppointment/{TestAppointmentID}", Name = "UpdateTestAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -1419,7 +1421,6 @@ namespace DVLD_API.Controllers
 
             }*/
 
-            TestAppointment.Result.TestAppointmentID = UpdatedTestAppointment.TestTypeID;
             TestAppointment.Result.TestTypeID = (clsTestTypes.enTestType)UpdatedTestAppointment.TestTypeID;
             TestAppointment.Result.LocalDrivingApplicationID = UpdatedTestAppointment.LocalDrivingLicenseApplicationID;
             TestAppointment.Result.AppointmentDate = UpdatedTestAppointment.AppointmentDate;
@@ -1442,7 +1443,7 @@ namespace DVLD_API.Controllers
     }
 
 
-    //Done without verfying & Testing
+    //Done without verfying & Testing (Test the Find,Add ,Update operatoin)
     [Route("api/DVLD/LocalDrivingLicenseApplication")]
     [ApiController]
     public class LocalDrivingLicenseApplicationController : ControllerBase
@@ -1555,7 +1556,7 @@ namespace DVLD_API.Controllers
             NewLDLApplicationDTO.LocalDrivingLicenseApplicationID = (LDLApplication.Result == null) ? 0 : LDLApplication.Result.Value;
 
             if (NewLDLApplicationDTO.LocalDrivingLicenseApplicationID != 0)
-                return CreatedAtRoute("GetLDLApplicationByApplicationID", new { LDLApplicationID = NewLDLApplicationDTO.LocalDrivingLicenseApplicationID }, NewLDLApplicationDTO);
+                return CreatedAtRoute("GetLDLApplicationByID", new { LDLApplicationID = NewLDLApplicationDTO.LocalDrivingLicenseApplicationID }, NewLDLApplicationDTO);
             else
                 return BadRequest("Adding Failed");
 
@@ -2309,7 +2310,7 @@ namespace DVLD_API.Controllers
 
 
 
-    //Done without verfying & Testing
+    //Done without verfying & Testing for GetActiveApplicationIDForLicenseClass
     [Route("api/DVLD/Application")]
     [ApiController]
     public class ApplicationController : ControllerBase
@@ -2351,7 +2352,7 @@ namespace DVLD_API.Controllers
         public ActionResult<ApplicationDTO> AddApplication(ApplicationDTO NewApplicatoinDTO)
         {
             ApplicationDTO Applicatoin = new ApplicationDTO
-                (NewApplicatoinDTO.ApplicationID, NewApplicatoinDTO.ApplicationPersonID, NewApplicatoinDTO.ApplicationDate,
+                (null, NewApplicatoinDTO.ApplicationPersonID, NewApplicatoinDTO.ApplicationDate,
                 NewApplicatoinDTO.ApplicationTypeID, NewApplicatoinDTO.Staute, NewApplicatoinDTO.LastStauteDate, NewApplicatoinDTO.PeadFees,
                 NewApplicatoinDTO.CreatedBy);
 
@@ -2371,7 +2372,7 @@ namespace DVLD_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ApplicationDTO> UpdateLicense(int ApplicationID, ApplicationDTO UpdatedApplication)
+        public ActionResult<ApplicationDTO> UpdateApplication(int ApplicationID, ApplicationDTO UpdatedApplication)
         {
             var App = _app.Find(ApplicationID);
 
@@ -2381,7 +2382,6 @@ namespace DVLD_API.Controllers
             }
 
 
-            App.Result.ApplicationID = UpdatedApplication.ApplicationID;
             App.Result.ApplicationTypeID = (clsApplicationType.enApplicationTypes)UpdatedApplication.ApplicationTypeID;
             App.Result.ApplicationStatus = (clsApplication.enApplicationStatus)UpdatedApplication.Staute;
             App.Result.LastStauteDate = UpdatedApplication.LastStauteDate;
@@ -2425,7 +2425,7 @@ namespace DVLD_API.Controllers
 
             if (_app.IsApplicationExist(ApplicationID).Result)
             {
-                return Ok("The person exists.");
+                return Ok("The Application exists.");
 
             }
             else
@@ -2483,16 +2483,7 @@ namespace DVLD_API.Controllers
 
         //---------------------------------------------------------------------------------
 
-        [HttpGet("GetActiveApplicationID/{ApplicationTypeID}", Name = "GetActiveApplicationID")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<int> GetActiveApplicationID(int ApplicationTypeID)
-        {
-            var ApplicationID = _app.GetActiveApplicationID((clsApplicationType.enApplicationTypes)ApplicationTypeID);
-            return ApplicationID.Result != -1 ? Ok(ApplicationID.Result) : NoContent();
-
-
-        }
+       
     }
 
 

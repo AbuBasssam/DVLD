@@ -165,38 +165,6 @@
   {
     "ContainingType": "DVLD_API.Controllers.ApplicationController",
     "Method": "GetActiveApplicationID",
-    "RelativePath": "api/DVLD/Application/GetActiveApplicationID/{ApplicationTypeID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ApplicationTypeID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Int32",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 204
-      }
-    ],
-    "EndpointName": "GetActiveApplicationID"
-  },
-  {
-    "ContainingType": "DVLD_API.Controllers.ApplicationController",
-    "Method": "GetActiveApplicationID",
     "RelativePath": "api/DVLD/Application/GetActiveApplicationIDForLicenseClass/{PersonID},{ApplicationTypeID},{LicnenseClass}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -307,7 +275,7 @@
   },
   {
     "ContainingType": "DVLD_API.Controllers.ApplicationController",
-    "Method": "UpdateLicense",
+    "Method": "UpdateApplication",
     "RelativePath": "api/DVLD/Application/UpdateApplication/{ApplicationID}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -3176,7 +3144,7 @@
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "GetLastTestAppointmentAsync",
-    "RelativePath": "api/DVLD/TestAppointment/GetLastTestAppointment/{TestAppointmentID},{TestTypeID}",
+    "RelativePath": "api/DVLD/TestAppointment/GetLastTestAppointment/{LocalDrivingLicenseApplicationID},{TestTypeID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -3184,16 +3152,11 @@
       {
         "Name": "LocalDrivingLicenseApplicationID",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
         "Name": "TestTypeID",
         "Type": "System.Byte",
-        "IsRequired": true
-      },
-      {
-        "Name": "TestAppointmentID",
-        "Type": "",
         "IsRequired": true
       }
     ],
@@ -3231,7 +3194,7 @@
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "GetTestIDOfTestAppointment",
-    "RelativePath": "api/DVLD/TestAppointment/GetTestIDForAppointment/{TestAppointmentID},{TestTypeID}",
+    "RelativePath": "api/DVLD/TestAppointment/GetTestIDForAppointment/{TestAppointmentID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -3239,11 +3202,6 @@
       {
         "Name": "TestAppointmentID",
         "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "TestTypeID",
-        "Type": "",
         "IsRequired": true
       }
     ],
@@ -3281,24 +3239,19 @@
   {
     "ContainingType": "DVLD_API.Controllers.TestAppointmentController",
     "Method": "IsTestApointmentExist",
-    "RelativePath": "api/DVLD/TestAppointment/IsTestAppointmentExistByIDPerTestType/{TestAppointmentID}/{TestTypeID}",
+    "RelativePath": "api/DVLD/TestAppointment/IsTestAppointmentExistByIDPerTestType/{LocalDrivingLicenseApplicationID}/{TestTypeID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "TestAppoitmentID",
+        "Name": "LocalDrivingLicenseApplicationID",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
         "Name": "TestTypeID",
         "Type": "System.Byte",
-        "IsRequired": true
-      },
-      {
-        "Name": "TestAppointmentID",
-        "Type": "",
         "IsRequired": true
       }
     ],
